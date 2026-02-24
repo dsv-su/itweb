@@ -11,4 +11,8 @@ class TestController extends Controller
            ->template('home.partials.search.staff')
            ->layout('mylayout');*/
    }
+   public function server()
+   {
+
+   }
 }
