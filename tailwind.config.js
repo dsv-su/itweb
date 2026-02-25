@@ -3,11 +3,22 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 module.exports = {
     darkMode: 'class',
     content: [
+        './resources/**/*.antlers.html',
+        './resources/**/*.antlers.php',
         './resources/**/*.blade.php',
-        './resources/**/*.js',
         './resources/**/*.vue',
+        './content/**/*.md',
         './app/**/*.php',
+        './resources/**/*.html',
+        './resources/**/*.js',
+        './resources/**/*.jsx',
+        './resources/**/*.ts',
+        './resources/**/*.tsx',
+        './resources/**/*.php',
+        './resources/**/*.vue',
+        './resources/**/*.twig',
         './node_modules/flowbite/**/*.js',
+        './vendor/haringsrob/livewire-datepicker/resources/**/*.blade.php',
     ],
     theme: {
         extend: {
