@@ -129,7 +129,7 @@ return [
 
     'from' => [
         'address' => $system_config['mail']['mail_from_adress'],
-        'name' => env('MAIL_FROM_NAME', 'DSVIT'),
+        'name' => env('MAIL_FROM_NAME', 'DSV'),
     ],
 
 ];

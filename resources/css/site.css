@@ -1,5 +1,13 @@
 @import "tailwindcss";
+@config "../../tailwind.config.js";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Plugins (Tailwind v4 CSS-first way) */
 @plugin "@tailwindcss/typography";
+@plugin "flowbite/plugin";
+
+/* Let Tailwind scan Flowbite for classnames */
+@source "../../node_modules/flowbite";
 
 @theme {
     /* Fonts (replaces theme.extend.fontFamily) */
