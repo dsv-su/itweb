@@ -27,28 +27,28 @@ return new class extends Migration
             $table->string('status');
             $table->string('type');
 
-            $table->foreignId('user_id')
+            $table->foreignUuid('user_id')
                 ->constrained('users')
                 ->cascadeOnDelete();
 
             $table->boolean('multiple_heads')->default(false);
 
-            $table->foreignId('manager_id')
+            $table->foreignUuid('manager_id')
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
 
-            $table->foreignId('fo_id')
+            $table->foreignUuid('fo_id')
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
 
-            $table->foreignId('head_id')
+            $table->foreignUuid('head_id')
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
 
-            $table->foreignId('vice_id')
+            $table->foreignUuid('vice_id')
                 ->constrained('users')
                 ->cascadeOnDelete();
 

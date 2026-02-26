@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->uuid('reqid')->index();
 
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->cascadeOnDelete();
+            $table->uuid('user_id')->index();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+
             $table->text('comment')->nullable();
             $table->timestamps();
         });

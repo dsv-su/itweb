@@ -59,5 +59,4 @@
             <!-- End Card -->
     </div>
     @endforeach
-    @include('layouts.darktoggler')
 @endsection

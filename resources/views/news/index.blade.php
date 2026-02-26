@@ -98,5 +98,4 @@
             @break
     @endswitch
     </div>
-    @include('layouts.darktoggler')
 @endsection
