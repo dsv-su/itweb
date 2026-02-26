@@ -25,7 +25,7 @@ has been approved
 @else
     .
 @endif
-
+<br><br>
 OVERVIEW:
 <br><br>
 <b>Proposal:</b> {{$dashboard->name}}
