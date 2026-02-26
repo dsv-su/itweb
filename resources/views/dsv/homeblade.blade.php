@@ -8,6 +8,4 @@
     <div class="flex overflow-hidden bg-white dark:bg-gray-800 dark:text-white">
         @include('partials.page')
     </div>
-
-    @nocache('layouts.darktoggler')
 @endsection

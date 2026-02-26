@@ -39,7 +39,7 @@ class BudgetTemplateUploader extends Component
             $this->templateLang[$safeKey] = $file['type'] ?? 'eng';
         }
 
-        $this->directory = ProposalsDirectory::BUDGET_TEMPLATE;
+        $this->directory = '/public'. ProposalsDirectory::BUDGET_TEMPLATE;
         //$this->template = Storage::files($this->directory);
 
         $this->allowUpload();

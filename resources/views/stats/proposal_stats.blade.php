@@ -62,8 +62,4 @@
             {{--}}
         </div>
     </section>
-
-
-
-    @nocache('layouts.darktoggler')
 @endsection

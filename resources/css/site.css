@@ -1,3 +1,5 @@
+/* Load datepicker CSS first */
+@import "../../node_modules/flowbite-datepicker/dist/css/datepicker.css";
 @import "tailwindcss";
 @config "../../tailwind.config.js";
 @custom-variant dark (&:where(.dark, .dark *));
@@ -8,6 +10,7 @@
 
 /* Let Tailwind scan Flowbite for classnames */
 @source "../../node_modules/flowbite";
+@source "../../node_modules/flowbite-datepicker";
 
 @theme {
     /* Fonts (replaces theme.extend.fontFamily) */
@@ -38,9 +41,17 @@
     font-style: normal;
 }
 
+/* Make sure Tailwind's hidden state always wins for the datepicker dropdown */
+.datepicker-dropdown.hidden {
+    display: none !important;
+}
+
 /* Mobile submenu styling */
 
-*, ::after, ::before {
+/*, ::after, ::before {
+    scroll-behavior: smooth;
+}*/
+html {
     scroll-behavior: smooth;
 }
 
@@ -75,10 +86,7 @@
     transform: translateY(3px);
 }
 
-.open {
-    transform: rotate(90deg);
-    transform: translateY(-1px);
-}
+.open { transform: rotate(90deg) translateY(-1px); }
 
 .open .hamburger_sub_top {
     transform:
