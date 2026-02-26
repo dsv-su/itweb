@@ -15,7 +15,7 @@ class ProposalDownloadController extends Controller
 
     public function usermanual(): StreamedResponse
     {
-        return Storage::download('PPManual.pdf');
+        return Storage::disk('public')->download('PPManual.pdf');
     }
 
     public function budget(string $type): StreamedResponse

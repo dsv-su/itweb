@@ -43,5 +43,4 @@
             <!-- End Content -->
         </div>
     </div>
-    @include('layouts.darktoggler')
 @endsection

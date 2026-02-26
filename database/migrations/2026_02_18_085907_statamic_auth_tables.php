@@ -26,13 +26,13 @@ class StatamicAuthTables extends Migration
 
         Schema::create('role_user', function (Blueprint $table) {
             $table->id('id');
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('role_id');
         });
 
         Schema::create('group_user', function (Blueprint $table) {
-            $table->id('id');
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->id();
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('group_id');
         });
 
