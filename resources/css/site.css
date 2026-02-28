@@ -48,12 +48,12 @@
 
 /* Mobile submenu styling */
 
-/*, ::after, ::before {
-    scroll-behavior: smooth;
-}*/
-html {
+*, ::after, ::before {
     scroll-behavior: smooth;
 }
+/*html {
+    scroll-behavior: smooth;
+}*/
 
 .border-r {
     /* Border for large screens in SU secondary color */
@@ -86,7 +86,9 @@ html {
     transform: translateY(3px);
 }
 
-.open { transform: rotate(90deg) translateY(-1px); }
+.open {
+    transform: rotate(90deg);
+    transform: translateY(-1px); }
 
 .open .hamburger_sub_top {
     transform:
