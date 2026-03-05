@@ -17,7 +17,7 @@ class AdminController extends Controller
         // $this->middleware('admin');
     }
 
-    public function pp()
+    public function pp(): StatamicView
     {
         $viewData = [
             'proposals' => ProjectProposal::query()
@@ -32,9 +32,9 @@ class AdminController extends Controller
             ->with($viewData);
     }
 
-    public function pp_delete($id): RedirectResponse
+    public function pp_delete(ProjectProposal $proposal): RedirectResponse
     {
-        $proposal = ProjectProposal::findOrFail($id);
+        //$proposal = ProjectProposal::findOrFail($id);
 
         $dashboard = Dashboard::where('request_id', $proposal->id)->first();
 

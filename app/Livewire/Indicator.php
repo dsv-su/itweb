@@ -2,9 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Dashboard;
 use App\Traits\DashboardIndicator;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Statamic\Auth\User;
@@ -21,8 +19,6 @@ class Indicator extends Component
     public function mount()
     {
         $this->dashboard = null;
-        //$this->status = 'Rt';
-        //$this->user_roles = $this->getUserRoles();
         $this->auth_user = Auth::user()->id;
         $this->checkDashboard();
     }
