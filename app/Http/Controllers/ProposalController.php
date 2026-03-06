@@ -74,6 +74,9 @@ class ProposalController extends Controller
 
     public function create()
     {
+        //Disabled until April 1
+        return view('pp.waitforit');
+        //
         $viewData = $this->proposalPrepare->prepareProjectProposalData();
         $viewData['type'] = 'preapproval';
 
@@ -670,7 +673,7 @@ class ProposalController extends Controller
             (new ReCalcBudget())->scan();
         }
     }
-    
+
 
     protected function validateRequest(Request $request)
     {

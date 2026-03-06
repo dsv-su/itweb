@@ -120,7 +120,7 @@
         @antlers
         <div
              class="hidden md:block md:static md:w-auto absolute left-0 top-full w-full z-40 bg-white dark:bg-gray-900
-                    {{--}}border-t border-susecondary{{--}} dark:border-gray-700"
+                   dark:border-gray-700"
              id="navbar-multi-level"
         >
             <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-susecondary rounded-lg bg-gray-50 md:space-x-8

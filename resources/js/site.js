@@ -42,20 +42,26 @@ import 'chartjs-adapter-moment';
 window.Chart = Chart;
 
 function syncThemeIcons() {
-    const btn = document.getElementById('theme-toggle')
-    if (!btn) return
-
-    const darkIcon = document.getElementById('theme-toggle-dark-icon')
-    const lightIcon = document.getElementById('theme-toggle-light-icon')
-    if (!darkIcon || !lightIcon) return
-
     const isDark = document.documentElement.classList.contains('dark')
-    darkIcon.classList.toggle('hidden', isDark)
-    lightIcon.classList.toggle('hidden', !isDark)
+
+    document.querySelectorAll('.theme-toggle').forEach((btn) => {
+        const darkIcon =
+            btn.querySelector('#theme-toggle-dark-icon') ||
+            btn.querySelector('[data-toggle-icon="moon"]')
+
+        const lightIcon =
+            btn.querySelector('#theme-toggle-light-icon') ||
+            btn.querySelector('[data-toggle-icon="sun"]')
+
+        if (!darkIcon || !lightIcon) return
+
+        darkIcon.classList.toggle('hidden', isDark)
+        lightIcon.classList.toggle('hidden', !isDark)
+    })
 }
 
 document.addEventListener('click', (e) => {
-    const btn = e.target.closest('#theme-toggle')
+    const btn = e.target.closest('.theme-toggle')
     if (!btn) return
 
     const nowDark = document.documentElement.classList.toggle('dark')

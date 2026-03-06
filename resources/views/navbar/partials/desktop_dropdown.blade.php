@@ -74,6 +74,7 @@
                     </span>
                     <span class="block font-light leading-5 opacity-50">Getting started: How to submit a proposal</span>
                 </a>
+                {{--}}
                 <a href="#" @click="navigationMenuClose()" class="block px-3.5 py-3 text-sm rounded hover:bg-neutral-100">
                     <span class="block mb-1 font-medium text-black">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline-block mb-2 size-4">
@@ -99,6 +100,7 @@
                     </span>
                     <span class="block leading-5 opacity-50">Configure Settings</span>
                 </a>
+                {{--}}
             </div>
         </div>
     </div>

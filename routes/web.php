@@ -149,7 +149,7 @@ Route::prefix('pp')->name('pp.')->group(function () {
 
     // Stats
     Route::prefix('stats')->name('stats.')->group(function () {
-        Route::get('committed', [\App\Http\Controllers\StatsController::class, 'preapproved'])->name('committed'); // fixed spelling
+        Route::get('committed', [\App\Http\Controllers\StatsController::class, 'preapproved'])->name('committed');
         Route::get('approved', [\App\Http\Controllers\StatsController::class, 'approved'])->name('approved');
         Route::get('recalc', [\App\Http\Controllers\StatsController::class, 'recalcBudget'])->name('recalc');
     });
