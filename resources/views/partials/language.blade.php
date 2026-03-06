@@ -4,8 +4,10 @@
     $isAwaiting = ($slug === 'awaiting');
     $isMy       = ($slug === 'my');
     $isAll      = ($slug === 'all');
+    $isNew = request()->routeIs('pp.create');
+    $isStats = request()->routeIs('pp.stats.committed') || request()->routeIs('pp.stats.approved');
 @endphp
-@if(!($isAwaiting || $isMy || $isAll))
+@if(!($isAwaiting || $isMy || $isAll || $isNew || $isStats))
     <!-- Language switcher -->
     <button data-tooltip-target="navbar-dropdown-languageswitch-tooltip" type="button" data-dropdown-toggle="language-dropdown-menu" class="md:opacity-100 opacity-0 flex items-center text-xs font-small w-24 h-6 mx-5 {{--}}outline outline-offset-2 outline-1{{--}} rounded justify-center px-4 py-2 text-sm text-white dark:text-white cursor-pointer dark:hover:bg-gray-700 dark:hover:text-white">
         @if(Illuminate\Support\Facades\App::currentLocale() == 'sv')
