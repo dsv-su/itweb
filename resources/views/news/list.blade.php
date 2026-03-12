@@ -3,60 +3,79 @@
     @nocache('dsvheader')
     @nocache('navbar.navbar')
 
+    {{-- Page header (render once) --}}
     @foreach ($collections as $collection)
         @if($loop->first)
-            <!-- Title -->
-            <div class="max-w-2xl mx-auto text-center mb-8 lg:mt-7 lg:mb-7">
-                <h2 class="uppercase text-2xl font-bold md:text-4xl md:leading-tight dark:text-white">{{__("$collection->collection") }}</h2>
-                <p class="mt-1 text-gray-600 dark:text-gray-400">{{__("Latest entries")}}</p>
+            <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-6 mt-4 sm:mt-6 lg:mt-8 lg:mb-8">
+                    <h2 class="uppercase text-2xl font-bold sm:text-3xl md:text-4xl md:leading-tight dark:text-white">
+                        {{ __("$collection->collection") }}
+                    </h2>
+                    <p class="mt-1 text-sm sm:text-base text-gray-600 dark:text-gray-400">
+                        {{ __("Latest entries") }}
+                    </p>
+                </div>
             </div>
         @endif
 
-        <div class="px-4 mx-auto max-w-2xl">
-            <!-- Card -->
-            <a class="mb-3 group flex flex-col border border-blue-600 hover:border-transparent hover:shadow-lg
-                    transition-all duration-300 rounded-xl p-5 dark:border-gray-700 dark:hover:border-transparent
-                    dark:hover:shadow-black/[.4] dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="{{$collection->url}}">
-                <div class="flex justify-between items-center mb-3">
-                    <div class="flex w-full sm:items-center gap-x-5 sm:gap-x-3">
-                        <div class="grow">
-                            <div class="flex justify-between items-center gap-x-2">
-                                <div>
-                                    <div class="inline-block">
-                                        <div class="sm:mb-1 block text-start">
-                                              <span class="font-semibold text-gray-800 dark:text-gray-200">
-                                                {!! $collection->author->name ?? '' !!}
-                                              </span>
+        @if($loop->first)
+            <div class="mb-4 mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+                <ul class="space-y-3">
+        @endif
+
+                    <li>
+                        <a
+                            href="{{ $collection->url }}"
+                            class="group block rounded-xl border border-blue-600 p-4 sm:p-5
+                                   transition-all duration-300
+                                   hover:border-transparent hover:shadow-lg
+                                   focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                                   dark:border-gray-700 dark:hover:border-transparent dark:hover:shadow-black/[.4]
+                                   dark:focus:ring-gray-600 dark:focus:ring-offset-gray-900"
+                        >
+                            <div class="flex flex-col gap-2 sm:gap-3">
+                                {{-- Meta row --}}
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                    <div class="min-w-0">
+                                        <div class="text-sm font-semibold text-gray-800 dark:text-gray-200 break-words">
+                                            {!! $collection->author->name ?? '' !!}
+                                        </div>
+
+                                        <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 dark:text-gray-300">
+                                            <span class="inline-flex items-center">
+                                                {!! $collection->date !!}
+                                            </span>
+                                            <span class="hidden sm:inline text-gray-300 dark:text-gray-600">•</span>
+                                            <span class="inline-flex items-center text-gray-600 dark:text-gray-200">
+                                                {!! $collection->collection !!}
+                                            </span>
                                         </div>
                                     </div>
-                                    <ul class="text-xs text-gray-500 dark:text-gray-300">
-                                        <li class="inline-block relative pe-6 last:pe-0 last-of-type:before:hidden before:absolute before:top-1/2 before:end-2 before:-translate-y-1/2 before:w-1
-                                        before:h-1 before:bg-gray-300 before:rounded-full dark:text-gray-400 dark:before:bg-gray-600">
-                                            {!! $collection->date !!}
-                                        </li>
-                                        <li class="inline-block relative pe-6 last:pe-0 last-of-type:before:hidden before:absolute before:top-1/2 before:end-2 before:-translate-y-1/2 before:w-1
-                                        before:h-1 before:bg-gray-300 before:rounded-full dark:text-gray-200 dark:before:bg-gray-600">
-                                            {!! $collection->collection !!}
-                                        </li>
-                                    </ul>
+                                </div>
+
+                                {{-- Title row --}}
+                                <div class="flex items-start justify-between gap-3">
+                                    <h3 class="text-base sm:text-lg md:text-xl font-normal text-gray-900 dark:text-white break-words">
+                                        {!! $collection->title !!}
+                                    </h3>
+
+                                    <svg
+                                        class="w-5 h-5 sm:w-6 sm:h-6 shrink-0 text-gray-800 dark:text-white transition-transform duration-200 group-hover:translate-x-0.5"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                    >
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m10 16 4-4-4-4"/>
+                                    </svg>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Content -->
-                <div class="space-y-5 md:space-y-8">
-                    <div class="space-y-3">
-                        <h2 class="text-xl font-normal md:text-xl dark:text-white inline-block"> {!! $collection->title !!}
-                            <svg class="w-6 h-6 text-gray-800 dark:text-white inline-block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m10 16 4-4-4-4"/>
-                            </svg>
-                        </h2>
+                        </a>
+                    </li>
 
-                    </div>
-                </div>
-            </a>
-            <!-- End Card -->
-    </div>
+        @if($loop->last)
+                </ul>
+            </div>
+        @endif
     @endforeach
 @endsection

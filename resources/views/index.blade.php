@@ -3,5 +3,5 @@
     @nocache('dsvheader')
     @nocache('navbar.navbar')
     @include('home.partials.banner')
-    @include('home.welcome')
+    @include('home.home')
 @endsection
