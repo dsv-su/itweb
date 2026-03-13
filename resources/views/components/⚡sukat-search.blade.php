@@ -1,19 +1,208 @@
+<?php
+
+use Livewire\Component;
+use App\Services\Directory\SearchPresenters;
+use App\Services\Ldap\SukatUser;
+
+new class extends Component
+{
+    public ?ProjectProposal $proposal = null;
+    public array $investigators = [];
+    #[Session]
+    public array $presenters = [];
+    public string $searchPresenter = '';
+    /** @var array<int, array{uid:int|string, name:string, role:string, local:bool}> */
+    public array $sukatUsers = [];
+    public int $highlighted = 0;
+    public array $coinvestigators = [];
+    public string $external_coinvestigators_name = '';
+    public string $external_coinvestigators_email = '';
+    public bool $showExternal = false;
+    public ?array $person = null;
+
+    public function boot(SearchPresenters $search)
+    {
+        $this->searchService = $search;
+    }
+
+    public function mount($proposal = null): void
+    {
+        $this->defaultUser();
+        if($proposal){
+            $this->proposal = $proposal;
+            $this->getCoInvestigators();
+        }
+
+
+        $this->getPresenters();
+        if ($this->searchPresenter !== '') {
+            $this->sukatUsers = $this->searchService->execute($this->searchPresenter);
+        }
+    }
+
+    public function defaultUser(): void
+    {
+        $user = null;
+
+        if (App::isLocal()) {
+            $user = SukatUser::where('uid', 'gwett')->first();
+        } else {
+            $email = auth()->user()?->email;
+            if ($email) {
+                $user = SukatUser::where('mail', $email)->first();
+            }
+        }
+
+        $this->person = $user?->toArray(); // null-safe
+    }
+
+    public function moveHighlight(int $direction): void
+    {
+        $count = count($this->sukatUsers);
+        if ($count === 0) return;
+
+        $this->highlighted = ($this->highlighted + $direction + $count) % $count;
+    }
+
+    public function addHighlighted(): void
+    {
+        if (isset($this->sukatUsers[$this->highlighted])) {
+            $user = $this->sukatUsers[$this->highlighted];
+            $this->addPresenter($user->uid, $user->name, $user->email);
+        }
+    }
+
+    public function updatedSearchPresenter(): void
+    {
+        $this->sukatUsers = $this->searchService->execute($this->searchPresenter);
+    }
+
+    public function getCoInvestigators(): void
+    {
+        $names  = $this->proposal->pp['co_investigator_name']  ?? [];
+        $emails = $this->proposal->pp['co_investigator_email'] ?? [];
+        $types  = $this->proposal->pp['co_investigator_type']  ?? [];
+        $roles  = $this->proposal->pp['co_investigator_role']  ?? [];
+
+        foreach ($names as $key => $name) {
+            $this->investigators[] = [
+                'name'  => $name,
+                'email' => $emails[$key] ?? null,
+                'type'  => $types[$key]  ?? null,
+                'role'  => $roles[$key]  ?? null,
+            ];
+        }
+    }
+
+    public function getPresenters(): void
+    {
+        $presenters = [];
+        $rolesByUid = [];
+        $uids = collect($presenters)->pluck('username')->filter()->unique()->values();
+
+        if (empty($presenters)) {
+            return;
+        }
+
+        if ($uids->isNotEmpty()) {
+            // (|(uid=u1)(uid=u2)...)
+            $clauses = $uids
+                ->map(fn($u) => '(uid=' . $this->searchService->esc($u) . ')')
+                ->implode('');
+            $filter = '(|' . $clauses . ')';
+
+            $ldapUsers = SukatUser::rawFilter($filter)->get();
+
+            foreach ($ldapUsers as $u) {
+                $uid  = is_array($u->uid ?? null) ? ($u->uid[0] ?? null) : ($u->uid ?? null);
+                if (!$uid) continue;
+
+                $ents = $u->edupersonentitlement ?? [];
+                if (!is_array($ents)) $ents = [$ents];
+
+                $role = 'SU';
+                if (in_array(SearchPresenters::ENT_STAFF, $ents, true)) {
+                    $role = 'DSV';
+                } elseif (in_array(SearchPresenters::ENT_STUDENT, $ents, true)) {
+                    $role = 'Student';
+                }
+                $rolesByUid[$uid] = $role;
+            }
+        }
+
+        $this->presenters = [];
+        foreach ($presenters as $p) {
+            $this->presenters[] = [
+                'uid'  => $p->username,
+                'name' => $p->name,
+                'email' => $p->email,
+                'type' => $p->description,
+                'role' => $rolesByUid[$p->username] ?? null,
+            ];
+        }
+    }
+
+    public function addPresenter($uid, $name, $email): void
+    {
+        dd($uid, $name, $email);
+        $uid = $uid ?: null;
+        $name = trim((string) $name);
+        $email = trim((string) $email);
+
+        $exists = collect($this->presenters)->contains(function ($item) use ($uid, $name, $email) {
+            $itemUid = $item['uid'] ?? null;
+
+            // SUKAT: unique by uid
+            if ($uid && $itemUid) {
+                return (string)$itemUid === (string)$uid;
+            }
+
+            // External: unique by email (fallback to name if no email)
+            if (!$uid && !$itemUid) {
+                if ($email !== '' && ($item['email'] ?? '') !== '') {
+                    return strcasecmp($item['email'], $email) === 0;
+                }
+                return ($item['name'] ?? '') === $name;
+            }
+
+            return false;
+        });
+
+        if ($exists) return;
+
+        $role = null;
+        if ($uid) {
+            $su   = SukatUser::where('uid', $uid)->first(['edupersonentitlement']);
+            $ents = $su?->edupersonentitlement ?? [];
+            $role = in_array(SearchPresenters::ENT_STAFF, $ents, true) ? 'DSV'
+                : (in_array(SearchPresenters::ENT_STUDENT, $ents, true) ? 'Student' : 'SU');
+        }
+
+        $this->presenters[] = [
+            'uid'   => $uid,
+            'name'  => $name,
+            'email' => $email,
+            'type'  => $uid ? 'sukat' : 'external',
+            'role'  => $role,
+        ];
+
+        $this->searchPresenter = '';
+    }
+
+
+
+
+};
+?>
+
 <div class="w-full sm:col-span-2">
     <!--First row -->
     <div class="w-full sm:col-span-2">
-        <!-- Co investigators label -->
-        <label for="coinvestigators" class="font-sans block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __("Co-investigators") }}
-            <button id="coinvestigators" data-modal-toggle="coinvestigators-modal" class="inline" type="button">
-                <svg class="w-[16px] h-[16px] inline text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M8 9h2v5m-2 0h4M9.408 5.5h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                </svg>
-            </button>
-        </label>
         <!-- Rendering SUKAT Co investigators -->
         @if(count($presenters) > 0 )
             @foreach($presenters as $key => $presenter)
                 <div wire:key="presenter-row-{{ $key }}"
-                    class="flex flex-col md:flex-row gap-4 mb-4 items-center">
+                     class="flex flex-col md:flex-row gap-4 mb-4 items-center">
                     <!-- Name -->
                     <div
                         class="font-mono bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600
@@ -74,7 +263,7 @@
              dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-400
              dark:border-slate-700 dark:focus:ring-blue-400"
                 wire:model.live.debounce.300ms="searchPresenter"
-                placeholder="{{__('Add a SUKAT co-investigator by name or email')}}"
+                placeholder="{{__('Search by name or email')}}"
                 autocomplete="off"
                 role="combobox"
                 aria-expanded="{{ filled($searchPresenter) ? 'true' : 'false' }}"
@@ -156,48 +345,18 @@
                 </div>
             @endif
         </div>
+
     </div>
-
-    <!-- External Co investigators -->
-    @if($showExternal)
-        <div class="flex flex-col md:flex-row gap-4 mt-4 mb-4 items-center">
-            <input type="text" wire:model.live="external_coinvestigators_name"
-                   class="font-mono bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600
-                      w-full md:w-1/2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-200 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                   placeholder="{{ __('Type Name') }}">
-
-            <input type="email" wire:model.live="external_coinvestigators_email"
-                   class="font-mono bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600
-                      w-full md:w-1/2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-200 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                   placeholder="{{ __('Type Email') }}">
-
-            <div class="flex items-center">
-                <button type="button" wire:click="saveExternal"
-                        class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50
-                           focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white
-                           dark:hover:bg-neutral-700 dark:focus:bg-neutral-700">
-                    Save
-                </button>
+    @if($person)
+        <div class="mx-auto mt-4 flex max-w-xs flex-col text-left rounded-xl border px-4 py-4 md:max-w-lg md:flex-row md:items-start md:text-left">
+            <div class="">
+                <p class="text-left font-normal text-gray-900 dark:text-gray-200">{{$person['displayname'][0] ?? ''}}</p>
+                <p class="mb-2 text-sm text-left font-medium text-blue-700 dark:text-gray-200">{{$person['title'][0] ?? ''}}</p>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-300">{{$person['ou'][0] ?? ''}}</p>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-300">Room: {{$person['roomnumber'][0] ?? ''}}</p>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-300">Phone: {{$person['telephonenumber'][0] ?? ''}}</p>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-300">Email: {{$person['mail'][0] ?? ''}}</p>
             </div>
         </div>
-    @endif
-
-    <button wire:click="addExternal"
-            class="inline mt-2 py-2 px-2 inline-flex items-center gap-x-1 text-xs font-medium rounded-lg border border-blue-600 text-blue-600
-          hover:border-blue-500 hover:text-blue-500 focus:outline-none focus:border-blue-500 focus:text-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-500 dark:hover:text-blue-400 dark:hover:border-blue-400"
-            type="button">
-        Add external co-investigator+
-    </button>
-
-    @foreach($presenters as $i => $p)
-        <input type="hidden" name="co_investigator_name[]" value="{{ $p['name'] ?? '' }}" wire:key="pr-name-{{ $i }}">
-        <input type="hidden" name="co_investigator_email[]" value="{{ $p['email'] ?? '' }}" wire:key="pr-email-{{ $i }}">
-        <input type="hidden" name="co_investigator_type[]" value="{{ $p['type'] ?? '' }}" wire:key="pr-type-{{ $i }}">
-        <input type="hidden" name="co_investigator_role[]" value="{{ $p['role'] ?? '' }}" wire:key="pr-role-{{ $i }}">
-    @endforeach
-</div>
-
-
-
-
+@endif
 
