@@ -80,7 +80,6 @@
                     @endif
                 </div>
             </div>
-
         @endif
     </div>
     @if($person)
