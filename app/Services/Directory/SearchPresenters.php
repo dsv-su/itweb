@@ -72,6 +72,9 @@ class SearchPresenters
                 $user->email    = $su->mail[0] ?? $user->uid;
                 $user->role     = $role;
                 $user->local    = false;
+                $user->ou       = $su->ou[0] ?? null;
+                $user->title    = $su->title[0] ?? null;
+                $user->telephonenumber    = $su->telephonenumber[0] ?? null;
 
                 return $user;
             })
