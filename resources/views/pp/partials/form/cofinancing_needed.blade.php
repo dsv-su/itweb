@@ -2,7 +2,10 @@
     <label for="cofinancing_needed" class="font-sans block mb-2 text-sm font-medium text-gray-900 dark:text-white">
         {{ __("Amount of Cofinancing needed (SEK)") }}
         <span class="text-red-600"> *</span>
-        <button id="cofinancing_needed-button" data-modal-toggle="cofinancing_needed-modal" class="inline" type="button">
+        <button id="cofinancing_needed-button"
+                data-modal-target="cofinancing_needed-modal"
+                data-modal-toggle="cofinancing_needed-modal"
+                class="inline" type="button">
             <svg class="w-[16px] h-[16px] inline text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M8 9h2v5m-2 0h4M9.408 5.5h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
             </svg>

@@ -9,6 +9,7 @@
             id="user_comments-button"
             type="button"
             class="inline-flex items-center"
+            data-modal-target="user_comments-modal"
             data-modal-toggle="user_comments-modal"
             aria-label="{{ __('Help about comments') }}">
             <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">

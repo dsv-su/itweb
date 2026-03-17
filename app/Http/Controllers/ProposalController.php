@@ -75,7 +75,7 @@ class ProposalController extends Controller
     public function create()
     {
         //Disabled until April 1
-        return view('pp.waitforit');
+        //return view('pp.waitforit');
         //
         $viewData = $this->proposalPrepare->prepareProjectProposalData();
         $viewData['type'] = 'preapproval';
