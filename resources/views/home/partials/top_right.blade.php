@@ -4,5 +4,4 @@
         {{__("Search people")}}
     </h3>
     <livewire:sukat-search />
-    {{--}}<livewire:sukat-staff-search />{{--}}
 </div>

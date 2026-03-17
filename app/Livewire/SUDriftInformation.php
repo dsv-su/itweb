@@ -9,7 +9,7 @@ use Livewire\Component;
 class SUDriftInformation extends Component
 {
     public $rssItems = [];
-    public $limit = 5;  // Limit the number of items displayed
+    public $limit = 7;  // Limit the number of items displayed
 
     public function mount()
     {
