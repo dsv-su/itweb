@@ -113,7 +113,7 @@
                     </div>
 
                     <!--Departure return-->
-                    <div date-rangepicker datepicker-format="dd/mm/yyyy" class="flex flex-col sm:flex-row sm:col-span-2 items-center dark:text-gray-200">
+                    <div date-rangepicker datepicker-format="yyyy-mm-dd" class="flex flex-col sm:flex-row sm:col-span-2 items-center dark:text-gray-200">
                         <div class="flex flex-col w-full sm:w-1/2">
                             <label for="departure" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">{{ __("From") }}
                             </label>
@@ -130,7 +130,7 @@
                                     @enderror
                                     <input name="departure"
                                            @if($type == 'resume')
-                                           value="{{ \Carbon\Carbon::createFromTimestamp($tr->departure)->format('d/m/Y') }}"
+                                           value="{{ \Carbon\Carbon::createFromTimestamp($tr->departure)->format('Y-m-d') }}"
                                            @endif
                                            id="startInput" type="text"
                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5
@@ -155,7 +155,7 @@
                                     @enderror
                                     <input name="return"
                                            @if($type == 'resume')
-                                           value="{{ \Carbon\Carbon::createFromTimestamp($tr->return)->format('d/m/Y') }}"
+                                           value="{{ \Carbon\Carbon::createFromTimestamp($tr->return)->format('Y-m-d') }}"
                                            @endif id="endInput" type="text"
                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5
                                         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:placeholder:text-gray-200 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"

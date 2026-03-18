@@ -153,7 +153,10 @@
     "Intranet": "Internwebb",
     "Travel Request": "Resebegäran",
     "Rejected Date": "Avslagsdatum",
+    "Please select a country or domestic": "Vänligen välj ett land eller välj inrikes",
     "Responsible for the page:": "Ansvarig för sidan:",
     "Last edited": "Senast redigerad",
-    "Calls from VR": "Utlysningar från VR"
+    "Calls from VR": "Utlysningar från VR",
+    "Search people": "Sök personer",
+    "Search by name or email": "Sök på namn eller epost"
 }

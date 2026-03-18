@@ -28,7 +28,7 @@
                    dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300
                    dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
 
-        {{ __("Submit proposal") }}
+        {{ __("Submit") }}
 
     </button>
 </div>

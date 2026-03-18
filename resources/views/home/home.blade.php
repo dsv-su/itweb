@@ -5,7 +5,8 @@
 
             <!-- Card middle-->
             {{--}}@include('home.partials.middle'){{--}}
-            @include('home.partials.bottom_right')
+            @include('home.partials.middle_right')
+
             <!-- End Card -->
 
         </div>
@@ -18,7 +19,7 @@
 
             <!-- Card left middle -->
             {{--}}@include('home.partials.middle_left'){{--}}
-            @include('home.partials.middle_right')
+            @include('home.partials.bottom_right')
              <!-- End card -->
 
             <!-- Card left bottom-->
