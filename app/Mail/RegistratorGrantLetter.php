@@ -35,8 +35,8 @@ class RegistratorGrantLetter extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('noreply@dsv.su.se', 'DSV ProjectProposal'),
-            subject: Str::upper($this->dashboard->type) . ' Decision Letter for application: '. Str::limit($this->dashboard->name, 28),
+            from: new Address('noreply@dsv.su.se', 'ProjectProposal'),
+            subject: 'Decision Letter for application: '. Str::limit($this->dashboard->name, 28),
         );
     }
 

@@ -36,7 +36,7 @@ class RequestFilesUploadUser extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('noreply@dsv.su.se', 'DSVIntranet'),
+            from: new Address('noreply@dsv.su.se', 'ProjectProposal'),
             subject: Str::limit($this->dashboard->name, 28) .
             ' - budgetfiles request',
         );

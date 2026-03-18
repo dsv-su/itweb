@@ -31,7 +31,7 @@ class NotifyAssignedFO extends Mailable
     {
         return new Envelope(
             from: new Address('noreply@dsv.su.se', 'ProjectProposals'),
-            subject: Str::upper($this->dashboard->type) . ' Assigned Proposal: '. Str::limit($this->dashboard->name, 28),
+            subject: 'Assigned Proposal: '. Str::limit($this->dashboard->name, 28),
         );
     }
 

@@ -32,7 +32,7 @@ class NewUser extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('helpdesk@dsv.su.se', 'Intranet'),
+            from: new Address('helpdesk@dsv.su.se', 'ITWebb'),
             subject: config('app.name'). ' New user',
         );
     }

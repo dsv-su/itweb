@@ -35,8 +35,8 @@ class GrantNotificationVice extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('noreply@dsv.su.se', 'DSVIntranet'),
-            subject: Str::upper($this->dashboard->type) . ' Grant approved: '. Str::limit($this->dashboard->name, 28),
+            from: new Address('noreply@dsv.su.se', 'ProjectProposals'),
+            subject: 'Grant approved: '. Str::limit($this->dashboard->name, 28),
         );
     }
 

@@ -36,8 +36,8 @@ class FinalApproval extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('noreply@dsv.su.se', 'DSVIntranet'),
-            subject: Str::upper($this->dashboard->type) . ' Final Approval: '. Str::limit($this->dashboard->name, 28),
+            from: new Address('noreply@dsv.su.se', 'ProjectProposals'),
+            subject: 'Final Approval: '. Str::limit($this->dashboard->name, 28),
         );
     }
 
