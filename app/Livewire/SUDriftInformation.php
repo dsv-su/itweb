@@ -51,7 +51,9 @@ class SUDriftInformation extends Component
                     $rssItems[] = [
                         'title' => $title,
                         'link' => $link,
-                        'pubDate' => Carbon::parse($pubDate)->format('D, d M Y'),
+                        'pubDate' => Carbon::parse($pubDate)
+                            ->locale(app()->getLocale())
+                            ->translatedFormat('j F Y'),
                         'description' => $description,
                     ];
                 }
@@ -69,7 +71,9 @@ class SUDriftInformation extends Component
                     $rssItems[] = [
                         'title' => $title,
                         'link' => $link,
-                        'pubDate' => Carbon::parse($updated)->format('D, d M Y'),
+                        'pubDate' => Carbon::parse($updated)
+                            ->locale(app()->getLocale())
+                            ->translatedFormat('j F Y'),
                         'description' => $summary,
                     ];
                 }
