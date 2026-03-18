@@ -72,4 +72,21 @@
             </a>
         </li>
     @endif
+
+    <li class="ml-6">
+        <a href="{{ url('/') }}"
+           class="inline-flex items-center justify-center h-9 px-3 gap-2 rounded-md font-medium text-sm
+              border border-neutral-300 text-neutral-700 bg-transparent
+              hover:bg-neutral-50 hover:border-neutral-400
+              focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2
+              dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800 dark:hover:border-neutral-600
+              dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-neutral-900">
+            <svg class="w-5 h-5 text-neutral-500 dark:text-neutral-300" aria-hidden="true"
+                 xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M5 12h14M5 12l4-4m-4 4 4 4"/>
+            </svg>
+            {{ __("itWebb") }}
+        </a>
+    </li>
 </ul>
