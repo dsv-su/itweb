@@ -1,4 +1,4 @@
-[DSV Intranet]<br><br>
+[DSV IT]<br><br>
 
 {{ config('app.name')}} - A new user has been created:
 <br><br>

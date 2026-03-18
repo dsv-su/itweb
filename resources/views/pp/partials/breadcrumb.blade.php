@@ -1,4 +1,3 @@
-{{--}}
 <div class="-mt-px">
     <!-- Breadcrumb -->
     <div class="sticky top-0 inset-x-0 z-20 bg-white border-y px-4 sm:px-6 lg:px-8 dark:bg-neutral-800 dark:border-neutral-700">
@@ -16,7 +15,6 @@
                 </li>
             </ol>
             <!-- End Breadcrumb -->
-            Status
         </div>
     </div>
     <!-- End Breadcrumb -->
@@ -64,7 +62,7 @@
             </div>
         </div>
     </div>
-</div>
+</div>{{--}}
 
 <!-- Banner -->
 <div id="pp-banner" class="relative isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1">

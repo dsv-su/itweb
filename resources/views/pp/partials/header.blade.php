@@ -115,7 +115,7 @@
 
 <!-- Right controls -->
 <div class="ml-auto flex items-center gap-2">
-    {{-- @include('navbar.partials.dark_toggle') --}}
+    @include('navbar.partials.dark_toggle')
 
     <!-- Mobile Menu Toggle Button -->
     @include('navbar.partials.mobile_menu_toggle')

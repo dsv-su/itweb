@@ -1,8 +1,3 @@
-<b>PLEASE NOTE! </b>
-<br>
-<b>ProjectProposal is currently in test mode, and all created proposals are fictitious and intended for testing purposes only.</b>
-<br><br>
-------------------------------------------------------------
 <br>
 To: {{$user->name}}
 <br>

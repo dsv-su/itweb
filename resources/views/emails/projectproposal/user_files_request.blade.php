@@ -1,8 +1,3 @@
-<b>PLEASE NOTE! </b>
-<br>
-<b>ProjectProposal is currently in test mode, and all created proposals are fictitious and intended for testing purposes only.</b>
-<br><br>
-------------------------------------------------------------
 <br>
 TO: {{$user->name}}
 <br>
@@ -39,7 +34,8 @@ OVERVIEW:
 <br><br>
 You can review the details and upload the requested files by accessing the proposal through the following link:
 <br><br>
-<a href="{{ url('') }}/pp/stage2_upload_pp/{{$dashboard->request_id}}">Direct link to {{$dashboard->name}}</a>
+Direct link to:
+<a href="{{ url('') }}/projectproposals/stage2_upload_pp/{{$dashboard->request_id}}">{{$dashboard->name}}</a>
 <br><br>
 ------------------------------------------------------------
 <br>

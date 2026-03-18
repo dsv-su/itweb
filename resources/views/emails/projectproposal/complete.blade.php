@@ -1,8 +1,3 @@
-<b>PLEASE NOTE! </b>
-<br>
-<b>ProjectProposal is currently in test mode, and all created proposals are fictitious and intended for testing purposes only.</b>
-<br><br>
-------------------------------------------------------------
 <br>
 To: User {{$user->name}}
 <br>
@@ -40,7 +35,8 @@ OVERVIEW:
 <br><br>
 You can review the details and take necessary action by accessing the proposal through the following link:
 <br><br>
-<a href="{{ url('') }}/pp/complete/{{$dashboard->request_id}}">Direct link to {{$dashboard->name}} for updating.</a>
+Direct link to:
+<a href="{{ url('') }}/projectproposals/complete/{{$dashboard->request_id}}">{{$dashboard->name}} for updating.</a>
 <br><br>
 ------------------------------------------------------------
 <br>

@@ -3,9 +3,10 @@
         $slug = request()->route('slug');
 
         $isAwaiting = ($slug === 'awaiting');
-        $isMy       = ($slug === 'my');
+        $isMy       = ($slug === 'my' || empty($slug));
         $isAll      = ($slug === 'all');
     @endphp
+
 <div class="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5">
     <section
         class="px-4 py-1 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl lg:px-12 lg:py-1"
