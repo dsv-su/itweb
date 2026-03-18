@@ -5,7 +5,7 @@
         <button
             type="button"
             data-toggle-dark="light"
-            class="theme-toggle ml-auto flex items-center w-6 h-6 justify-center text-xs font-small text-black outline outline-offset-2 outline-1 rounded-sm
+            class="md:hidden theme-toggle ml-auto flex items-center w-6 h-6 justify-center text-xs font-small text-black outline outline-offset-2 outline-1 rounded-sm
                     toggle-dark-state-example hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-500 focus:outline-none
                     dark:text-gray-200 dark:border-gray-200 dark:hover:text-white dark:hover:bg-gray-700"
         >
