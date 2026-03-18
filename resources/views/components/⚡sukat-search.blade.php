@@ -222,7 +222,7 @@ new class extends Component
     @if($person)
         <div class="mx-auto mt-4 flex max-w-xs flex-col text-left rounded-xl border px-4 py-4 md:max-w-lg md:flex-row md:items-start md:text-left">
             <div class="w-full max-w-[320px] min-h-[160px] rounded-xl border border-slate-200 bg-white p-4 shadow-sm
-            dark:border-slate-800 dark:bg-slate-900">
+            dark:border-slate-800 dark:bg-slate-800">
 
                 <p class="text-left font-normal text-gray-900 dark:text-gray-200">
                     {{ data_get($person, 'displayname.0') ?? data_get($person, 'name') ?? '' }}
