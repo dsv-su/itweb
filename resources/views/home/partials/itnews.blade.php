@@ -1,7 +1,11 @@
-@foreach (\Statamic\Statamic::tag('collection:itnews')->limit(3)->fetch()->sortByDesc('date') as $entry)
+@foreach (\Statamic\Statamic::tag('collection:itnews')->limit(6)->fetch()->sortByDesc('date') as $entry)
     <div>
         <div class="mt-4 text-gray-900 text-[0.65rem] dark:text-gray-300">
-            {{ $entry['date'] }}  {{-- $entry['author']->name ?? '' --}}
+
+            {{ \Carbon\Carbon::parse($entry['date'])
+                    ->locale(app()->getLocale())
+                    ->translatedFormat('j F Y') }}
+            {{-- $entry['author']->name ?? '' --}}
         </div>
         <a href="{{$entry['url']}}" class="inline text-left items-center gap-x-1.5 text-blue-800 text-[0.85rem] dark:text-gray-200">
             {{ $entry['title'] }}

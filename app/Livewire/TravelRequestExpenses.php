@@ -45,21 +45,21 @@ class TravelRequestExpenses extends Component
     {
         $this->departure = $date;
 
-        $this->days = Carbon::parse(Carbon::createFromFormat('d/m/Y', $this->departure))->diffInDays(Carbon::createFromFormat('d/m/Y', $this->return ?? $this->departure));
+        $this->days = Carbon::parse(Carbon::createFromFormat('Y-m-d', $this->departure))->diffInDays(Carbon::createFromFormat('Y-m-d', $this->return ?? $this->departure));
     }
 
     public function changeEndDate($date)
     {
         $this->return = $date;
 
-        $this->days = Carbon::parse(Carbon::createFromFormat('d/m/Y', $this->departure ?? $this->return))->diffInDays(Carbon::createFromFormat('d/m/Y', $this->return));
+        $this->days = Carbon::parse(Carbon::createFromFormat('Y-m-d', $this->departure ?? $this->return))->diffInDays(Carbon::createFromFormat('Y-m-d', $this->return));
 
     }
 
     public function hydrate()
     {
         if(!empty($this->departure)) {
-            $this->days = Carbon::parse(Carbon::createFromFormat('d/m/Y', $this->departure))->diffInDays(Carbon::createFromFormat('d/m/Y', $this->return));
+            $this->days = Carbon::parse(Carbon::createFromFormat('Y-m-d', $this->departure))->diffInDays(Carbon::createFromFormat('Y-m-d', $this->return));
         }
     }
 

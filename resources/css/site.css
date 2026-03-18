@@ -1,6 +1,7 @@
 /* Load datepicker CSS first */
 @import "../../node_modules/flowbite-datepicker/dist/css/datepicker.css";
 @import "tailwindcss";
+
 @config "../../tailwind.config.js";
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -73,7 +74,7 @@
     position: absolute;
     width: 18px;
     height: 2px;
-    background: #000;
+    @apply bg-black dark:bg-white;
     transform: rotate(0);
     transition: all 0.5s;
 }

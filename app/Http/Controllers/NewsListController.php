@@ -31,6 +31,7 @@ class NewsListController extends Controller
 
         $collections = Statamic::tag('collection:' . $collection)
             ->where('collection', $collection)
+            ->sort('date:desc')
             ->fetch();
 
         return (new StatamicView)

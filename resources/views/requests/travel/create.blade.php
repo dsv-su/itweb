@@ -15,7 +15,9 @@
                     <!--Name-->
                     <div class="w-full">
                         <label for="name" class="font-sans block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __("You may change this name") }}
-                            <button id="name-button" data-modal-toggle="name-modal" class="inline" type="button">
+                            <button id="name-button"
+                                    data-modal-target="name-modal"
+                                    data-modal-toggle="name-modal" class="inline" type="button">
                                 <svg class="w-[16px] h-[16px] inline text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M8 9h2v5m-2 0h4M9.408 5.5h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                 </svg>
@@ -31,7 +33,9 @@
                     <!-- Purpose-->
                     <div class="sm:col-span-2">
                         <label for="purpose" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __("Purpose of the mission with the web address of the conference") }}<span class="text-red-600"> *</span>
-                            <button id="purpose-button" data-modal-toggle="purpose-modal" class="inline" type="button">
+                            <button id="purpose-button"
+                                    data-modal-target="purpose-modal"
+                                    data-modal-toggle="purpose-modal" class="inline" type="button">
                                 <svg class="w-[16px] h-[16px] inline text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M8 9h2v5m-2 0h4M9.408 5.5h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                 </svg>
@@ -49,7 +53,9 @@
                     <!--Paper accepted -->
                     <div class="w-full">
                         <label for="paper" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __("Paper accepted") }}
-                            <button id="paper-button" data-modal-toggle="paper-modal" class="inline" type="button">
+                            <button id="paper-button"
+                                    data-modal-target="paper-modal"
+                                    data-modal-toggle="paper-modal" class="inline" type="button">
                                 <svg class="w-[16px] h-[16px] inline text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M8 9h2v5m-2 0h4M9.408 5.5h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                 </svg>
@@ -77,15 +83,15 @@
                         <livewire:travel-type />
                     @endif
 
-
-
                     <!-- Projectleader -->
                     <livewire:select2.projectleader-select2 />
 
                     <!--Unithead-->
                     <div>
                         <label for="unit_head" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __("Unit Head") }}<span class="text-red-600"> *</span>
-                            <button id="unithead-button" data-modal-toggle="unithead-modal" class="inline" type="button">
+                            <button id="unithead-button"
+                                    data-modal-target="unithead-modal"
+                                    data-modal-toggle="unithead-modal" class="inline" type="button">
                                 <svg class="w-[16px] h-[16px] inline text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M8 9h2v5m-2 0h4M9.408 5.5h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                 </svg>
@@ -107,7 +113,7 @@
                     </div>
 
                     <!--Departure return-->
-                    <div date-rangepicker datepicker-format="dd/mm/yyyy" class="flex flex-col sm:flex-row sm:col-span-2 items-center dark:text-gray-200">
+                    <div date-rangepicker datepicker-format="yyyy-mm-dd" class="flex flex-col sm:flex-row sm:col-span-2 items-center dark:text-gray-200">
                         <div class="flex flex-col w-full sm:w-1/2">
                             <label for="departure" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">{{ __("From") }}
                             </label>
@@ -124,7 +130,7 @@
                                     @enderror
                                     <input name="departure"
                                            @if($type == 'resume')
-                                           value="{{ \Carbon\Carbon::createFromTimestamp($tr->departure)->format('d/m/Y') }}"
+                                           value="{{ \Carbon\Carbon::createFromTimestamp($tr->departure)->format('Y-m-d') }}"
                                            @endif
                                            id="startInput" type="text"
                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5
@@ -149,7 +155,7 @@
                                     @enderror
                                     <input name="return"
                                            @if($type == 'resume')
-                                           value="{{ \Carbon\Carbon::createFromTimestamp($tr->return)->format('d/m/Y') }}"
+                                           value="{{ \Carbon\Carbon::createFromTimestamp($tr->return)->format('Y-m-d') }}"
                                            @endif id="endInput" type="text"
                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5
                                         dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:placeholder:text-gray-200 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -167,12 +173,15 @@
                         <livewire:travel-request-expenses />
                     @endif
                 </div>
+                {{--}}
                 <div class="mt-6 flex items-center justify-end gap-x-6">
                     <a type="button" href="{{ url()->previous() }}" class="text-sm bg-transparent hover:bg-blue-500 text-blue-700 dark:text-gray-200 font-semibold hover:text-white py-2 px-4 border border-blue-500 dark:border-gray-200 hover:border-transparent rounded">{{__("Cancel")}}</a>
                     <div class="py-3 px-6 border border-blue-500 rounded dark:border-gray-200">
                         <button type="submit" class="text-sm bg-transparent hover:bg-blue-500 text-blue-700 dark:text-gray-200 font-semibold hover:text-white py-2 px-4 border border-blue-500 dark:border-gray-200 hover:border-transparent rounded">{{__("Send in request")}}</button>
                     </div>
                 </div>
+                {{--}}
+                @include('requests.travel.partials.submit-buttons')
             </form>
         </div>
     </section>
@@ -203,9 +212,7 @@
         document.addEventListener("DOMContentLoaded", function(event) {
             document.getElementById('project-button').click();
         });
-        /*document.addEventListener("DOMContentLoaded", function(event) {
-            document.getElementById('tabs-2-1').click();
-        });*/
+
         document.addEventListener("DOMContentLoaded", function(event) {
             document.getElementById('projectleader-button').click();
         });
@@ -215,11 +222,6 @@
         document.addEventListener("DOMContentLoaded", function(event) {
             document.getElementById('paper-button').click();
         });
-        /*document.addEventListener("DOMContentLoaded", function(event) {
-            document.getElementById('contribution-button').click();
-        });*/
-        /*document.addEventListener("DOMContentLoaded", function(event) {
-            document.getElementById('other-button').click();
-        });*/
+
     </script>
 @endsection

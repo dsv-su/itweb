@@ -8,7 +8,9 @@
         @endif
         <span class="text-red-600"> *</span>
 
-        <button id="eu_wallenberg-button" data-modal-toggle="eu_wallenberg-modal" class="inline" type="button">
+        <button id="eu_wallenberg-button"
+                data-modal-target="eu_wallenberg-modal"
+                data-modal-toggle="eu_wallenberg-modal" class="inline" type="button">
             <svg class="w-[16px] h-[16px] inline text-gray-800 dark:text-white" aria-hidden="true"
                  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"
