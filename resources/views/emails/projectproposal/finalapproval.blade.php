@@ -1,14 +1,18 @@
 <br>
-To: ViceHead
+To: {{$vice->name}}
 <br>
 SUBJECT: FINAL APPROVAL
 <br>
 ------------------------------------------------------------
 <br><br>
+Dear {{$vice->name}},
+<br>
 A new <strong>{{$dashboard->type}}</strong> awaits your Final Approval.
 <br><br>
 OVERVIEW:
-<br><br>
+<br>
+--------------
+<br>
 <b>Proposal:</b> {{$dashboard->name}}
 <br>
 <b>Requester:</b> {{$user->name}}
@@ -18,6 +22,8 @@ OVERVIEW:
 <b>ProposalID:</b> {{$dashboard->request_id}}
 <br><br>
 ACTION
+<br>
+--------------
 <br>
 Review the proposal using this link:
 <br><br>

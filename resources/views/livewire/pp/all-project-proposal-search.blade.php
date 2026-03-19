@@ -10,7 +10,7 @@
     </a>
 
     <main class="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5" aria-labelledby="page-title">
-        <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
+        <div class="mx-auto max-w-7xl">
 
             {{-- Page title for landmark labeling --}}
             <h1 id="page-title" class="sr-only">Proposals</h1>

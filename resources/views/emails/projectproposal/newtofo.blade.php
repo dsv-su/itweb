@@ -4,13 +4,14 @@ To: {{$fo->name}}
 SUBJECT: New Project Proposal Submitted for Review
 <br>
 ------------------------------------------------------------
-<br>
 <br><br>
-Dear Finacial Officer,
+Dear {{$fo->name}},
 <br><br>
 A new <strong>{{Illuminate\Support\Str::upper($dashboard->type)}}</strong> has been submitted and is now available for your review.
 <br><br>
 OVERVIEW:
+<br>
+--------------
 <br>
 <b>Proposal:</b> {{$dashboard->name}}
 <br>
@@ -27,7 +28,9 @@ OVERVIEW:
 <b>ProposalID:</b> {{$dashboard->request_id}}
 <br>
 <b>Approved by unit head(s):</b> {{Carbon\Carbon::parse($dashboard->updated_at)->format('Y-m-d')}}
-<br><br>
+<br>
+--------------
+<br>
 Link to:
 <a href="{{ url('') }}/projectproposals/all">ProjectProposals</a>
 <br><br>

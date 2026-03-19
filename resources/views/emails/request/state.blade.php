@@ -1,13 +1,18 @@
-Notification: <b>Status Update on Your Submitted Request</b><br><br>
-Dear {{$user->name}}
+TO: {{$user->name}}
+<br>
+SUBJECT: <b>Status Update on Your Submitted Request</b>
+<br>
+------------------------------------------------------------
 <br><br>
-We're reaching out to inform you that your <strong>{{Illuminate\Support\Str::upper($dashboard->type)}}</strong> has been processed.
+Dear  {{$user->name}}
 <br><br>
-<b>Updated:</b> {{$dashboard->updated_at}}
+We are writing to inform you that your <strong>{{Illuminate\Support\Str::upper($dashboard->type)}}</strong> has been reviewed and processed.
 <br><br>
-<b>By:</b> {{$return->name}}
+<b>Last updated:</b> {{$dashboard->updated_at}}
 <br><br>
-<b>Status:</b>
+<b>Reviewed By:</b> {{$return->name}}
+<br><br>
+<b>Current Status:</b>
 @switch($dashboard->state)
     @case('manager_returned')
         RETURNED
@@ -36,11 +41,12 @@ We're reaching out to inform you that your <strong>{{Illuminate\Support\Str::upp
 @endswitch
 
 <br><br>
-Please take a moment to review any associated comments at your earliest convenience by visiting:
+Please take a moment to review any associated comments by visiting the link below:
 <br><br>
 <a href="{{ url('') }}">{{url('')}}</a>
 <br><br>
-Should you have any questions or need further assistance, feel free to reach out to {{$return->name}}. However, please note that this is an automated notification, and replies to this email will not be monitored.
+If you have any questions or need further assistance, you’re welcome to contact {{$return->name}} directly.
+Please note that this is an automated message and replies to this email are not monitored.
 <br><br>
 ---
 <br>

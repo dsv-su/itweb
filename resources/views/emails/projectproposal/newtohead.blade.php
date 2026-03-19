@@ -12,6 +12,8 @@ A new <strong>{{Illuminate\Support\Str::upper($dashboard->type)}}</strong> has b
 <br><br>
 OVERVIEW:
 <br>
+--------------
+<br>
 <b>Proposal:</b> {{$dashboard->name}}
 <br>
 <b>Requester:</b> {{$user->name}}
@@ -29,7 +31,9 @@ OVERVIEW:
 ACTION
 <br>
 Review the proposal using this link:
-<br><br>
+<br>
+--------------
+<br>
 Direct link to:
 <a href="{{ url('') }}/projectproposals/review/{{$dashboard->request_id}}">{{$dashboard->name}}</a>
 <br><br>

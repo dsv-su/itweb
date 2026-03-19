@@ -22,7 +22,9 @@ has been approved
 @endif
 <br><br>
 OVERVIEW:
-<br><br>
+<br>
+--------------
+<br>
 <b>Proposal:</b> {{$dashboard->name}}
 <br>
 <b>Requester:</b> {{$user->name}}
@@ -32,6 +34,8 @@ OVERVIEW:
 <b>ProposalID:</b> {{$dashboard->request_id}}
 <br><br>
 ACTION
+<br>
+--------------
 <br>
 Please manually report your submitted application by clicking the Sent button. Once you receive a grant decision or a rejection, update your progress by clicking the corresponding buttons.
 

@@ -1,16 +1,17 @@
 <br>
-TO: Financial officer, {{$fo->name}}
+TO: {{$fo->name}}
 <br>
 SUBJECT: You have been assigned a new Project Proposal for Review
 <br>
 ------------------------------------------------------------
-<br>
 <br><br>
-Dear Finacial Officer,
+Dear {{$fo->name}},
 <br><br>
 A new <strong>{{Illuminate\Support\Str::upper($dashboard->type)}}</strong> has been submitted and is now available for your review.
 <br><br>
 OVERVIEW:
+<br>
+--------------
 <br>
 <b>Proposal:</b> {{$dashboard->name}}
 <br>
@@ -27,6 +28,8 @@ OVERVIEW:
 <b>Approved by unit head(s):</b> {{Carbon\Carbon::parse($dashboard->updated_at)->format('Y-m-d')}}
 <br><br>
 ACTION
+<br>
+--------------
 <br>
 Review the proposal using this link:
 <br><br>

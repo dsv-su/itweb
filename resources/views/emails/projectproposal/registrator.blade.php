@@ -11,6 +11,8 @@ Both documents are attached to this email for registration and further processin
 <br><br>
 OVERVIEW:
 <br>
+--------------
+<br>
 <b>Application:</b> {{$dashboard->name}}
 <br>
 <b>Principal Investigator:</b> {{$user->name}}

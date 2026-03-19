@@ -1,5 +1,5 @@
 <br>
-TO: ViceHead
+TO: {{$vice->name}}
 <br>
 SUBJECT: New proposal submitted for review
 <br>
@@ -11,6 +11,8 @@ Dear {{$vice->name}},
 A new <strong>{{Illuminate\Support\Str::upper($dashboard->type)}}</strong> has been submitted and is now available for your review.
 <br><br>
 OVERVIEW:
+<br>
+--------------
 <br>
 <b>Proposal:</b> {{$dashboard->name}}
 <br>
@@ -27,6 +29,8 @@ OVERVIEW:
 <b>ProposalID:</b> {{$dashboard->request_id}}
 <br><br>
 ACTION:
+<br>
+--------------
 <br>
 Review the proposal using this link:
 <br><br>
