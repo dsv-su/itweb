@@ -17,7 +17,9 @@ is <strong>missing necessary files</strong>. Please upload: <br><br>
 <strong> - Any other relevant supporting documents </strong>
 <br><br>
 OVERVIEW:
-<br><br>
+<br>
+------------------
+<br>
 <b>Proposal:</b> {{$dashboard->name}}
 <br><br>
 <b>Requester:</b> {{$user->name}}

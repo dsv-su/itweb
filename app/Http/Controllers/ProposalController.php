@@ -420,17 +420,18 @@ class ProposalController extends Controller
             $this->comments_update($pp->id, $request->edit_comments, 'rejected');
 
             $reg = new FilesForRegistrator($pp);
-            $reg->storeDecisionLetter();
+            $letter = $reg->storeDecisionLetter();
+            if($letter) {
+                DB::afterCommit(function () use ($pp) {
+                    $filePath = public_path('download/' . $pp->id . '/' . 'ProjectProposal-' . $pp->name . '.zip');
 
-            DB::afterCommit(function () use ($pp) {
-                $filePath = public_path('download/' . $pp->id . '/' . 'ProjectProposal-' . $pp->name . '.zip');
+                    $user = User::find($pp->dashboard->user_id);
 
-                $user = User::find($pp->dashboard->user_id);
-
-                // TODO "SendRejectedToRegistrator"
-                SendGrantToRegistrator::dispatch($user, $pp->dashboard, $filePath);
-            });
-
+                    // TODO "SendRejectedToRegistrator"
+                    SendGrantToRegistrator::dispatch($user, $pp->dashboard, $filePath);
+                });
+            }
+            
             return redirect()->route('pp.show', 'my')
                 ->with('success', 'Your project proposal has been registered as a denied project!');
         });

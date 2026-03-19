@@ -63,7 +63,7 @@ class FilesForRegistrator
     public function storeDecisionLetter()
     {
         $files = Storage::files(ProposalsDirectory::MAIN . $this->proposal->id . ProposalsDirectory::DECISION);
-
+        if (!$files) { return false; }
         $originalfiles = $this->proposal->files;
         $zip = new ZipArchive;
         $zipFileName = "download/"  . $this->proposal->id .'/'. 'ProjectProposal-' . $this->proposal->name . '.zip';

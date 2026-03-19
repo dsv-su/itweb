@@ -4,7 +4,6 @@ TO: Unithead
 SUBJECT: New Proposal Submitted for Review
 <br>
 ------------------------------------------------------------
-<br>
 <br><br>
 Dear {{$head->name}},
 <br><br>
@@ -30,10 +29,10 @@ OVERVIEW:
 <br><br>
 ACTION
 <br>
-Review the proposal using this link:
-<br>
 --------------
 <br>
+Review the proposal using this link:
+<br><br>
 Direct link to:
 <a href="{{ url('') }}/projectproposals/review/{{$dashboard->request_id}}">{{$dashboard->name}}</a>
 <br><br>
