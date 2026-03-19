@@ -83,6 +83,17 @@ class ProposalController extends Controller
         return $this->proposalCreateView->build('pp.create', 'mylayout', $viewData);
     }
 
+    public function test()
+    {
+        //
+        $viewData = $this->proposalPrepare->prepareProjectProposalData();
+        $viewData['type'] = 'preapproval';
+
+        return $this->proposalCreateView->build('pp.create', 'mylayout', $viewData);
+    }
+
+
+
     /***
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
