@@ -57,6 +57,8 @@ class StateUpdateNotification extends Activity
                 break;
             case('vice_returned'):
             case('vice_denied'):
+            case('final_returned'):
+            case('final_denied'):
                 //Notify
                 Mail::to($user->email)->send(new NotifyUserChangedState($user, $vice, $this->dashboard));
                 break;

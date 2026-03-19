@@ -18,6 +18,7 @@ We are writing to inform you that your <strong>{{Illuminate\Support\Str::upper($
         RETURNED
         @break
     @case('vice_returned')
+    @case('final_returned')
         RETURNED
         @break
     @case('fo_returned')

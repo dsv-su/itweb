@@ -75,7 +75,7 @@ class ProposalController extends Controller
     public function create()
     {
         //Disabled until April 1
-        //return view('pp.waitforit');
+        return view('pp.waitforit');
         //
         $viewData = $this->proposalPrepare->prepareProjectProposalData();
         $viewData['type'] = 'preapproval';
@@ -431,7 +431,7 @@ class ProposalController extends Controller
                     SendGrantToRegistrator::dispatch($user, $pp->dashboard, $filePath);
                 });
             }
-            
+
             return redirect()->route('pp.show', 'my')
                 ->with('success', 'Your project proposal has been registered as a denied project!');
         });
