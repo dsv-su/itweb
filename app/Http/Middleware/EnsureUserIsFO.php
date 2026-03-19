@@ -15,10 +15,17 @@ class EnsureUserIsFO
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(\Statamic\Auth\User::current()->can('financial_officer')) {
+        $user = \Statamic\Facades\User::current();
+
+        if (! $user) {
+            abort(401);
+        }
+
+        if ($user->can('financial_officer')) {
             return $next($request);
         }
-        abort(401);
+
+        abort(403);
         return redirect('/');
     }
 }
