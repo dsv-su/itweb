@@ -194,6 +194,7 @@
         </div>
     </div>
 </div>
+
 <!-- Co Investigation modal -->
 <div id="coinvestigators-modal"
      tabindex="-1"
@@ -246,6 +247,7 @@
         </div>
     </div>
 </div>
+
 <!-- Research area modal -->
 <div id="research_area-modal"
      tabindex="-1"

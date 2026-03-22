@@ -1,8 +1,3 @@
-<b>PLEASE NOTE! </b>
-<br>
-<b>ProjectProposal is currently in test mode, and all created proposals are fictitious and intended for testing purposes only.</b>
-<br><br>
-------------------------------------------------------------
 <br>
 TO: ViceHead
 <br>
@@ -15,7 +10,8 @@ This is an automated notification to inform you that application, <strong>{{$das
 Please find the relevant details through the following link:
 
 <br><br>
-<a href="{{ url('') }}/pp/view/{{$dashboard->request_id}}">Direct link to {{$dashboard->name}}</a>
+Direct link to:
+<a href="{{ url('') }}/projectproposals/view/{{$dashboard->request_id}}">{{$dashboard->name}}</a>
 <br><br>
 <br>
 OVERVIEW:

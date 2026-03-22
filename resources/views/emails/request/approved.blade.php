@@ -1,8 +1,3 @@
-<b>PLEASE NOTE! </b>
-<br>
-<b>ProjectProposal is currently in test mode, and all created proposals are fictitious and intended for testing purposes only.</b>
-<br><br>
-------------------------------------------------------------
 <br>
 To: {{$user->name}}
 <br>
@@ -27,7 +22,9 @@ has been approved
 @endif
 <br><br>
 OVERVIEW:
-<br><br>
+<br>
+--------------
+<br>
 <b>Proposal:</b> {{$dashboard->name}}
 <br>
 <b>Requester:</b> {{$user->name}}
@@ -37,6 +34,8 @@ OVERVIEW:
 <b>ProposalID:</b> {{$dashboard->request_id}}
 <br><br>
 ACTION
+<br>
+--------------
 <br>
 Please manually report your submitted application by clicking the Sent button. Once you receive a grant decision or a rejection, update your progress by clicking the corresponding buttons.
 

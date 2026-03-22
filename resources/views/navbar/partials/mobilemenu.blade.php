@@ -67,7 +67,7 @@
             </li>
 
         <li>
-            <a href="{{route('pp.stats.committed')}}" class="inline-flex items-center justify-center px-3 h-10 py-2 font-medium transition-colors rounded-md hover:text-neutral-900 dark:hover:text-gray-200">
+            <a href="{{route('pp.stats.committed')}}" class="inline-flex items-center justify-center px-3 h-10 py-2 font-medium transition-colors rounded-md hover:text-neutral-900 dark:text-white dark:hover:text-gray-200">
                 {{__("Stats")}}
             </a>
         </li>
@@ -97,6 +97,11 @@
                 </a>
             </li>
         @endif
+        <li>
+            <a href="{{ url('/') }}" class="block px-3 py-2 rounded-md text-base font-medium text-neutral-700 hover:bg-neutral-100 dark:text-white">
+                {{ __("itWebb") }}
+            </a>
+        </li>
     </ul>
 </div>
 

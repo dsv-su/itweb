@@ -1,19 +1,18 @@
-<b>PLEASE NOTE! </b>
 <br>
-<b>ProjectProposal is currently in test mode, and all created proposals are fictitious and intended for testing purposes only.</b>
-<br><br>
-------------------------------------------------------------
-<br>
-To: ViceHead
+To: {{$vice->name}}
 <br>
 SUBJECT: FINAL APPROVAL
 <br>
 ------------------------------------------------------------
 <br><br>
+Dear {{$vice->name}},
+<br>
 A new <strong>{{$dashboard->type}}</strong> awaits your Final Approval.
 <br><br>
 OVERVIEW:
-<br><br>
+<br>
+--------------
+<br>
 <b>Proposal:</b> {{$dashboard->name}}
 <br>
 <b>Requester:</b> {{$user->name}}
@@ -24,9 +23,12 @@ OVERVIEW:
 <br><br>
 ACTION
 <br>
+--------------
+<br>
 Review the proposal using this link:
 <br><br>
-<a href="{{ url('') }}/pp/review/{{$dashboard->request_id}}">Direct link to {{$dashboard->name}}</a>
+Direct link to:
+<a href="{{ url('') }}/projectproposals/review/{{$dashboard->request_id}}">{{$dashboard->name}}</a>
 <br><br>
 ------------------------------------------------------------
 <br>

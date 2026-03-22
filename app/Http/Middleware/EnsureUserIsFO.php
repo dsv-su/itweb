@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,10 +16,15 @@ class EnsureUserIsFO
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(\Statamic\Auth\User::current()->can('financial_officer')) {
+        $user = request()->user();
+        if (! $user) {
+            abort(401);
+        }
+
+        if ($user->isFO()) {
             return $next($request);
         }
-        abort(401);
-        return redirect('/');
+
+        abort(403, 'Unauthorized');
     }
 }

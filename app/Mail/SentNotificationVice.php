@@ -35,8 +35,8 @@ class SentNotificationVice extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('noreply@dsv.su.se', 'DSVIntranet'),
-            subject: Str::upper($this->dashboard->type) . ' Sent application: '. Str::limit($this->dashboard->name, 28),
+            from: new Address('noreply@dsv.su.se', 'ProjectProposal'),
+            subject: 'Sent application: '. Str::limit($this->dashboard->name, 28),
         );
     }
 

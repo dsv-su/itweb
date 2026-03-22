@@ -16,8 +16,11 @@ class ReCalcBudget
 
         //Dashboard states to include
         $available_states = [
-            'head_approved', 'fo_approved', 'final_approved',
-            'sent', 'granted'
+            //'head_approved',
+            //'fo_approved',
+            'final_approved',
+            'sent',
+            'granted'
         ];
 
         //Dashboard sent states

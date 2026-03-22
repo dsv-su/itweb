@@ -114,7 +114,10 @@ Route::get('/sv/newslist/{collection}', [\App\Http\Controllers\NewsListControlle
 //Project Proposals Home
 //Route::get('/', [\App\Http\Controllers\ProposalController::class, 'pp'])->name('pp.home');
 
-Route::prefix('pp')->name('pp.')->group(function () {
+Route::prefix('projectproposals')->name('pp.')->group(function () {
+    // Alias: /projectproposals -> same as slug handler
+    Route::get('/', [\App\Http\Controllers\ProposalHomeController::class, 'pp'])
+        ->name('index');
     // Create + submit
     Route::get('new', [\App\Http\Controllers\ProposalController::class, 'create'])->name('create');
     Route::post('submit', [\App\Http\Controllers\ProposalController::class, 'submit'])->name('submit');
@@ -201,8 +204,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 | Maintenance / Test
 |--------------------------------------------------------------------------
 */
-Route::get('test', [\App\Http\Controllers\TestController::class, 'test'])->name('test');
-
+//Route::get('test', [\App\Http\Controllers\TestController::class, 'test'])->name('test');
+Route::get('test', [\App\Http\Controllers\ProposalController::class, 'test'])->name('test');
 // These should be POST and protected by auth + authorization, and ideally only in local/staging.
 Route::get('/dev/seed', [\App\Http\Controllers\ViceController::class, 'seed'])->name('proposal.seed');
 Route::get('/dev/reset', [\App\Http\Controllers\ViceController::class, 'reset'])->name('proposal.reset');

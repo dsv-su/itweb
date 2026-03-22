@@ -56,11 +56,24 @@ class User extends Authenticatable
         return $this->hasOne(Dashboard::class);
     }
 
+    /**
+     * Vice Head
+     */
     public function isVice(): bool
     {
         return in_array('vice_head', $this->getRoles());
     }
+    /**
+     * Finacial Officer
+     */
+    public function isFO(): bool
+    {
+        return in_array('financial_officer', $this->getRoles());
+    }
 
+    /**
+     * Super Admin
+     */
     public function isSuperAdmin(): bool
     {
         return (bool) $this->super;

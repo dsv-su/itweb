@@ -5,33 +5,47 @@ namespace App\Http\Controllers;
 use App\Models\DsvBudget;
 use App\Models\ProjectProposal;
 use App\Services\Budget\ReCalcBudget;
-use Faker\Guesser\Name;
 use IcehouseVentures\LaravelChartjs\Facades\Chartjs;
-use Illuminate\Http\Request;
 use Statamic\View\View;
 
 class StatsController extends Controller
 {
+    private const PREAPPROVED_STATES = [
+        //'head_approved',
+        //'fo_approved',
+        'final_approved',
+        'sent',
+    ];
+
+    private const YEAR = 2026;
+
+    private const APPROVED_STATES = [
+        'granted',
+    ];
+
     public function preapproved()
     {
-        $available_states = [
-            'head_approved',
-            'fo_approved',
-            'final_approved',
-            'sent'
-            ];
+        $fromYear = self::YEAR;
 
-        $proposals = ProjectProposal::whereIn('status_stage1', $available_states)->count();
+        $start = $fromYear . '-01-01';
+        $end   = $fromYear . '-12-31';
+
+        $proposals = ProjectProposal::query()
+            ->whereIn('status_stage1', self::PREAPPROVED_STATES)
+            ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(pp, '$.submission_deadline')) BETWEEN ? AND ?", [$start, $end])
+            ->count();
+
         $budget = DsvBudget::find(1);
 
-        //Check first if there are stats to show
-        if( $proposals > 0 && !empty(json_decode($budget->funding_org, true))) {
-            //Recalculate
-            $this->recalcBudget();
-        } else {
+        $fundingOrg = $budget ? json_decode($budget->funding_org, true) : null;
+
+        if ($proposals <= 0 || empty($fundingOrg)) {
             $viewData['breadcrumb'] = 'Stats are unavailable';
             return $this->createView('stats.unavailable', 'mylayout', $viewData);
         }
+
+        // Recalculate without redirect side effects
+        $this->recalcBudget(false);
 
         $labels = [];
         $preapproved = [];
@@ -43,9 +57,8 @@ class StatsController extends Controller
         $cost_usd = [];
         $phd = [];
 
-        //Research Subject preapproved and budget
-        foreach ($budget->research_area as $key => $dsv) {
-            $labels[] = strlen($key) > 20 ? substr($key, 0, 17) . '...' : $key; // Limit to 20 characters
+        foreach (($budget->research_area ?? []) as $key => $dsv) {
+            $labels[] = $this->shortLabel((string) $key);
             $preapproved[] = $dsv['preapproved'] ?? 0;
             $commited_sek[] = $dsv['budget_sek'] ?? 0;
             $commited_eur[] = $dsv['budget_eur'] ?? 0;
@@ -56,168 +69,100 @@ class StatsController extends Controller
             $phd[] = $dsv['phd'] ?? 0;
         }
 
-        //Funding Agency
-        foreach (json_decode($budget->funding_org, true) as $key => $fundingOrg) {
-            $org[] = strlen($key) > 20 ? substr($key, 0, 17) . '...' : $key; // Limit to 20 characters
-            $orgStats[] = $fundingOrg;
+        $org = [];
+        $orgStats = [];
+        foreach ($fundingOrg as $key => $value) {
+            $org[] = $this->shortLabel((string) $key);
+            $orgStats[] = $value;
         }
 
-        //Preapproved
-        $chart['researchsubject_preapproved'] = Chartjs::build()
-            ->name('barChartPreapproved')
-            ->type('bar')
-            ->size(['width' => 400, 'height' => 200])
-            ->labels($labels)
-            ->datasets([
-                [
-                    "label" => "PreApproved",
-                    'backgroundColor' => 'rgba(0, 123, 255, 1)', // Blue
-                    'borderWidth' => 1,
-                    'data' => $preapproved,
-                    'categoryPercentage' => 0.6,
-                    'barPercentage' => 0.6,
-                    'yAxisID' => 'y-left' // Assign to left y-axis
-                ],
+        $chart = [];
+        $chart['researchsubject_preapproved'] = $this->buildBarChart(
+            'barChartPreapproved',
+            $labels,
+            'PreApproved',
+            $preapproved,
+            'rgba(0, 123, 255, 1)'
+        );
 
-            ]);
-        //Commited budget SEK
-        $chart['researchsubject_commited_sek'] = Chartjs::build()
-            ->name('barChartCommited_sek')
-            ->type('bar')
-            ->size(['width' => 400, 'height' => 200])
-            ->labels($labels)
-            ->datasets([
-                [
-                    "label" => "Commited budget (SEK)",
-                    'backgroundColor' => 'rgba(0, 255, 0, 1)',
-                    'borderWidth' => 1,
-                    'data' => $commited_sek,
-                    'categoryPercentage' => 0.6,
-                    'barPercentage' => 0.6,
-                    'yAxisID' => 'y-left' // Assign to left y-axis
-                ],
+        $chart['researchsubject_commited_sek'] = $this->buildBarChart(
+            'barChartCommited_sek',
+            $labels,
+            'Commited budget (SEK)',
+            $commited_sek,
+            'rgba(0, 255, 0, 1)'
+        );
 
-            ]);
-        //Commited budget EUR
-        $chart['researchsubject_commited_eur'] = Chartjs::build()
-            ->name('barChartCommited_eur')
-            ->type('bar')
-            ->size(['width' => 400, 'height' => 200])
-            ->labels($labels)
-            ->datasets([
-                [
-                    "label" => "Commited budget (EUR)",
-                    'backgroundColor' => 'rgba(0, 255, 0, 1)',
-                    'borderWidth' => 1,
-                    'data' => $commited_eur,
-                    'categoryPercentage' => 0.6,
-                    'barPercentage' => 0.6,
-                    'yAxisID' => 'y-left' // Assign to left y-axis
-                ],
+        $chart['researchsubject_commited_eur'] = $this->buildBarChart(
+            'barChartCommited_eur',
+            $labels,
+            'Commited budget (EUR)',
+            $commited_eur,
+            'rgba(0, 255, 0, 1)'
+        );
 
-            ]);
-        //Commited budget USD
-        $chart['researchsubject_commited_usd'] = Chartjs::build()
-            ->name('barChartCommited_usd')
-            ->type('bar')
-            ->size(['width' => 400, 'height' => 200])
-            ->labels($labels)
-            ->datasets([
-                [
-                    "label" => "Commited budget (USD)",
-                    'backgroundColor' => 'rgba(0, 255, 0, 1)',
-                    'borderWidth' => 1,
-                    'data' => $commited_usd,
-                    'categoryPercentage' => 0.6,
-                    'barPercentage' => 0.6,
-                    'yAxisID' => 'y-left' // Assign to left y-axis
-                ],
+        $chart['researchsubject_commited_usd'] = $this->buildBarChart(
+            'barChartCommited_usd',
+            $labels,
+            'Commited budget (USD)',
+            $commited_usd,
+            'rgba(0, 255, 0, 1)'
+        );
 
-            ]);
-        //PhD budget
-        $chart['researchsubject_phd'] = Chartjs::build()
-            ->name('barChartPhD')
-            ->type('bar')
-            ->size(['width' => 400, 'height' => 200])
-            ->labels($labels)
-            ->datasets([
-                [
-                    "label" => "PhD years",
-                    'backgroundColor' => 'rgba(0, 123, 255, 1)', // Blue
-                    'borderWidth' => 1,
-                    'data' => $phd,
-                    'categoryPercentage' => 0.6,
-                    'barPercentage' => 0.6,
-                    'yAxisID' => 'y-left' // Assign to left y-axis
-                ],
+        $chart['researchsubject_phd'] = $this->buildBarChart(
+            'barChartPhD',
+            $labels,
+            'PhD years',
+            $phd,
+            'rgba(0, 123, 255, 1)'
+        );
 
-            ]);
-
-        //Chart Agency funding
-        $chart['agency'] = Chartjs::build()
-            ->name('barChartAgency')
-            ->type('bar')
-            ->size(['width' => 400, 'height' => 200])
-            ->labels($org)
-            ->datasets([
-                [
-                    "label" => "Funding organization",
-                    'backgroundColor' => 'rgba(128, 0, 128, 1)',
-                    'borderWidth' => 1,
-                    'data' => $orgStats,
-                    'categoryPercentage' => 0.6,
-                    'barPercentage' => 0.6,
-                    'yAxisID' => 'y-left' // Assign to left y-axis
-                ],
-
-            ]);
+        $chart['agency'] = $this->buildBarChart(
+            'barChartAgency',
+            $org,
+            'Funding organization',
+            $orgStats,
+            'rgba(128, 0, 128, 1)'
+        );
 
         $breadcrumb = 'Stats';
-        return $this->createView('stats.proposal_stats', 'mylayout', compact('chart', 'breadcrumb'));
+        return $this->createView('stats.proposal_stats', 'mylayout', compact('chart', 'breadcrumb', 'fromYear'));
     }
 
     public function approved()
     {
-        $available_states = [
-            'granted'
-        ];
+        $fromYear = self::YEAR;
 
-        $proposals = ProjectProposal::whereIn('status_stage1', $available_states)->count();
+        $start = $fromYear . '-01-01';
+        $end   = $fromYear . '-12-31';
+
+        $proposals = ProjectProposal::query()
+            ->whereIn('status_stage1', self::PREAPPROVED_STATES)
+            ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(pp, '$.submission_deadline')) BETWEEN ? AND ?", [$start, $end])
+            ->count();
         $budget = DsvBudget::find(1);
 
-        //Check first if there are stats to show
-        if( $proposals > 0 && !empty(json_decode($budget->funding_org, true))) {
-            //Recalculate
-            $this->recalcBudget();
-        } else {
+        $fundingOrg = $budget ? json_decode($budget->funding_org, true) : null;
+
+        if ($proposals <= 0 || empty($fundingOrg)) {
             $viewData['breadcrumb'] = 'Stats are unavailable';
             return $this->createView('stats.unavailable', 'mylayout', $viewData);
         }
 
+        // Recalculate without redirect side effects
+        $this->recalcBudget(false);
+
         $labels = [];
-        $commited_sek = [];
-        $commited_eur = [];
-        $commited_usd = [];
-        $cost_sek = [];
-        $cost_eur = [];
-        $cost_usd = [];
         $phd = [];
         $granted_sek = [];
         $granted_eur = [];
         $granted_usd = [];
-        $promised_sek = [];
-        $promised_eur = [];
-        $promised_usd = [];
+        $cofinancing_promised_sek = [];
+        $cofinancing_promised_eur = [];
+        $cofinancing_promised_usd = [];
 
-        //Research Subject approved and budget
-        foreach ($budget->research_area as $key => $dsv) {
-            $labels[] = strlen($key) > 20 ? substr($key, 0, 17) . '...' : $key; // Limit to 20 characters
-            $commited_sek[] = $dsv['budget_sek'] ?? 0;
-            $commited_eur[] = $dsv['budget_eur'] ?? 0;
-            $commited_usd[] = $dsv['budget_usd'] ?? 0;
-            $cost_sek[] = $dsv['cost_sek'] ?? 0;
-            $cost_eur[] = $dsv['cost_eur'] ?? 0;
-            $cost_usd[] = $dsv['cost_usd'] ?? 0;
+        foreach (($budget->research_area ?? []) as $key => $dsv) {
+            $labels[] = $this->shortLabel((string) $key);
             $phd[] = $dsv['phd'] ?? 0;
             $granted_sek[] = $dsv['granted_sek'] ?? 0;
             $granted_eur[] = $dsv['granted_eur'] ?? 0;
@@ -227,168 +172,117 @@ class StatsController extends Controller
             $cofinancing_promised_usd[] = $dsv['cofinancing_promised_usd'] ?? 0;
         }
 
-        //Funding Agency
-        foreach (json_decode($budget->funding_org, true) as $key => $fundingOrg) {
-            $org[] = strlen($key) > 20 ? substr($key, 0, 17) . '...' : $key; // Limit to 20 characters
-            $orgStats[] = $fundingOrg;
+        $org = [];
+        $orgStats = [];
+        foreach ($fundingOrg as $key => $value) {
+            $org[] = $this->shortLabel((string) $key);
+            $orgStats[] = $value;
         }
 
-        //Granted
-        $chart['researchsubject_granted_sek'] = Chartjs::build()
-            ->name('barChartGrantedSEK')
-            ->type('bar')
-            ->size(['width' => 400, 'height' => 200])
-            ->labels($labels)
-            ->datasets([
-                [
-                    "label" => "Granted (SEK)",
-                    'backgroundColor' => 'rgba(0, 123, 255, 1)', // Blue
-                    'borderWidth' => 1,
-                    'data' => $granted_sek,
-                    'categoryPercentage' => 0.6,
-                    'barPercentage' => 0.6,
-                    'yAxisID' => 'y-left' // Assign to left y-axis
-                ],
+        $chart = [];
+        $chart['researchsubject_granted_sek'] = $this->buildBarChart(
+            'barChartGrantedSEK',
+            $labels,
+            'Granted (SEK)',
+            $granted_sek,
+            'rgba(0, 123, 255, 1)'
+        );
 
-            ]);
+        $chart['researchsubject_promised_sek'] = $this->buildBarChart(
+            'barChartPromisedSEK',
+            $labels,
+            'Cofinacing promised (SEK)',
+            $cofinancing_promised_sek,
+            'rgba(0, 255, 0, 1)'
+        );
 
-        $chart['researchsubject_promised_sek'] = Chartjs::build()
-            ->name('barChartPromisedSEK')
-            ->type('bar')
-            ->size(['width' => 400, 'height' => 200])
-            ->labels($labels)
-            ->datasets([
-                [
-                    "label" => "Cofinacing promised (SEK)",
-                    'backgroundColor' => 'rgba(0, 255, 0, 1)',
-                    'borderWidth' => 1,
-                    'data' => $cofinancing_promised_sek,
-                    'categoryPercentage' => 0.6,
-                    'barPercentage' => 0.6,
-                    'yAxisID' => 'y-left' // Assign to left y-axis
-                ],
+        $chart['researchsubject_granted_eur'] = $this->buildBarChart(
+            'barChartGrantedEur',
+            $labels,
+            'Granted (EUR)',
+            $granted_eur,
+            'rgba(0, 123, 255, 1)'
+        );
 
-            ]);
-        $chart['researchsubject_granted_eur'] = Chartjs::build()
-            ->name('barChartGrantedEur')
-            ->type('bar')
-            ->size(['width' => 400, 'height' => 200])
-            ->labels($labels)
-            ->datasets([
-                [
-                    "label" => "Granted (EUR)",
-                    'backgroundColor' => 'rgba(0, 123, 255, 1)', // Blue
-                    'borderWidth' => 1,
-                    'data' => $granted_eur,
-                    'categoryPercentage' => 0.6,
-                    'barPercentage' => 0.6,
-                    'yAxisID' => 'y-left' // Assign to left y-axis
-                ],
+        $chart['researchsubject_promised_eur'] = $this->buildBarChart(
+            'barChartPromisedEUR',
+            $labels,
+            'Cofinacing promised (EUR)',
+            $cofinancing_promised_eur,
+            'rgba(0, 255, 0, 1)'
+        );
 
-            ]);
+        $chart['researchsubject_granted_usd'] = $this->buildBarChart(
+            'barChartGrantedUSD',
+            $labels,
+            'Granted (USD)',
+            $granted_usd,
+            'rgba(0, 123, 255, 1)'
+        );
 
-        $chart['researchsubject_promised_eur'] = Chartjs::build()
-            ->name('barChartPromisedEUR')
-            ->type('bar')
-            ->size(['width' => 400, 'height' => 200])
-            ->labels($labels)
-            ->datasets([
-                [
-                    "label" => "Cofinacing promised (EUR)",
-                    'backgroundColor' => 'rgba(0, 255, 0, 1)',
-                    'borderWidth' => 1,
-                    'data' => $cofinancing_promised_eur,
-                    'categoryPercentage' => 0.6,
-                    'barPercentage' => 0.6,
-                    'yAxisID' => 'y-left' // Assign to left y-axis
-                ],
+        $chart['researchsubject_promised_usd'] = $this->buildBarChart(
+            'barChartPromisedUSD',
+            $labels,
+            'Cofinacing promised (USD)',
+            $cofinancing_promised_usd,
+            'rgba(0, 255, 0, 1)'
+        );
 
-            ]);
-        $chart['researchsubject_granted_usd'] = Chartjs::build()
-            ->name('barChartGrantedUSD')
-            ->type('bar')
-            ->size(['width' => 400, 'height' => 200])
-            ->labels($labels)
-            ->datasets([
-                [
-                    "label" => "Granted (USD)",
-                    'backgroundColor' => 'rgba(0, 123, 255, 1)', // Blue
-                    'borderWidth' => 1,
-                    'data' => $granted_usd,
-                    'categoryPercentage' => 0.6,
-                    'barPercentage' => 0.6,
-                    'yAxisID' => 'y-left' // Assign to left y-axis
-                ],
+        $chart['researchsubject_phd'] = $this->buildBarChart(
+            'barChartPhD',
+            $labels,
+            'PhD years',
+            $phd,
+            'rgba(0, 123, 255, 1)'
+        );
 
-            ]);
-
-        $chart['researchsubject_promised_usd'] = Chartjs::build()
-            ->name('barChartPromisedUSD')
-            ->type('bar')
-            ->size(['width' => 400, 'height' => 200])
-            ->labels($labels)
-            ->datasets([
-                [
-                    "label" => "Cofinacing promised (USD)",
-                    'backgroundColor' => 'rgba(0, 255, 0, 1)',
-                    'borderWidth' => 1,
-                    'data' => $cofinancing_promised_usd,
-                    'categoryPercentage' => 0.6,
-                    'barPercentage' => 0.6,
-                    'yAxisID' => 'y-left' // Assign to left y-axis
-                ],
-
-            ]);
-
-        //PhD budget
-        $chart['researchsubject_phd'] = Chartjs::build()
-            ->name('barChartPhD')
-            ->type('bar')
-            ->size(['width' => 400, 'height' => 200])
-            ->labels($labels)
-            ->datasets([
-                [
-                    "label" => "PhD years",
-                    'backgroundColor' => 'rgba(0, 123, 255, 1)', // Blue
-                    'borderWidth' => 1,
-                    'data' => $phd,
-                    'categoryPercentage' => 0.6,
-                    'barPercentage' => 0.6,
-                    'yAxisID' => 'y-left' // Assign to left y-axis
-                ],
-
-            ]);
-
-        //Chart Agency funding
-        $chart['agency'] = Chartjs::build()
-            ->name('barChartAgency')
-            ->type('bar')
-            ->size(['width' => 400, 'height' => 200])
-            ->labels($org)
-            ->datasets([
-                [
-                    "label" => "Funding organization",
-                    'backgroundColor' => 'rgba(128, 0, 128, 1)',
-                    'borderWidth' => 1,
-                    'data' => $orgStats,
-                    'categoryPercentage' => 0.6,
-                    'barPercentage' => 0.6,
-                    'yAxisID' => 'y-left' // Assign to left y-axis
-                ],
-
-            ]);
+        $chart['agency'] = $this->buildBarChart(
+            'barChartAgency',
+            $org,
+            'Funding organization',
+            $orgStats,
+            'rgba(128, 0, 128, 1)'
+        );
 
         $breadcrumb = 'Stats';
-
-        return $this->createView('stats.proposal_approved', 'mylayout', compact('chart', 'breadcrumb'));
+        return $this->createView('stats.proposal_approved', 'mylayout', compact('chart', 'breadcrumb', 'fromYear'));
     }
 
-    public function recalcBudget()
+    public function recalcBudget(bool $redirect = true)
     {
         $calc = new ReCalcBudget();
         $calc->scan();
 
-        return redirect()->back();
+        if ($redirect) {
+            return redirect()->back();
+        }
+
+        return null;
+    }
+
+    private function buildBarChart(string $name, array $labels, string $label, array $data, string $color)
+    {
+        return Chartjs::build()
+            ->name($name)
+            ->type('bar')
+            ->size(['width' => 400, 'height' => 200])
+            ->labels($labels)
+            ->datasets([
+                [
+                    'label' => $label,
+                    'backgroundColor' => $color,
+                    'borderWidth' => 1,
+                    'data' => $data,
+                    'categoryPercentage' => 0.6,
+                    'barPercentage' => 0.6,
+                    'yAxisID' => 'y-left',
+                ],
+            ]);
+    }
+
+    private function shortLabel(string $label, int $max = 20): string
+    {
+        return mb_strlen($label) > $max ? (mb_substr($label, 0, $max - 3) . '...') : $label;
     }
 
     private function createView($template, $layout, $data)

@@ -19,8 +19,11 @@ class EnsureUserForReview
     {
         // Ensure the correct reviewer reviews the request
         $id = basename($request->path());
-        $user = User::current();
-
+        //$user = User::current();
+        $user = request()->user();
+        if (! $user) {
+            abort(401);
+        }
         //$dashboard = Dashboard::find($id) ?? Dashboard::where('request_id', $id)->first();
 
         if ($dashboard =  Dashboard::where('request_id', $id)->first()) {
@@ -67,7 +70,6 @@ class EnsureUserForReview
         }
 
         abort(403, 'Unauthorized');
-        return redirect('/');
     }
 
 

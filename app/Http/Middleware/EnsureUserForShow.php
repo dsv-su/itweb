@@ -22,7 +22,11 @@ class EnsureUserForShow
          */
 
         $id = basename($request->getUri());
-        $user = User::current();
+        //$user = User::current();
+        $user = request()->user();
+        if (! $user) {
+            abort(401);
+        }
         $dashboard = Dashboard::find($id);
         $valid_viewers = [$dashboard->user_id, $dashboard->manager_id, $dashboard->fo_id, $dashboard->head_id];
 
@@ -30,7 +34,6 @@ class EnsureUserForShow
             return $next($request);
         }
 
-        abort(401);
-        return redirect('/');
+        abort(403, 'Unauthorized');
     }
 }
