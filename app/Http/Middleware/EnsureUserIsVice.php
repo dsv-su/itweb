@@ -15,10 +15,17 @@ class EnsureUserIsVice
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(\Statamic\Auth\User::current()->can('vice_head')) {
+        $user = request()->user();
+
+        if (! $user) {
+            abort(401);
+        }
+
+        if($user->isVice()) {
             return $next($request);
         }
-        abort(401);
-        return redirect('/');
+
+        abort(403, 'Unauthorized');
+
     }
 }
