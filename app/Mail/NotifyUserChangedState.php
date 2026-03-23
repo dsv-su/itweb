@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -33,9 +34,23 @@ class NotifyUserChangedState extends Mailable
      */
     public function envelope(): Envelope
     {
-        return new Envelope(
-            subject: Str::upper($this->dashboard->type) . ' Status update',
-        );
+        switch($this->dashboard->type) {
+            case 'projectproposals':
+                return new Envelope(
+                    from: new Address('noreply@dsv.su.se', 'ProjectProposals'),
+                    subject: Str::upper($this->dashboard->type) . ' Status update',
+                );
+            case 'travelrequest':
+                return new Envelope(
+                    from: new Address('noreply@dsv.su.se', 'Travel Request'),
+                    subject: Str::upper($this->dashboard->type) . ' Status update',
+                );
+            default:
+                return new Envelope(
+                    subject: Str::upper($this->dashboard->type) . ' Status update',
+                );
+        }
+
     }
 
     /**

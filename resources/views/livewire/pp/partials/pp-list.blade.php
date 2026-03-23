@@ -152,7 +152,6 @@
                                 </p>
 
                                 <!-- Program/Call/Target -->
-
                                 <p class="text-sm text-gray-700 dark:text-neutral-300">
                                     <span class="font-semibold">Program/Call/Target:</span><br>
 
@@ -161,16 +160,19 @@
                                     @endphp
 
                                     @if (filter_var($program, FILTER_VALIDATE_URL))
-                                    <a href="{{ $program }}" target="_blank" rel="noopener noreferrer">
+                                        <a
+                                            href="{{ $program }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300"
+                                        >
                                         {{ \Illuminate\Support\Str::limit($program, 24) }}
                                     </a>
                                     @else
                                         {{ \Illuminate\Support\Str::limit($program, 24) }}
                                     @endif
 
-
                                 </p>
-
 
                                 <!-- Co-financing -->
                                 <p class="text-sm text-gray-700 dark:text-neutral-300">

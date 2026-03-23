@@ -1,10 +1,10 @@
 <br>
-TO: Unithead
+TO: {{$head->name}}
 <br>
 SUBJECT: New Proposal Submitted for Review
 <br>
 ------------------------------------------------------------
-<br><br>
+<br>
 Dear {{$head->name}},
 <br><br>
 A new <strong>{{Illuminate\Support\Str::upper($dashboard->type)}}</strong> has been submitted and is now available for your review.
