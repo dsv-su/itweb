@@ -52,7 +52,7 @@ Please take a moment to review any associated comments by visiting the link belo
 
 
 <br><br>
-If you have any questions or need further assistance, you’re welcome to contact {{$return->name}} directly.
+If you have any questions or need further assistance, you’re welcome to contact <i>{{$return->name}}</i> directly.
 Please note that this is an automated message and replies to this email are not monitored.
 <br><br>
 ---
