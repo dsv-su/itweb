@@ -117,8 +117,8 @@ class ReviewController extends Controller
             $this->applyFoUpdates($request, $dashboard);
         }
 
+        //$user = request()->user();
         $user = auth()->user();
-
         $comment = trim(
             (string) ($request->input('comment_mobile') ?: $request->input('comment'))
         );

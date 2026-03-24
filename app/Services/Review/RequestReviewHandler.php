@@ -7,147 +7,171 @@ use App\Models\HeadComment;
 use App\Models\ManagerComment;
 use App\Models\TravelRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
+use RuntimeException;
 
 class RequestReviewHandler
 {
-    protected $dashboard;
-    protected $reviewer;
-    protected $comment;
-    protected $workflowhandler;
-    protected $decicion;
+    protected Dashboard $dashboard;
+    protected User $reviewer;
+    protected string $comment;
+    protected WorkflowHandler $workflowhandler;
+    protected string $decision;
 
-    public function __construct(Dashboard $dashboard, User $reviewer, $comment, string $decicion)
+    public function __construct(Dashboard $dashboard, User $reviewer, $comment, string $decision)
     {
         $this->dashboard = $dashboard;
         $this->reviewer = $reviewer;
-        $this->comment = $comment;
-        $this->decicion = $decicion;
+        $this->comment = trim((string) $comment);
+        $this->decision = $decision;
+
         $this->workflowhandler = new WorkflowHandler($this->dashboard->workflow_id);
     }
 
-    public function review()
+    public function review(): void
     {
-        $this->register_comment();
+        $this->assertValidDecision($this->decision);
+
+        DB::transaction(function (): void {
+            $this->registerCommentAndTransition();
+        });
     }
 
-    private function register_comment()
+    private function registerCommentAndTransition(): void
     {
-        //Register comment
-        switch($this->dashboard->type) {
-            case('travelrequest'):
-                $tr = TravelRequest::find($this->dashboard->request_id);
-                switch($this->getRole()) {
-                    case('manager'):
-                        $comment = $this->manager_comment('travelrequest', $tr->id, $this->reviewer->id, $this->comment);
-                        $tr->manager_comment_id = $comment->id;
-                        switch($this->decicion) {
-                            case('approve'):
-                                $this->workflowhandler->ManagerApprove();
-                                break;
-                            case('return'):
-                                $this->workflowhandler->ManagerReturn();
-                                break;
-                            case('deny'):
-                                $this->workflowhandler->ManagerDeny();
-                                break;
-                        }
-                        break;
-                    case('fo'):
-                        $comment = $this->fo_comment('travelrequest', $tr->id, $this->reviewer->id, $this->comment);
-                        $tr->fo_comment_id = $comment->id;
-                        switch($this->decicion) {
-                            case('approve'):
-                                $this->workflowhandler->FOApprove();
-                                break;
-                            case('return'):
-                                $this->workflowhandler->FOReturn();
-                                break;
-                            case('deny'):
-                                $this->workflowhandler->FODeny();
-                                break;
-                        }
-                        break;
-                    case('head'):
-                        $comment = $this->head_comment('travelrequest', $tr->id, $this->reviewer->id, $this->comment);
-                        $tr->head_comment_id = $comment->id;
-                        switch($this->decicion) {
-                            case('approve'):
-                                $this->workflowhandler->HeadApprove();
-                                break;
-                            case('return'):
-                                $this->workflowhandler->HeadReturn();
-                                break;
-                            case('deny'):
-                                $this->workflowhandler->HeadDeny();
-                                break;
-                        }
-                        break;
-                }
-                $tr->save();
-                break;
+        if ($this->dashboard->type !== 'travelrequest') {
+            throw new RuntimeException('Unsupported dashboard type: ' . (string) $this->dashboard->type);
+        }
+
+        $tr = TravelRequest::query()->findOrFail($this->dashboard->request_id);
+
+        $role = $this->getRole();
+        if ($role === null) {
+            throw new RuntimeException('Reviewer is not allowed to review this request in the current state.');
+        }
+
+        $commentId = match ($role) {
+            'manager' => $this->managerComment('travelrequest', $tr->id, $this->reviewer->id, $this->comment)->id,
+            'head' => $this->headComment('travelrequest', $tr->id, $this->reviewer->id, $this->comment)->id,
+            'fo' => $this->foComment('travelrequest', $tr->id, $this->reviewer->id, $this->comment)->id,
+            default => throw new RuntimeException('Unsupported role: ' . $role),
+        };
+
+        if ($role === 'manager') {
+            $tr->manager_comment_id = $commentId;
+        } elseif ($role === 'head') {
+            $tr->head_comment_id = $commentId;
+        } elseif ($role === 'fo') {
+            $tr->fo_comment_id = $commentId;
+        }
+
+        $this->applyTransition($role, $this->decision);
+
+        $tr->save();
+    }
+
+    private function getRole(): ?string
+    {
+        // Make this total: always return a string or null.
+        $state = (string) $this->dashboard->state;
+        $reviewerId = (string) $this->reviewer->id;
+
+        if ($state === 'submitted' && (string) $this->dashboard->manager_id === $reviewerId) {
+            return 'manager';
+        }
+
+        if ($state === 'manager_approved' && (string) $this->dashboard->head_id === $reviewerId) {
+            return 'head';
+        }
+
+        if ($state === 'head_approved' && (string) $this->dashboard->fo_id === $reviewerId) {
+            return 'fo';
+        }
+
+        return null;
+    }
+
+    private function applyTransition(string $role, string $decision): void
+    {
+        $map = [
+            'manager' => [
+                'approve' => 'ManagerApprove',
+                'return'  => 'ManagerReturn',
+                'deny'    => 'ManagerDeny',
+            ],
+            'head' => [
+                'approve' => 'HeadApprove',
+                'return'  => 'HeadReturn',
+                'deny'    => 'HeadDeny',
+            ],
+            'fo' => [
+                'approve' => 'FOApprove',
+                'return'  => 'FOReturn',
+                'deny'    => 'FODeny',
+            ],
+        ];
+
+        if (!isset($map[$role][$decision])) {
+            throw new InvalidArgumentException("Invalid decision '{$decision}' for role '{$role}'.");
+        }
+
+        $method = $map[$role][$decision];
+        $this->workflowhandler->{$method}();
+    }
+
+    private function assertValidDecision(string $decision): void
+    {
+        if (!in_array($decision, ['approve', 'return', 'deny'], true)) {
+            throw new InvalidArgumentException("Invalid decision: {$decision}");
         }
     }
 
-    private function getRole()
+    private function managerComment($type, $req_id, $role_id, $comment)
     {
-        switch ($this->dashboard->state) {
-            case('submitted'):
-                if($this->dashboard->manager_id == $this->reviewer->id) {
-                    $role = 'manager';
-                }
-                break;
-            case('manager_approved'):
-                if ($this->dashboard->head_id == $this->reviewer->id) {
-                    $role = 'head';
-                }
-                break;
-
-            case('head_approved'):
-                if ($this->dashboard->fo_id == $this->reviewer->id) {
-                    $role = 'fo';
-                }
-
-        }
-        return $role;
-    }
-
-    private function manager_comment($type, $req_id, $role_id, $comment)
-    {
-        switch($type) {
-            case('travelrequest'):
-                $id = ManagerComment::updateOrcreate(
+        switch ($type) {
+            case 'travelrequest':
+                $id = ManagerComment::updateOrCreate(
                     ['reqid' => $req_id, 'user_id' => $role_id],
                     ['comment' => $comment]
                 );
                 break;
+            default:
+                throw new RuntimeException('Unsupported comment type: ' . (string) $type);
         }
+
         return $id;
     }
 
-    private function fo_comment($type, $req_id, $role_id, $comment)
+    private function foComment($type, $req_id, $role_id, $comment)
     {
-        switch($type) {
-            case('travelrequest'):
-                $id = FoComment::updateOrcreate(
+        switch ($type) {
+            case 'travelrequest':
+                $id = FoComment::updateOrCreate(
                     ['reqid' => $req_id, 'user_id' => $role_id],
                     ['comment' => $comment]
                 );
                 break;
+            default:
+                throw new RuntimeException('Unsupported comment type: ' . (string) $type);
         }
+
         return $id;
     }
 
-    private function head_comment($type, $req_id, $role_id, $comment)
+    private function headComment($type, $req_id, $role_id, $comment)
     {
-        switch($type) {
-            case('travelrequest'):
-                $id = HeadComment::updateOrcreate(
+        switch ($type) {
+            case 'travelrequest':
+                $id = HeadComment::updateOrCreate(
                     ['reqid' => $req_id, 'user_id' => $role_id],
                     ['comment' => $comment]
                 );
                 break;
+            default:
+                throw new RuntimeException('Unsupported comment type: ' . (string) $type);
         }
+
         return $id;
     }
-
 }

@@ -104,13 +104,13 @@ class TravelRequestController extends Controller
 
         // Convert dates to unix format
         if($request->departure && $request->return) {
-            $departureDate = Carbon::createFromFormat('d/m/Y', $request->departure)->timestamp;
-            $returnDate = Carbon::createFromFormat('d/m/Y', $request->return)->timestamp;
+            $departureDate = Carbon::createFromFormat('Y-m-d', $request->departure)->timestamp;
+            $returnDate = Carbon::createFromFormat('Y-m-d', $request->return)->timestamp;
             $travelRequestData['departure'] = $departureDate;
             $travelRequestData['return'] = $returnDate;
         }
         // Timestamp request
-        $travelRequestData['created'] = Carbon::createFromFormat('d/m/Y', now()->format('d/m/Y'))->timestamp;
+        $travelRequestData['created'] = Carbon::createFromFormat('Y-m-d', now()->format('Y-m-d'))->timestamp;
 
         //Set initial state
         $travelRequestData['state'] = 'submitted';
@@ -126,7 +126,7 @@ class TravelRequestController extends Controller
         $dashboardData = [
             'request_id' => $travelRequest->id,
             'name' => $request->name,
-            'created' => Carbon::createFromFormat('d/m/Y', now()->format('d/m/Y'))->timestamp,
+            'created' => Carbon::createFromFormat('Y-m-d', now()->format('Y-m-d'))->timestamp,
             'state' => 'submitted',
             'status' => 'unread',
             'type' => 'travelrequest',
