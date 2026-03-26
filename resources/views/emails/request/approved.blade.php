@@ -32,8 +32,7 @@ OVERVIEW:
 <b>Created:</b> {{Carbon\Carbon::createFromTimestamp($dashboard->created)->format('Y-m-d')}}
 <br>
 <b>ProposalID:</b> {{$dashboard->request_id}}
-<br><br>
-ACTION
+<br>
 <br>
 --------------
 <br>

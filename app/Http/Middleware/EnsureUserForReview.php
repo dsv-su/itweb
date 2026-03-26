@@ -39,6 +39,7 @@ class EnsureUserForReview
         $state = (string) $dashboard->state;
 
         $reviewers = [
+            'submitted' => ['travelrequest' => $dashboard->manager_id],
             'complete' => [
                 'travelrequest' => $dashboard->manager_id,
                 //'projectproposal' => $dashboard->vice_id,

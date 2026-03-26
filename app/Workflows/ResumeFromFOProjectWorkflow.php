@@ -142,7 +142,7 @@ class ResumeFromFOProjectWorkflow extends Workflow
         yield ActivityStub::make(UnitHeadApprovedTransition::class, $userRequest);
 
         //Email to FO for review
-        yield ActivityStub::make(NewProjectProposalNotification::class, RequestStates::FINACIAL_OFFICER, $userRequest);
+        yield ActivityStub::make(NewProjectProposalNotification::class, RequestStates::FINANCIAL_OFFICER, $userRequest);
 
         //Wait for FO decision
         yield WorkflowStub::await(fn () => ($this->FOApproved() || $this->FODenied() || $this->FOReturned()));

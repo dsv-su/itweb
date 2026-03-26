@@ -157,7 +157,7 @@ class ResumeFromUHProjectWorkflow extends Workflow
                 //Update stage2
                 yield ActivityStub::make(Stage2UpdateTransition::class, $userRequest);
                 //Email to FO for review
-                yield ActivityStub::make(NewProjectProposalNotification::class, RequestStates::FINACIAL_OFFICER, $userRequest);
+                yield ActivityStub::make(NewProjectProposalNotification::class, RequestStates::FINANCIAL_OFFICER, $userRequest);
                 break;
             case RequestStates::HEAD_RETURNED:
             case RequestStates::HEAD_DENIED:

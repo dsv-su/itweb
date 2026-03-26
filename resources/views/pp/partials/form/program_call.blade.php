@@ -1,6 +1,13 @@
 <!-- Program call -->
+@php
+    $programValue = old('program', $proposal->pp['program'] ?? '');
+    $programUrl = filter_var($programValue, FILTER_VALIDATE_URL) ? $programValue : null;
+    $isReadonly = in_array($type, ['review', 'view'], true);
+@endphp
+
 <div class="w-full sm:col-span-2">
-    <label for="program" class="font-sans block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __("Program/Call/Target (add link to the call if any)") }}
+    <label for="program" class="font-sans block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        {{ __("Program/Call/Target (add link to the call if any)") }}
         <button id="program-button"
                 data-modal-target="program-modal"
                 data-modal-toggle="program-modal"
@@ -10,8 +17,23 @@
             </svg>
         </button>
     </label>
+
     <input type="text" name="program" id="program"
            class="font-mono bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600
-                                        block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-200 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-           value="{{ old('program') ? old('program'): $proposal->pp['program'] ??  '' }}" placeholder="Link" @if($type == 'review' or $type == 'view') readonly @endif>
+                  block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-200 dark:focus:ring-primary-500 dark:focus:border-primary-500"
+           value="{{ $programValue }}"
+           placeholder="Link"
+           @if($isReadonly) readonly @endif>
+
+    @if($isReadonly && $programUrl)
+        <a href="{{ $programUrl }}"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="font-mono text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300">
+            <svg class="inline w-6 h-6 text-blue-600 dark:text-blue-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.213 9.787a3.391 3.391 0 0 0-4.795 0l-3.425 3.426a3.39 3.39 0 0 0 4.795 4.794l.321-.304m-.321-4.49a3.39 3.39 0 0 0 4.795 0l3.424-3.426a3.39 3.39 0 0 0-4.794-4.795l-1.028.961"/>
+            </svg>
+            Go to link
+        </a>
+    @endif
 </div>

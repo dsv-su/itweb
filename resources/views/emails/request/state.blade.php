@@ -44,9 +44,15 @@ We are writing to inform you that your <strong>{{Illuminate\Support\Str::upper($
 <br><br>
 Please take a moment to review any associated comments by visiting the link below:
 <br><br>
-<a href="{{ url('') }}">{{url('')}}</a>
+@if($dashboard->type == 'projectproposal')
+    <a href="{{ url('') }}/projectproposals/review/view/{{$dashboard->request_id}}">{{$dashboard->name}}</a>
+@else
+    <a href="{{ url('') }}">{{url('')}}</a>
+@endif
+
+
 <br><br>
-If you have any questions or need further assistance, you’re welcome to contact {{$return->name}} directly.
+If you have any questions or need further assistance, you’re welcome to contact <i>{{$return->name}}</i> directly.
 Please note that this is an automated message and replies to this email are not monitored.
 <br><br>
 ---

@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\UserIsManagerTransition;
 use App\Models\Country;
 use App\Models\Dashboard;
 use App\Models\SettingsFo;
 use App\Models\TravelRequest;
 use App\Models\User;
+use App\Services\Review\WorkflowHandler;
 use App\Workflows\DSVRequestWorkflow;
+use App\Workflows\Partials\CheckRoleforApprove;
+use App\Jobs\StartTravelRequestWorkflow;
+use App\Workflows\UserManagerTravelRequestWorkflow;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +21,7 @@ use Workflow\WorkflowStub;
 
 class TravelRequestController extends Controller
 {
+    protected CheckRoleforApprove $checkRole;
 
     public function __construct()
     {
@@ -31,19 +37,19 @@ class TravelRequestController extends Controller
      */
     public function show($id)
     {
-        $dashboard = Dashboard::find($id);
-        $tr = TravelRequest::find($dashboard->request_id);
-        if($tr->state == 'manager_returned' or $tr->state == 'head_returned' or $tr->state == 'fo_returned') {
-            $formtype = 'returned';
-        } else {
-            $formtype = 'show';
-        }
+        $dashboard = Dashboard::findOrFail($id);
+        $tr = TravelRequest::findOrFail($dashboard->request_id);
 
+        $returnedStates = ['manager_returned', 'head_returned', 'fo_returned'];
+        $formtype = in_array($tr->state, $returnedStates, true) ? 'returned' : 'show';
 
         return (new \Statamic\View\View)
             ->template('requests.travel.show')
-            ->layout('mylayout')
-            ->with(['tr' => $tr, 'formtype' => $formtype]);
+            ->with([
+                'tr' => $tr,
+                'formtype' => $formtype,
+                'dashboard' => $dashboard,
+            ]);
     }
 
     public function resume(TravelRequest $tr)
@@ -104,13 +110,13 @@ class TravelRequestController extends Controller
 
         // Convert dates to unix format
         if($request->departure && $request->return) {
-            $departureDate = Carbon::createFromFormat('d/m/Y', $request->departure)->timestamp;
-            $returnDate = Carbon::createFromFormat('d/m/Y', $request->return)->timestamp;
+            $departureDate = Carbon::createFromFormat('Y-m-d', $request->departure)->timestamp;
+            $returnDate = Carbon::createFromFormat('Y-m-d', $request->return)->timestamp;
             $travelRequestData['departure'] = $departureDate;
             $travelRequestData['return'] = $returnDate;
         }
         // Timestamp request
-        $travelRequestData['created'] = Carbon::createFromFormat('d/m/Y', now()->format('d/m/Y'))->timestamp;
+        $travelRequestData['created'] = Carbon::createFromFormat('Y-m-d', now()->format('Y-m-d'))->timestamp;
 
         //Set initial state
         $travelRequestData['state'] = 'submitted';
@@ -126,7 +132,7 @@ class TravelRequestController extends Controller
         $dashboardData = [
             'request_id' => $travelRequest->id,
             'name' => $request->name,
-            'created' => Carbon::createFromFormat('d/m/Y', now()->format('d/m/Y'))->timestamp,
+            'created' => Carbon::createFromFormat('Y-m-d', now()->format('Y-m-d'))->timestamp,
             'state' => 'submitted',
             'status' => 'unread',
             'type' => 'travelrequest',
@@ -144,8 +150,10 @@ class TravelRequestController extends Controller
             $dashboard->update($dashboardData);
         }
 
-        // Create and start workflow
-        $workflow = $this->createAndStartWorkflow($dashboard);
+        //Check if user is manager
+        $this->checkRole = new CheckRoleforApprove();
+
+        StartTravelRequestWorkflow::dispatch($dashboard->id);
 
         return redirect()->route('statamic.site');
     }
@@ -172,6 +180,16 @@ class TravelRequestController extends Controller
     protected function createAndStartWorkflow($dashboard)
     {
         $workflow = WorkflowStub::make(DSVRequestWorkflow::class);
+        $dashboard->workflow_id = $workflow->id();
+        $dashboard->save();
+        $workflow->start($dashboard);
+        $workflow->submit();
+        return $workflow;
+    }
+
+    protected function createAndStartWorkflowisManager($dashboard)
+    {
+        $workflow = WorkflowStub::make(UserManagerTravelRequestWorkflow::class);
         $dashboard->workflow_id = $workflow->id();
         $dashboard->save();
         $workflow->start($dashboard);

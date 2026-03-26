@@ -1,51 +1,57 @@
-@if($tr->state == 'submitted')
-    <span class="bg-blue-100 text-blue-800 font-medium mr-2 px-6 py-2 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">{{__("Submitted")}}</span>
-    <div class="w-full h-4 mb-4 mt-6 bg-gray-200 rounded-full dark:bg-gray-700">
-        <div class="h-4 bg-blue-600 rounded-full dark:bg-blue-500" style="width: 33%"></div>
-    </div>
-@elseif ($tr->state == 'manager_approved')
-    <span class="bg-blue-100 text-blue-800 font-medium mr-2 px-6 py-2 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">{{__("Processed by manager") }}</span>
-    <div class="w-full h-4 mb-4 mt-6 bg-gray-200 rounded-full dark:bg-gray-700">
-        <div class="h-4 bg-blue-600 rounded-full dark:bg-blue-500" style="width: 33%"></div>
-    </div>
-@elseif ($tr->state == 'manager_denied')
-    <span class="bg-red-100 text-red-800 font-medium mr-2 px-6 py-2 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400">{{__("Denied") }}</span>
-    <div class="w-full h-4 mb-4 mt-6 bg-gray-200 rounded-full dark:bg-gray-700">
-        <div class="h-4 bg-red-600 rounded-full dark:bg-red-500" style="width: 100%"></div>
-    </div>
-@elseif ($tr->state == 'manager_returned')
-    <span class="bg-red-100 text-red-800 font-medium mr-2 px-6 py-2 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400">{{__("Returned") }}</span>
-    <div class="w-full h-4 mb-4 mt-6 bg-gray-200 rounded-full dark:bg-gray-700">
-        <div class="h-4 bg-red-600 rounded-full dark:bg-red-500" style="width: 100%"></div>
-    </div>
-@elseif ($tr->state == 'head_approved')
-    <span class="bg-blue-100 text-blue-800 font-medium mr-2 px-6 py-2 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">{{__("Being processed by FO") }}</span>
-    <div class="w-full h-4 mb-4 mt-6 bg-gray-200 rounded-full dark:bg-gray-700">
-        <div class="h-4 bg-blue-600 rounded-full dark:bg-blue-500" style="width: 90%"></div>
-    </div>
-@elseif ($tr->state == 'fo_denied')
-    <span class="bg-red-100 text-red-800 font-medium mr-2 px-6 py-2 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400">{{__("Denied") }}</span>
-    <div class="w-full h-4 mb-4 mt-6 bg-gray-200 rounded-full dark:bg-gray-700">
-        <div class="h-4 bg-red-600 rounded-full dark:bg-red-500" style="width: 100%"></div>
-    </div>
-@elseif ($tr->state == 'fo_returned')
-    <span class="bg-red-100 text-red-800 font-medium mr-2 px-6 py-2 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400">{{__("Returned") }}</span>
-    <div class="w-full h-4 mb-4 mt-6 bg-gray-200 rounded-full dark:bg-gray-700">
-        <div class="h-4 bg-red-600 rounded-full dark:bg-red-500" style="width: 100%"></div>
-    </div>
-@elseif ($tr->state == 'fo_approved')
-    <span class="bg-green-100 text-green-800 font-medium mr-2 px-6 py-2 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400">{{__("Approved") }}</span>
-    <div class="w-full h-4 mb-4 mt-6 bg-gray-200 rounded-full dark:bg-gray-700">
-        <div class="h-4 bg-blue-600 rounded-full dark:bg-blue-500" style="width: 100%"></div>
-    </div>
-@elseif ($tr->state == 'head_denied')
-    <span class="bg-red-100 text-red-800 font-medium mr-2 px-6 py-2 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400">{{__("Denied") }}</span>
-    <div class="w-full h-4 mb-4 mt-6 bg-gray-200 rounded-full dark:bg-gray-700">
-        <div class="h-4 bg-red-600 rounded-full dark:bg-red-500" style="width: 100%"></div>
-    </div>
-@elseif ($tr->state == 'head_returned')
-    <span class="bg-red-100 text-red-800 font-medium mr-2 px-6 py-2 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400">{{__("Returned") }}</span>
-    <div class="w-full h-4 mb-4 mt-6 bg-gray-200 rounded-full dark:bg-gray-700">
-        <div class="h-4 bg-red-600 rounded-full dark:bg-red-500" style="width: 100%"></div>
-    </div>
-@endif
+<!-- Stepper -->
+
+@php
+    // Dashboard state mapped to a step number
+    $stateToStep = [
+        'submitted' => 1,
+        'manager_approved' => 2,
+        'head_approved'  => 3,
+        'head_returned'  => 2,
+        'head_denied'  => 0,
+        'fo_approved' => 4,
+        'fo_returned' => 3,
+        'fo_denied' => 0,
+
+
+
+    ];
+    // Determine the current step based on the dashboard state (or 1 if not set)
+    $currentStep = isset($dashboard) && isset($stateToStep[(string)$dashboard->state])
+                     ? $stateToStep[(string)$dashboard->state]
+                     : 1;
+@endphp
+
+<ul class="relative flex flex-col md:flex-row gap-2">
+    @for($i = 1; $i <= 4; $i++)
+        @php
+            // For each step, if it's less than or equal to the current step, mark as "completed" (blue)
+            $isCompleted = $i <= $currentStep;
+            $bgColor = $isCompleted ? 'bg-blue-500' : 'bg-gray-100';
+            $darkBgColor = $isCompleted ? 'dark:bg-blue-600' : 'dark:bg-neutral-700';
+            $textColor = $isCompleted ? 'text-white' : 'text-gray-800';
+            $describeText = $isCompleted ? 'text-blue-500' : 'text-gray-800';
+        @endphp
+        <li class="md:shrink md:basis-0 flex-1 group flex gap-x-2 md:block">
+            <div class="min-w-7 min-h-7 flex flex-col items-center md:w-full md:inline-flex md:flex-wrap md:flex-row text-xs align-middle">
+                <span class="size-7 flex justify-center items-center shrink-0 {{ $bgColor }} font-medium {{ $textColor }} rounded-full {{ $darkBgColor }} {{ $isCompleted ? 'dark:text-white' : '' }}">
+                    {{ $i }}
+                </span>
+                <div class="mt-2 w-px h-full md:mt-0 md:ms-2 md:w-full md:h-px md:flex-1 bg-gray-200 group-last:hidden dark:bg-neutral-700"></div>
+            </div>
+            <div class="grow md:grow-0 md:mt-3 pb-5">
+                <span class="block text-sm font-medium {{ $describeText }} dark:text-white">
+                    @if($i == 1)
+                        {{__("Submitted")}}
+                    @elseif($i == 2)
+                        {{__("Manager Approval")}}
+                    @elseif($i == 3)
+                        {{__("Unit Head Approval")}}
+                    @elseif($i == 4)
+                        {{__("Financial Officers Approval") }}
+                    @endif
+                </span>
+            </div>
+        </li>
+    @endfor
+</ul>
+

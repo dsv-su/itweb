@@ -9,7 +9,7 @@ class RequestStates
     const MANAGER = 'manager';
     const UNIT_HEAD = 'head';
     const VICE = 'vice';
-    const FINACIAL_OFFICER = 'fo';
+    const FINANCIAL_OFFICER = 'fo';
     const MANAGER_APPROVED = 'manager_approved';
     const MANAGER_RETURNED = 'manager_returned';
     const MANAGER_DENIED = 'manager_denied';

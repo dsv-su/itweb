@@ -14,66 +14,65 @@ use Workflow\Models\StoredWorkflow;
 use Workflow\Workflow;
 use Workflow\WorkflowStub;
 
-class DSVRequestWorkflow extends Workflow
+class TravelRequestWorkflow extends Workflow
 {
-    private Dashboard $stateMachine;
-    private int $dashboardId;
+    use WorkflowSignals;
+    private $stateMachine;
     protected $checkRole;
 
-    use WorkflowSignals;
 
     //Wait for statechange
     public function isSubmitted()
     {
-        return $this->getState() === 'submitted';
+        return $this->stateMachine->state->status() === 'submitted';
     }
 
     //Manager
     public function ManagerApproved()
     {
-        return $this->getState() === 'manager_approved';
+        return $this->stateMachine->state->status() === 'manager_approved';
     }
 
     public function ManagerReturned()
     {
-        return $this->getState() === 'manager_returned';
+        return $this->stateMachine->state->status() === 'manager_returned';
     }
 
     public function ManagerDenied()
     {
-        return $this->getState() === 'manager_denied';
+        return $this->stateMachine->state->status() === 'manager_denied';
     }
 
     //Head
     public function HeadApproved()
     {
-        return $this->getState() === 'head_approved';
+        return $this->stateMachine->state->status() === 'head_approved';
     }
 
     public function HeadReturned()
     {
-        return $this->getState() === 'head_returned';
+        return $this->stateMachine->state->status() === 'head_returned';
     }
 
     public function HeadDenied()
     {
-        return $this->getState() === 'head_denied';
+        return $this->stateMachine->state->status() === 'head_denied';
     }
 
     //Finacial officer
     public function FOApproved()
     {
-        return $this->getState() === 'fo_approved';
+        return $this->stateMachine->state->status() === 'fo_approved';
     }
 
     public function FOReturned()
     {
-        return $this->getState() === 'fo_returned';
+        return $this->stateMachine->state->status() === 'fo_returned';
     }
 
     public function FODenied()
     {
-        return $this->getState() === 'fo_denied';
+        return $this->stateMachine->state->status() === 'fo_denied';
     }
 
     public function __construct(
@@ -81,33 +80,20 @@ class DSVRequestWorkflow extends Workflow
     {
         parent::__construct($storedWorkflow, $dashboard, $arguments);
         $this->stateMachine = $dashboard;
-        $this->dashboardId = (int) $dashboard->workflow_id;
         $this->checkRole = new CheckRoleforApprove();
     }
 
     public function execute(Dashboard $dashboard)
     {
-        $userRequest = (int) $dashboard->workflow_id;
-
-        //Submitted by requester
-        //$this->submit();
-
         //Manager
-        if($this->checkRole->isSameUserManager($userRequest)) {
+        if($this->checkRole->isSameUserManager($dashboard->id)) {
 
             // User and Manager is same person
-            $this->manager_approve();
-
-            $newState = $this->getState();
-            $commonActivities = $this->getCommonActivities($userRequest);
-
-            // Await stateupdate
-            yield $commonActivities[0];
 
         } else {
 
             //Fire email to manager
-            yield ActivityStub::make(NewRequestNotification::class, RequestStates::MANAGER, $userRequest);
+            yield ActivityStub::make(NewRequestNotification::class, RequestStates::MANAGER, $dashboard->id);
 
             //Wait for manager to process request
             yield WorkflowStub::await(fn () => $this->ManagerApproved() || $this->ManagerDenied() || $this->ManagerReturned());
@@ -116,7 +102,7 @@ class DSVRequestWorkflow extends Workflow
             $newState = $this->getState();
 
             // Activities
-            $commonActivities = $this->getCommonActivities($userRequest);
+            $commonActivities = $this->getCommonActivities($dashboard->id);
 
             switch ($newState) {
                 case RequestStates::MANAGER_APPROVED:
@@ -136,27 +122,23 @@ class DSVRequestWorkflow extends Workflow
         }
 
         //UnitHead
-        if($this->checkRole->isSameManagerHead($userRequest)) {
+        if($this->checkRole->isSameManagerHead($dashboard->id)) {
 
             // Manager and Head is same person
-            $this->head_approve();
-            $newState = $this->getState();
-            $commonActivities = $this->getCommonActivities($userRequest);
-
-            // Await stateupdate
-            yield $commonActivities[0];
+            // Notify FO
+            yield ActivityStub::make(NewRequestNotification::class, RequestStates::FINANCIAL_OFFICER, $dashboard->id);
 
         } else {
 
             // Notify Head
-            yield ActivityStub::make(NewRequestNotification::class, RequestStates::UNIT_HEAD, $userRequest);
+            yield ActivityStub::make(NewRequestNotification::class, RequestStates::UNIT_HEAD, $dashboard->id);
 
             //Wait for Head to process request
             yield WorkflowStub::await(fn () => $this->HeadApproved() || $this->HeadDenied() || $this->HeadReturned());
 
             //Handle Head decision
             $newState = $this->getState();
-            $commonActivities = $this->getCommonActivities($userRequest);
+            $commonActivities = $this->getCommonActivities($dashboard->id);
 
             switch ($newState) {
                 case RequestStates::HEAD_RETURNED:
@@ -171,19 +153,16 @@ class DSVRequestWorkflow extends Workflow
 
             yield $commonActivities[0];
             //Notify FO
-            yield ActivityStub::make(NewRequestNotification::class, RequestStates::FINANCIAL_OFFICER, $userRequest);
+            yield ActivityStub::make(NewRequestNotification::class, RequestStates::FINANCIAL_OFFICER, $dashboard->id);
 
         }
-
-        // Notify FO
-        yield ActivityStub::make(NewRequestNotification::class, RequestStates::FINANCIAL_OFFICER, $userRequest);
 
         //FO
         yield WorkflowStub::await(fn () => $this->FOApproved() || $this->FODenied() || $this->FOReturned());
 
         //Handle FO decision
         $newState = $this->getState();
-        $commonActivities = $this->getCommonActivities($userRequest);
+        $commonActivities = $this->getCommonActivities($dashboard->id);
 
         switch ($newState) {
             case RequestStates::FO_RETURNED:
@@ -207,13 +186,7 @@ class DSVRequestWorkflow extends Workflow
 
     protected function getState()
     {
-        $fresh = Dashboard::query()->find($this->dashboardId);
-
-        if (! $fresh) {
-            return null;
-        }
-
-        return is_object($fresh->state) ? $fresh->state->status() : (string) $fresh->state;
+        return $this->stateMachine->state->status();
     }
 
     protected function getCommonActivities($userRequest)
