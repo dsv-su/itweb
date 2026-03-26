@@ -7,7 +7,6 @@ use App\Models\HeadComment;
 use App\Models\ManagerComment;
 use App\Models\TravelRequest;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -17,6 +16,7 @@ class RequestReviewHandler
     protected User $reviewer;
     protected string $comment;
     protected WorkflowHandler $workflowhandler;
+
     protected string $decision;
 
     public function __construct(Dashboard $dashboard, User $reviewer, $comment, string $decision)
@@ -26,16 +26,13 @@ class RequestReviewHandler
         $this->comment = trim((string) $comment);
         $this->decision = $decision;
 
-        $this->workflowhandler = new WorkflowHandler($this->dashboard->workflow_id);
+        $this->workflowhandler = new WorkflowHandler((int)$this->dashboard->workflow_id);
     }
 
     public function review(): void
     {
         $this->assertValidDecision($this->decision);
-
-        DB::transaction(function (): void {
-            $this->registerCommentAndTransition();
-        });
+        $this->registerCommentAndTransition();
     }
 
     private function registerCommentAndTransition(): void
@@ -66,9 +63,42 @@ class RequestReviewHandler
             $tr->fo_comment_id = $commentId;
         }
 
+        // Persist the new dashboard state (this is what your await() checks)
+        $this->applyDashboardStateTransition($role, $this->decision);
+
+        // Signal the workflow
         $this->applyTransition($role, $this->decision);
 
         $tr->save();
+    }
+
+    private function applyDashboardStateTransition(string $role, string $decision): void
+    {
+        $map = [
+            'manager' => [
+                'approve' => 'manager_approved',
+                'return'  => 'manager_returned',
+                'deny'    => 'manager_denied',
+            ],
+            'head' => [
+                'approve' => 'head_approved',
+                'return'  => 'head_returned',
+                'deny'    => 'head_denied',
+            ],
+            'fo' => [
+                'approve' => 'fo_approved',
+                'return'  => 'fo_returned',
+                'deny'    => 'fo_denied',
+            ],
+        ];
+
+        $newState = $map[$role][$decision] ?? null;
+        if ($newState === null) {
+            throw new InvalidArgumentException("Invalid decision '{$decision}' for role '{$role}'.");
+        }
+
+        $this->dashboard->state = $newState;
+        $this->dashboard->save();
     }
 
     private function getRole(): ?string
@@ -96,19 +126,19 @@ class RequestReviewHandler
     {
         $map = [
             'manager' => [
-                'approve' => 'ManagerApprove',
-                'return'  => 'ManagerReturn',
-                'deny'    => 'ManagerDeny',
+                'approve' => 'managerApprove',
+                'return'  => 'managerReturn',
+                'deny'    => 'managerDeny',
             ],
             'head' => [
-                'approve' => 'HeadApprove',
-                'return'  => 'HeadReturn',
-                'deny'    => 'HeadDeny',
+                'approve' => 'headApprove',
+                'return'  => 'headReturn',
+                'deny'    => 'headDeny',
             ],
             'fo' => [
-                'approve' => 'FOApprove',
-                'return'  => 'FOReturn',
-                'deny'    => 'FODeny',
+                'approve' => 'foApprove',
+                'return'  => 'foReturn',
+                'deny'    => 'foDeny',
             ],
         ];
 

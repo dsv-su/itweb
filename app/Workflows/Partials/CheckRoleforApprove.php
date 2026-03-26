@@ -3,6 +3,7 @@
 namespace App\Workflows\Partials;
 
 use App\Models\Dashboard;
+use Workflow\WorkflowStub;
 
 class CheckRoleforApprove
 {
@@ -19,7 +20,7 @@ class CheckRoleforApprove
         }
 
         // Check if the user and manager are the same
-        return $dashboard->user_id === $dashboard->manager_id;
+        return (string)$dashboard->user_id === (string)$dashboard->manager_id;
     }
 
 
@@ -34,7 +35,7 @@ class CheckRoleforApprove
         }
 
         // Check if manager and head are the same
-        return $dashboard->manager_id === $dashboard->head_id;
+        return (string)$dashboard->manager_id === (string)$dashboard->head_id;
     }
 
 

@@ -91,7 +91,7 @@ class ReviewController extends Controller
 
         return (new StatamicView)
             ->template('requests.travel.show')
-            ->layout('mylayout')
+            //->layout('mylayout')
             ->with([
                 'tr' => $tr,
                 'formtype' => $formtype,

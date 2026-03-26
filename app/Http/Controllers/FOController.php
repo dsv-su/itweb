@@ -26,21 +26,22 @@ class FOController extends Controller
     {
         $dashboard = Dashboard::where('request_id', $id)->firstOrFail();
 
-        if ($dashboard->type === 'travelrequest') {
-            $tr = TravelRequest::findOrFail($id);
-
-            return (new StatamicView)
+        return match ($dashboard->type) {
+            'travelrequest' => (new StatamicView)
                 ->template('requests.travel.show')
-                //->layout('mylayout')
-                ->with(['tr' => $tr, 'formtype' => 'show']);
-        }
+                ->with([
+                    'tr'        => TravelRequest::findOrFail($id),
+                    'formtype'  => 'show',
+                    'dashboard' => $dashboard,
+                ]),
 
-        if ($dashboard->type === 'projectproposal') {
-            $proposal = ProjectProposal::find($id);
-            return redirect()->action([ReviewController::class, 'pp_view'], ['proposal' => $proposal]);
-        }
+            'projectproposal' => redirect()->action(
+                [ReviewController::class, 'pp_view'],
+                ['proposal' => ProjectProposal::findOrFail($id)]
+            ),
 
-        abort(404);
+            default => abort(404),
+        };
     }
 
     public function list()

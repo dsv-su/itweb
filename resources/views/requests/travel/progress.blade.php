@@ -1,96 +1,57 @@
+<!-- Stepper -->
+
 @php
-    $state = (string) ($tr->state ?? '');
+    // Dashboard state mapped to a step number
+    $stateToStep = [
+        'submitted' => 1,
+        'manager_approved' => 2,
+        'head_approved'  => 3,
+        'head_returned'  => 2,
+        'head_denied'  => 0,
+        'fo_approved' => 4,
+        'fo_returned' => 3,
+        'fo_denied' => 0,
 
-    $states = [
-        'submitted' => [
-            'label' => __('Submitted'),
-            'tone' => 'info',
-            'progress' => 33,
-        ],
-        'manager_approved' => [
-            'label' => __('Processed by manager'),
-            'tone' => 'info',
-            'progress' => 33,
-        ],
-        'head_approved' => [
-            'label' => __('Being processed by FO'),
-            'tone' => 'info',
-            'progress' => 90,
-        ],
-        'fo_approved' => [
-            'label' => __('Approved'),
-            'tone' => 'success',
-            'progress' => 100,
-        ],
 
-        'manager_denied' => [
-            'label' => __('Denied'),
-            'tone' => 'danger',
-            'progress' => 100,
-        ],
-        'head_denied' => [
-            'label' => __('Denied'),
-            'tone' => 'danger',
-            'progress' => 100,
-        ],
-        'fo_denied' => [
-            'label' => __('Denied'),
-            'tone' => 'danger',
-            'progress' => 100,
-        ],
 
-        'manager_returned' => [
-            'label' => __('Returned'),
-            'tone' => 'danger',
-            'progress' => 100,
-        ],
-        'head_returned' => [
-            'label' => __('Returned'),
-            'tone' => 'danger',
-            'progress' => 100,
-        ],
-        'fo_returned' => [
-            'label' => __('Returned'),
-            'tone' => 'danger',
-            'progress' => 100,
-        ],
     ];
-
-    $meta = $states[$state] ?? null;
-
-    $badgeClassesByTone = [
-        'info' => 'bg-blue-100 text-blue-800 dark:bg-gray-700 dark:text-blue-400 border-blue-400',
-        'success' => 'bg-green-100 text-green-800 dark:bg-gray-700 dark:text-green-400 border-green-400',
-        'danger' => 'bg-red-100 text-red-800 dark:bg-gray-700 dark:text-red-400 border-red-400',
-    ];
-
-    $barClassesByTone = [
-        'info' => 'bg-blue-600 dark:bg-blue-500',
-        'success' => 'bg-blue-600 dark:bg-blue-500',
-        'danger' => 'bg-red-600 dark:bg-red-500',
-    ];
+    // Determine the current step based on the dashboard state (or 1 if not set)
+    $currentStep = isset($dashboard) && isset($stateToStep[(string)$dashboard->state])
+                     ? $stateToStep[(string)$dashboard->state]
+                     : 1;
 @endphp
 
-@if($meta)
-    <span
-        class="inline-flex items-center border rounded font-medium
-               px-3 py-1 text-sm sm:px-6 sm:py-2
-               {{ $badgeClassesByTone[$meta['tone']] ?? $badgeClassesByTone['info'] }}"
-    >
-        {{ $meta['label'] }}
-    </span>
+<ul class="relative flex flex-col md:flex-row gap-2">
+    @for($i = 1; $i <= 4; $i++)
+        @php
+            // For each step, if it's less than or equal to the current step, mark as "completed" (blue)
+            $isCompleted = $i <= $currentStep;
+            $bgColor = $isCompleted ? 'bg-blue-500' : 'bg-gray-100';
+            $darkBgColor = $isCompleted ? 'dark:bg-blue-600' : 'dark:bg-neutral-700';
+            $textColor = $isCompleted ? 'text-white' : 'text-gray-800';
+            $describeText = $isCompleted ? 'text-blue-500' : 'text-gray-800';
+        @endphp
+        <li class="md:shrink md:basis-0 flex-1 group flex gap-x-2 md:block">
+            <div class="min-w-7 min-h-7 flex flex-col items-center md:w-full md:inline-flex md:flex-wrap md:flex-row text-xs align-middle">
+                <span class="size-7 flex justify-center items-center shrink-0 {{ $bgColor }} font-medium {{ $textColor }} rounded-full {{ $darkBgColor }} {{ $isCompleted ? 'dark:text-white' : '' }}">
+                    {{ $i }}
+                </span>
+                <div class="mt-2 w-px h-full md:mt-0 md:ms-2 md:w-full md:h-px md:flex-1 bg-gray-200 group-last:hidden dark:bg-neutral-700"></div>
+            </div>
+            <div class="grow md:grow-0 md:mt-3 pb-5">
+                <span class="block text-sm font-medium {{ $describeText }} dark:text-white">
+                    @if($i == 1)
+                        {{__("Submitted")}}
+                    @elseif($i == 2)
+                        {{__("Manager Approval")}}
+                    @elseif($i == 3)
+                        {{__("Unit Head Approval")}}
+                    @elseif($i == 4)
+                        {{__("Financial Officers Approval") }}
+                    @endif
+                </span>
+            </div>
+        </li>
+    @endfor
+</ul>
 
-    <div
-        class="w-full h-3 sm:h-4 mb-4 mt-4 sm:mt-6 bg-gray-200 rounded-full dark:bg-gray-700 overflow-hidden"
-        role="progressbar"
-        aria-valuenow="{{ (int) $meta['progress'] }}"
-        aria-valuemin="0"
-        aria-valuemax="100"
-        aria-label="{{ __('Request progress') }}"
-    >
-        <div
-            class="h-full rounded-full {{ $barClassesByTone[$meta['tone']] ?? $barClassesByTone['info'] }}"
-            style="width: {{ (int) $meta['progress'] }}%"
-        ></div>
-    </div>
-@endif

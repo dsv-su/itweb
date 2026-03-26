@@ -27,15 +27,14 @@ abstract class DashboardState extends State
             ->allowTransition(Submitted::class,FOReturned::class)
             ->allowTransition(Submitted::class,FOApproved::class)
 
-
-            ->allowTransition(ManagerApproved::class,Submitted::class)
-            ->allowTransition(ManagerApproved::class,HeadApproved::class)
-            ->allowTransition(ManagerApproved::class,HeadReturned::class)
-            ->allowTransition(ManagerApproved::class,HeadDenied::class)
-            ->allowTransition(ManagerReturned::class,Submitted::class)
-            ->allowTransition(ManagerDenied::class,Submitted::class)
-
-
+            ->allowTransition(ManagerApproved::class, Submitted::class)
+            ->allowTransition(ManagerApproved::class, ManagerApproved::class)
+            ->allowTransition(ManagerApproved::class, HeadApproved::class)
+            ->allowTransition(ManagerApproved::class, HeadReturned::class)
+            ->allowTransition(ManagerApproved::class, HeadDenied::class)
+            ->allowTransition(ManagerReturned::class, Submitted::class)
+            ->allowTransition(ManagerDenied::class, Submitted::class)
+            ->allowTransition(HeadApproved::class,HeadApproved::class)
             ->allowTransition(HeadApproved::class,ManagerApproved::class)
             ->allowTransition(HeadApproved::class,Submitted::class)
             ->allowTransition(HeadApproved::class,FOApproved::class)

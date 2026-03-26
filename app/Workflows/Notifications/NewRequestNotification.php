@@ -14,16 +14,16 @@ class NewRequestNotification extends Activity
 {
     protected $dashboard;
 
-    public function execute($recipent, $request)
+    public function execute(string $recipent, int $dashboardId)
     {
         //Retrive request dashboard
         //$id = $request[0];
-        $id = $request;
+        $id = $dashboardId;
         $this->dashboard = Dashboard::find($id);
-        $user = User::find($this->dashboard->user_id);
-        $manager = User::find($this->dashboard->manager_id);
-        $fo = User::find($this->dashboard->fo_id);
-        $head = User::find($this->dashboard->head_id);
+        $user = User::find((string)$this->dashboard->user_id);
+        $manager = User::find((string)$this->dashboard->manager_id);
+        $fo = User::find((string)$this->dashboard->fo_id);
+        $head = User::find((string)$this->dashboard->head_id);
 
         //Send email to recipent
         switch($recipent) {

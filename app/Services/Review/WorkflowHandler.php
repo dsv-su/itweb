@@ -6,76 +6,32 @@ use Workflow\WorkflowStub;
 
 class WorkflowHandler
 {
-    protected $workflow;
+    protected WorkflowStub $workflow;
 
-    public function __construct($id)
+    public function __construct(int $id)
     {
         $this->workflow = WorkflowStub::load($id);
     }
 
     //Manager
-    public function ManagerApprove()
-    {
-        $this->workflow->manager_approve();
-    }
-
-    public function ManagerReturn()
-    {
-        $this->workflow->manager_return();
-    }
-
-    public function ManagerDeny()
-    {
-        $this->workflow->manager_deny();
-    }
+    public function managerApprove(): void { $this->workflow->manager_approve(); }
+    public function managerReturn(): void { $this->workflow->manager_return(); }
+    public function managerDeny(): void { $this->workflow->manager_deny(); }
 
     //FO
-    public function FOApprove()
-    {
-        $this->workflow->fo_approve();
-    }
-
-    public function FOReturn()
-    {
-        $this->workflow->fo_return();
-    }
-
-    public function FODeny()
-    {
-        $this->workflow->fo_deny();
-    }
+    public function foApprove(): void {  $this->workflow->fo_approve(); }
+    public function foReturn(): void { $this->workflow->fo_return(); }
+    public function foDeny(): void { $this->workflow->fo_deny(); }
 
     //Head
-    public function HeadApprove()
-    {
-        $this->workflow->head_approve();
-    }
-
-    public function HeadReturn()
-    {
-        $this->workflow->head_return();
-    }
-
-    public function HeadDeny()
-    {
-        $this->workflow->head_deny();
-    }
+    public function headApprove(): void { $this->workflow->head_approve(); }
+    public function headReturn(): void { $this->workflow->head_return(); }
+    public function headDeny(): void { $this->workflow->head_deny(); }
 
     //Vice
-    public function ViceApprove()
-    {
-        $this->workflow->vice_approve();
-    }
-
-    public function ViceReturn()
-    {
-        $this->workflow->vice_return();
-    }
-
-    public function ViceDeny()
-    {
-        $this->workflow->vice_deny();
-    }
+    public function viceApprove(): void { $this->workflow->vice_approve(); }
+    public function viceReturn(): void { $this->workflow->vice_return(); }
+    public function viceDeny(): void { $this->workflow->vice_deny(); }
 
     public function Submitted()
     {
@@ -87,36 +43,14 @@ class WorkflowHandler
     }
 
     //Files have been uploaded
-    public function UploadedFiles()
-    {
-        $this->workflow->setfilesUploaded(true);
-    }
+    public function uploadedFiles(): void { $this->workflow->setfilesUploaded(true); }
+    public function removedFile(): void { $this->workflow->setfilesUploaded(false); }
 
-    //A File has been removed
-    public function RemovedFile()
-    {
-        $this->workflow->setfilesUploaded(false);
-    }
+    public function draftFileChanged(): void { $this->workflow->setDraftFilesChanged(true); }
+    public function draftFileUnchanged(): void { $this->workflow->setDraftFilesChanged(false); }
 
-    public function DraftFileChanged()
-    {
-        $this->workflow->setDraftFilesChanged(true);
-    }
-
-    public function DraftFileUnchanged()
-    {
-        $this->workflow->setDraftFilesChanged(false);
-    }
-
-    public function BudgetFileChanged()
-    {
-        $this->workflow->setBudgetFilesChanged(true);
-    }
-
-    public function BudgetFileUnchanged()
-    {
-        $this->workflow->setBudgetFilesChanged(false);
-    }
+    public function budgetFileChanged(): void { $this->workflow->setBudgetFilesChanged(true); }
+    public function budgetFileUnchanged(): void { $this->workflow->setBudgetFilesChanged(false); }
 
     //Final
     public function FinalApprove()

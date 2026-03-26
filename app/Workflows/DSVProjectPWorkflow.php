@@ -168,7 +168,7 @@ class DSVProjectPWorkflow extends Workflow
         }
 
         //Notify FO (for review)
-        //yield ActivityStub::make(NewProjectProposalNotification::class, RequestStates::FINACIAL_OFFICER, $userRequest);
+        //yield ActivityStub::make(NewProjectProposalNotification::class, RequestStates::FINANCIAL_OFFICER, $userRequest);
         //Notify entire FO group
         yield ActivityStub::make(NewPPtoFinance::class, $userRequest);
 

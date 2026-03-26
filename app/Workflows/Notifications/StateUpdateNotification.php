@@ -13,16 +13,10 @@ class StateUpdateNotification extends Activity
 {
     protected Dashboard $dashboard;
 
-    /***********************
-     * @param $request
-     *
-     * Returned or Denied Notification
-     */
-
-    public function execute($request)
+    public function execute(int $dashboardId)
     {
         //Retrive request dashboard
-        $id = $request;
+        $id = $dashboardId;
         $this->dashboard = Dashboard::find($id);
 
         //Users
