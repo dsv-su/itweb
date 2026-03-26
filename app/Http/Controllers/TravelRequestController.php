@@ -41,7 +41,7 @@ class TravelRequestController extends Controller
         $tr = TravelRequest::findOrFail($dashboard->request_id);
 
         $returnedStates = ['manager_returned', 'head_returned', 'fo_returned'];
-        $formtype = in_array($tr->state, $returnedStates, true) ? 'returned' : 'show';
+        $formtype = in_array((string)$dashboard->state, $returnedStates, true) ? 'returned' : 'show';
 
         return (new \Statamic\View\View)
             ->template('requests.travel.show')

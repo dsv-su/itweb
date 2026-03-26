@@ -1,8 +1,19 @@
-Review Request: New Request - <b>Action Required</b><br><br>
+<br>
+TO: {{$manager->name}}
+<br>
+SUBJECT: New {{$dashboard->type}} Submitted for Review
+<br>
+------------------------------------------------------------
+<br>
 Dear {{$manager->name}},
 <br><br>
-A new <strong>{{Illuminate\Support\Str::upper($dashboard->type)}}</strong> has been submitted.
-Your attention is kindly requested to review and approve the request. Here's a quick overview of the request:
+A new <strong>{{Illuminate\Support\Str::upper($dashboard->type)}}</strong> has been submitted and is now available for your review.
+<br><br>
+OVERVIEW:
+<br>
+--------------
+<br><br>
+{{Illuminate\Support\Str::upper($dashboard->type)}}
 <br><br>
 <b>Requester:</b> {{$user->name}}
 <br><br>
@@ -14,7 +25,11 @@ Your attention is kindly requested to review and approve the request. Here's a q
 <br><br>
 <b>RequestID:</b> {{$dashboard->request_id}}
 <br><br>
-Please review the request at your earliest convenience by accessing the following link:
+ACTION
+<br>
+--------------
+<br>
+Review the request using this link:
 <br><br>
 <a href="{{ url('') }}">{{url('')}}</a>
 <br><br>
