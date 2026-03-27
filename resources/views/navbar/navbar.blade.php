@@ -118,10 +118,10 @@
         </div>
 
         @antlers
-        <div
-             class="hidden md:block md:static md:w-auto absolute left-0 top-full w-full z-40 bg-white dark:bg-gray-900
-                   dark:border-gray-700"
-             id="navbar-multi-level"
+            <div
+                 class="hidden absolute left-0 top-full w-full z-40 bg-white dark:bg-gray-900 dark:border-gray-700
+                        md:static md:z-auto md:flex md:items-center md:w-auto md:ml-auto"
+                 id="navbar-multi-level"
         >
             <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-susecondary rounded-lg bg-gray-50 md:space-x-8
             rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
