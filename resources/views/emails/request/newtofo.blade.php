@@ -1,17 +1,20 @@
 <br>
 To: Financial Officer
 <br>
-SUBJECT: New TravelRequest - <b>Action Required</b>
+SUBJECT:  New {{$dashboard->type}} Submitted for Review
 <br>
 ------------------------------------------------------------
-
-<br><br>
+<br>
 Dear Financial Officer,
 <br><br>
 A new <strong>{{Illuminate\Support\Str::upper($dashboard->type)}}</strong> has been submitted and has already been approved from both the project leader/manager and unit head.
 Your review and approval are now required to proceed.
 Please take a moment to review the request. Below is a brief overview:
 <br><br>
+OVERVIEW:
+<br>
+--------------
+<br>
 <b>Requester:</b> {{$user->name}}
 <br>
 <b>Projectleader/Manager:</b> {{$manager->name}}

@@ -5,6 +5,7 @@
     $stateToStep = [
         'submitted' => 1,
         'manager_approved' => 2,
+        'manager_denied' => 0,
         'head_approved'  => 3,
         'head_returned'  => 2,
         'head_denied'  => 0,
