@@ -42,21 +42,21 @@ class ClearTest extends Command
         DB::table('fo_comments')->truncate();
         DB::table('head_comments')->truncate();
         DB::table('project_proposals')->truncate();
-        DB::table('research_areas')->truncate();
+        //DB::table('research_areas')->truncate();
         DB::table('dsv_budgets')->truncate();
-        DB::table('settings_ohs')->truncate();
+        //DB::table('settings_ohs')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         // Run a specific seeder
-        $this->call('db:seed', [
+        /*$this->call('db:seed', [
             '--class' => 'ResearchAreaSeeder',
             '--force' => true,
-        ]);
+        ]);*/
         $this->call('db:seed', [
             '--class' => 'DsvBudgetsSeeder',
             '--force' => true,
         ]);
         // Run OH seeder
-        $this->call(SettingsOhsSeeder::class);
+        //$this->call(SettingsOhsSeeder::class);
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         Storage::deleteDirectory('proposals');
     }
