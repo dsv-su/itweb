@@ -41,6 +41,7 @@ class StatsController extends Controller
 
         if ($proposals <= 0 || empty($fundingOrg)) {
             $viewData['breadcrumb'] = 'Stats are unavailable';
+            $viewData['fromYear'] = $fromYear;
             return $this->createView('stats.unavailable', 'mylayout', $viewData);
         }
 
@@ -146,6 +147,7 @@ class StatsController extends Controller
 
         if ($proposals <= 0 || empty($fundingOrg)) {
             $viewData['breadcrumb'] = 'Stats are unavailable';
+            $viewData['fromYear'] = $fromYear;
             return $this->createView('stats.unavailable', 'mylayout', $viewData);
         }
 
