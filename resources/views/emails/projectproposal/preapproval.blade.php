@@ -1,7 +1,7 @@
 <br>
-TO: ViceHead
+To: ViceHead
 <br>
-SUBJECT: New <strong>{{Illuminate\Support\Str::upper($dashboard->type)}}</strong> submitted for review.
+Subject: New <strong>{{Illuminate\Support\Str::upper($dashboard->type)}}</strong> submitted for review.
 <br>
 ------------------------------------------------------------
 <br>

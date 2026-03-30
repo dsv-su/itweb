@@ -1,6 +1,6 @@
-TO: {{$user->name}}
+To: {{$user->name}}
 <br>
-SUBJECT: <b>Status Update on Your Submitted Request</b>
+Subject: <b>Status Update on Your Submitted Request</b>
 <br>
 ------------------------------------------------------------
 <br><br>
@@ -44,6 +44,7 @@ We are writing to inform you that your <strong>{{Illuminate\Support\Str::upper($
 <br><br>
 Please take a moment to review any associated comments by visiting the link below:
 <br><br>
+Direct link:
 @if($dashboard->type == 'projectproposal')
     <a href="{{ url('') }}/projectproposals/review/view/{{$dashboard->request_id}}">{{$dashboard->name}}</a>
 @else

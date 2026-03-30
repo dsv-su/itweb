@@ -1,7 +1,7 @@
 <br>
 To: {{$user->name}}
 <br>
-SUBJECT: APPROVED {{Illuminate\Support\Str::upper($dashboard->type)}}
+Subject: APPROVED {{Illuminate\Support\Str::upper($dashboard->type)}}
 <br>
 ------------------------------------------------------------
 <br><br>

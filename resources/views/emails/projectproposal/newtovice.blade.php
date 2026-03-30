@@ -1,7 +1,7 @@
 <br>
-TO: {{$vice->name}}
+To: {{$vice->name}}
 <br>
-SUBJECT: New proposal submitted for review
+Subject: New proposal submitted for review
 <br>
 ------------------------------------------------------------
 <br>
@@ -20,8 +20,7 @@ OVERVIEW:
 <br>
 <b>Unit Head(s):</b>
 @foreach($dashboard->unit_heads as $head)
-    {{ \App\Models\User::find($head)->name }}
-    ,
+    {{ \App\Models\User::find($head)->name }}@if(! $loop->last), @endif
 @endforeach
 <br>
 <b>Created:</b> {{Carbon\Carbon::createFromTimestamp($dashboard->created)->format('Y-m-d')}}

@@ -1,7 +1,7 @@
 <br>
-TO: Registrator DSV
+To: Registrator DSV
 <br>
-SUBJECT: Application with budget
+Subject: Application with budget
 <br>
 ------------------------------------------------------------
 <br>

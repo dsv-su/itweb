@@ -1,7 +1,7 @@
 <br>
-TO: {{$user->name}}
+To: {{$user->name}}
 <br>
-SUBJECT: Missing necessary files
+Subject: Missing necessary files
 <br>
 ------------------------------------------------------------
 <br><br>
@@ -26,8 +26,7 @@ OVERVIEW:
 <br><br>
 <b>Unit Head(s):</b>
 @foreach($dashboard->unit_heads as $head)
-{{ \App\Models\User::find($head)->name }}
-,
+    {{ \App\Models\User::find($head)->name }}@if(! $loop->last), @endif
 @endforeach
 <br><br>
 <b>Created:</b> {{Carbon\Carbon::createFromTimestamp($dashboard->created)->format('Y-m-d')}}
@@ -37,7 +36,7 @@ OVERVIEW:
 You can review the details and upload the requested files by accessing the proposal through the following link:
 <br><br>
 Direct link to:
-<a href="{{ url('') }}/projectproposals/stage2_upload_pp/{{$dashboard->request_id}}">{{$dashboard->name}}</a>
+<a href="{{ url('') }}/projectproposals/complete/{{$dashboard->request_id}}#proposal-attachments">{{$dashboard->name}}</a>
 <br><br>
 ------------------------------------------------------------
 <br>

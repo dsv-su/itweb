@@ -1,7 +1,7 @@
 <br>
 To: User {{$user->name}}
 <br>
-SUBJECT: Your project proposal, <i><strong>{{$dashboard->name}}</strong></i>, is now pending completion.
+Subject: Your project proposal, <i><strong>{{$dashboard->name}}</strong></i>, is now pending completion.
 ------------------------------------------------------------
 <br><br>
 Dear {{$user->name}},
@@ -36,7 +36,7 @@ OVERVIEW:
 You can review the details and take necessary action by accessing the proposal through the following link:
 <br><br>
 Direct link to:
-<a href="{{ url('') }}/projectproposals/complete/{{$dashboard->request_id}}">{{$dashboard->name}} for updating.</a>
+<a href="{{ url('') }}/projectproposals/complete/{{$dashboard->request_id}}#proposal-attachments">{{$dashboard->name}} for updating.</a>
 <br><br>
 ------------------------------------------------------------
 <br>

@@ -1,7 +1,7 @@
 <br>
-TO: ViceHead
+To: ViceHead
 <br>
-SUBJECT: Granted Proposal
+Subject: Granted Proposal
 <br>
 ------------------------------------------------------------
 <br>

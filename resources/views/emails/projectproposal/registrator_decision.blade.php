@@ -1,7 +1,7 @@
 <br>
-TO: Registrator DSV
+To: Registrator DSV
 <br>
-SUBJECT: Decision letter application, {{$dashboard->name}}
+Subject: Decision letter application, {{$dashboard->name}}
 <br>
 ------------------------------------------------------------
 <br>
