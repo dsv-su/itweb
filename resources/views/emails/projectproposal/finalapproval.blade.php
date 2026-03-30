@@ -1,7 +1,7 @@
 <br>
 To: {{$vice->name}}
 <br>
-SUBJECT: FINAL APPROVAL
+Subject: FINAL APPROVAL
 <br>
 ------------------------------------------------------------
 <br><br>

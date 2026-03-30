@@ -1,10 +1,9 @@
 <br>
-TO: Unithead
+To: Unithead
 <br>
-SUBJECT: A Proposal has been ReSubmitted for Review
+Subject: A Proposal has been resubmitted for Review
 <br>
 ------------------------------------------------------------
-<br>
 <br><br>
 Dear {{$head->name}},
 <br><br>
@@ -20,8 +19,7 @@ OVERVIEW:
 <br>
 <b>Unit Head(s):</b>
 @foreach($dashboard->unit_heads as $head)
-    {{ \App\Models\User::find($head)->name }}
-    ,
+    {{ \App\Models\User::find($head)->name }}@if(! $loop->last), @endif
 @endforeach
 <br>
 <b>Created:</b> {{Carbon\Carbon::createFromTimestamp($dashboard->created)->format('Y-m-d')}}

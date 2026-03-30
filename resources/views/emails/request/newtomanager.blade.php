@@ -1,7 +1,7 @@
 <br>
-TO: {{$manager->name}}
+To: {{$manager->name}}
 <br>
-SUBJECT: New {{$dashboard->type}} Submitted for Review
+Subject: New {{$dashboard->type}} Submitted for Review
 <br>
 ------------------------------------------------------------
 <br>
