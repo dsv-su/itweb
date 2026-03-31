@@ -74,7 +74,9 @@
     </div>
     <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
         <p class="text-sm/6 text-gray-900">
-            <strong class="font-semibold">Project Proposals</strong><svg viewBox="0 0 2 2" aria-hidden="true" class="mx-2 inline size-0.5 fill-current"><circle r="1" cx="1" cy="1" /></svg>The new portal launches on April 1. Until then, use the current portal via the link.
+            <strong class="font-semibold">Not finding your proposal?</strong>
+            <svg viewBox="0 0 2 2" aria-hidden="true" class="mx-2 inline size-0.5 fill-current"><circle r="1" cx="1" cy="1" /></svg>
+            Visit the old ProjectProposals portal.
         </p>
         <a href="https://projectproposals.dsv.su.se" class="flex-none rounded-full bg-gray-900 px-3.5 py-1 text-sm font-semibold text-white shadow-xs hover:bg-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900">Project Proposals <span aria-hidden="true">&rarr;</span></a>
     </div>

@@ -204,9 +204,3 @@ Route::prefix('admin')->name('admin.')->group(function () {
 | Maintenance / Test
 |--------------------------------------------------------------------------
 */
-//Route::get('test', [\App\Http\Controllers\TestController::class, 'test'])->name('test');
-Route::get('test', [\App\Http\Controllers\ProposalController::class, 'test'])->name('test');
-// These should be POST and protected by auth + authorization, and ideally only in local/staging.
-Route::get('/dev/seed', [\App\Http\Controllers\ViceController::class, 'seed'])->name('proposal.seed');
-Route::get('/dev/reset', [\App\Http\Controllers\ViceController::class, 'reset'])->name('proposal.reset');
-
