@@ -58,6 +58,6 @@ class ClearTest extends Command
         // Run OH seeder
         //$this->call(SettingsOhsSeeder::class);
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-        Storage::deleteDirectory('proposals');
+        //Storage::deleteDirectory('proposals');
     }
 }
