@@ -106,8 +106,8 @@
                             @php
                                 $data = is_array($result) ? $result : (method_exists($result, 'toArray') ? $result->toArray() : (array) $result);
 
-                                $collection = (string) ($data['collection'] ?? 'default');
-                                $badgeClass = $collectionStyles[$collection] ?? $collectionStyles['default'];
+                                $collection = (string) ($data['collection'] ?? 'guidelines');
+                                $badgeClass = $collectionStyles[$collection] ?? $collectionStyles['guidelines'];
 
                                 $url = $data['url'] ?? null;
                                 $title = $data['title'] ?? null;
