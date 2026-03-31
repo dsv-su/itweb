@@ -119,106 +119,104 @@
 
         @antlers
             <div
-                 class="hidden absolute left-0 top-full w-full z-40 bg-white dark:bg-gray-900 dark:border-gray-700
-                        md:static md:z-auto md:flex md:items-center md:w-auto md:ml-auto"
-                 id="navbar-multi-level"
-        >
-            <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-susecondary rounded-lg bg-gray-50 md:space-x-8
-            rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                class="hidden absolute left-0 top-full w-full z-40 bg-white dark:bg-gray-900 dark:border-gray-700
+                       md:static md:z-auto md:flex md:flex-1 md:min-w-0 md:justify-center md:items-center md:w-auto"
+                id="navbar-multi-level"
+            >
+                <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-susecondary rounded-lg bg-gray-50 md:space-x-8
+                rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                    {{ nav:main  }}
+                    {{ if children }}
+                    <li>
+                        <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar-{{ title }}"
+                                class="flex items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0
+                                md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent">
+                            {{ title }}
+                            <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                            </svg>
+                        </button>
 
-                {{ nav:main  }}
-                {{ if children }}
-                <li>
-                    <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar-{{ title }}"
-                            class="flex items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0
-                            md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent">
-                        {{ title }}
-                        <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                        </svg>
-                    </button>
-
-                    <div id="dropdownNavbar-{{ title }}"
-                         class="absolute top-full left-0 z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-full md:w-auto dark:bg-gray-700 dark:divide-gray-600">
-                        <ul class="border border-susecondary rounded-lg py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownLargeButton">
-                            {{ children }}
-                            {{ if children }}
-                            <li aria-labelledby="dropdownNavbarLink">
-                                <button id="doubleDropdownButton-{{ title }}" data-dropdown-toggle="doubleDropdown-{{ depth }}-{{ title }}" type="button"
-                                        class="flex items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                    {{ title }}
-                                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                                    </svg>
-                                </button>
-                                <div id="doubleDropdown-{{depth}}-{{ title }}"
-                                     class="absolute top-0 left-full z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-full md:w-auto dark:bg-gray-700">
-                                    <ul class="border border-susecondary rounded-lg py-2 pl-6 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="doubleDropdownButton-{{ title }}">
-                                        {{ children}}
-                                        {{ if children }}
-                                        <li aria-labelledby="dropdownNavbarLink">
-                                            <button id="trippleDropdownButton-{{ title }}" data-dropdown-toggle="trippleDropdown-{{ depth }}-{{ title }}"
-                                                    type="button" class="flex items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                {{ title }}
-                                                <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                                                </svg>
-                                            </button>
-                                            <div id="trippleDropdown-{{depth}}-{{ title }}" class="absolute top-0 left-full z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-full md:w-auto dark:bg-gray-700">
-                                                <ul class="border border-susecondary rounded-lg py-2 pl-9 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="trippleDropdownButton-{{ title }}">
-                                                    {{ children}}
-                                                    {{ if children }}
-                                                    <li aria-labelledby="dropdownNavbarLink">
-                                                        <button id="lastDropdownButton-{{ title }}" data-dropdown-toggle="lastDropdown-{{ depth }}-{{ title }}" data-dropdown-placement="right-start" type="button"
-                                                                class="flex items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                            {{ title }}
-                                                            <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                                                            </svg>
-                                                        </button>
-                                                    </li>
-                                                    {{ else }}
-                                                    <li>
-                                                        <a href="{{ url }}" aria-label="Nav link" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                                                            {{ title}}
-                                                        </a>
-                                                    </li>
-                                                    {{ /if }}
-                                                    {{ /children }}
-                                                </ul>
-                                            </div>
-                                        </li>
-                                        {{ else }}
-                                        <li>
-                                            <a href="{{ url }}" aria-label="Nav link" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                                                {{ title}}
-                                            </a>
-                                        </li>
-                                        {{ /if }}
-                                        {{ /children }}
-                                    </ul>
-                                </div>
-                            </li>
-                            {{ else }}
-                            <li>
-                                <a href="{{ url }}" aria-label="Nav link" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">{{ title }}</a>
-                            </li>
-                            {{ /if }}
-                            {{ /children }}
-                        </ul>
-                    </div>
-                </li>
-                {{ else }}
-                <li>
-                    <a href="{{ url }}" aria-label="Nav link"
-                       class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
-                       aria-current="page">{{ title }}</a>
-                </li>
-                {{ /if }}
-                {{ /nav:main }}
-
-            </ul>
-        </div>
+                        <div id="dropdownNavbar-{{ title }}"
+                             class="absolute top-full left-0 z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-full md:w-auto dark:bg-gray-700 dark:divide-gray-600">
+                            <ul class="border border-susecondary rounded-lg py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownLargeButton">
+                                {{ children }}
+                                {{ if children }}
+                                <li aria-labelledby="dropdownNavbarLink">
+                                    <button id="doubleDropdownButton-{{ title }}" data-dropdown-toggle="doubleDropdown-{{ depth }}-{{ title }}" type="button"
+                                            class="flex items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                        {{ title }}
+                                        <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                        </svg>
+                                    </button>
+                                    <div id="doubleDropdown-{{depth}}-{{ title }}"
+                                         class="absolute top-0 left-full z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-full md:w-auto dark:bg-gray-700">
+                                        <ul class="border border-susecondary rounded-lg py-2 pl-6 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="doubleDropdownButton-{{ title }}">
+                                            {{ children}}
+                                            {{ if children }}
+                                            <li aria-labelledby="dropdownNavbarLink">
+                                                <button id="trippleDropdownButton-{{ title }}" data-dropdown-toggle="trippleDropdown-{{ depth }}-{{ title }}"
+                                                        type="button" class="flex items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                    {{ title }}
+                                                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                                    </svg>
+                                                </button>
+                                                <div id="trippleDropdown-{{depth}}-{{ title }}" class="absolute top-0 left-full z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-full md:w-auto dark:bg-gray-700">
+                                                    <ul class="border border-susecondary rounded-lg py-2 pl-9 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="trippleDropdownButton-{{ title }}">
+                                                        {{ children}}
+                                                        {{ if children }}
+                                                        <li aria-labelledby="dropdownNavbarLink">
+                                                            <button id="lastDropdownButton-{{ title }}" data-dropdown-toggle="lastDropdown-{{ depth }}-{{ title }}" data-dropdown-placement="right-start" type="button"
+                                                                    class="flex items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                                {{ title }}
+                                                                <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                                                </svg>
+                                                            </button>
+                                                        </li>
+                                                        {{ else }}
+                                                        <li>
+                                                            <a href="{{ url }}" aria-label="Nav link" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                                                {{ title}}
+                                                            </a>
+                                                        </li>
+                                                        {{ /if }}
+                                                        {{ /children }}
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            {{ else }}
+                                            <li>
+                                                <a href="{{ url }}" aria-label="Nav link" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                                    {{ title}}
+                                                </a>
+                                            </li>
+                                            {{ /if }}
+                                            {{ /children }}
+                                        </ul>
+                                    </div>
+                                </li>
+                                {{ else }}
+                                <li>
+                                    <a href="{{ url }}" aria-label="Nav link" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">{{ title }}</a>
+                                </li>
+                                {{ /if }}
+                                {{ /children }}
+                            </ul>
+                        </div>
+                    </li>
+                    {{ else }}
+                    <li>
+                        <a href="{{ url }}" aria-label="Nav link"
+                           class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
+                           aria-current="page">{{ title }}</a>
+                    </li>
+                    {{ /if }}
+                    {{ /nav:main }}
+                </ul>
+            </div>
         @endantlers
 
         @include('navbar.dashboard')
@@ -226,11 +224,33 @@
 </nav>
 
 <script>
-    function navToggle() {
+    document.addEventListener('DOMContentLoaded', () => {
         const btn = document.getElementById('menuBtn');
         const menu = document.getElementById('navbar-multi-level');
 
-        btn.classList.toggle('open');
-        menu.classList.toggle('hidden'); // ✅ actually show/hide the menu
-    }
+        if (!btn || !menu) return;
+
+        const isOpen = () => !menu.classList.contains('hidden');
+
+        const setOpen = (open) => {
+            menu.classList.toggle('hidden', !open);
+            btn.classList.toggle('open', open);
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        };
+
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            setOpen(!isOpen());
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') setOpen(false);
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!isOpen()) return;
+            if (btn.contains(e.target) || menu.contains(e.target)) return;
+            setOpen(false);
+        });
+    });
 </script>

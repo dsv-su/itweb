@@ -1,5 +1,6 @@
 <div class="flex flex-wrap justify-between items-center">
     <div class="flex items-center">
+        <livewire:search />
         <livewire:indicator />
         <!-- Dark mode switcher (mobile) -->
         <button
