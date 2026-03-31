@@ -17,6 +17,7 @@
         "laravel/tinker": "^2.10.1",
         "livewire/livewire": "^4.1",
         "maatwebsite/excel": "^3.1",
+        "marcorieser/statamic-live-search": "^3.2",
         "spatie/laravel-model-states": "^2.7",
         "statamic/cms": "^6.3",
         "statamic/eloquent-driver": "*",
