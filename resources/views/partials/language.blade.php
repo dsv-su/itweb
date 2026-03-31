@@ -1,7 +1,8 @@
 @php
     $slug = request()->route('slug');
 
-    $isRoot = blank($slug);
+    //$isRoot = blank($slug);
+    $isRoot    = request()->routeIs('pp.index');
     $isAwaiting = ($slug === 'awaiting');
     $isMy       = ($slug === 'my');
     $isAll      = ($slug === 'all');
