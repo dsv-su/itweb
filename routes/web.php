@@ -114,7 +114,10 @@ Route::get('/sv/newslist/{collection}', [\App\Http\Controllers\NewsListControlle
 //Project Proposals Home
 //Route::get('/', [\App\Http\Controllers\ProposalController::class, 'pp'])->name('pp.home');
 
-Route::prefix('projectproposals')->name('pp.')->group(function () {
+Route::prefix('projectproposals')
+    ->name('pp.')
+    ->middleware(['pp.title'])
+    ->group(function () {
     // Alias: /projectproposals -> same as slug handler
     Route::get('/', [\App\Http\Controllers\ProposalHomeController::class, 'pp'])
         ->name('index');
