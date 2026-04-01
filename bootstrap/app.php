@@ -22,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'locale' => \App\Http\Middleware\Switchlocale::class,
             'download' => \App\Http\Middleware\EnsureUserForDownload::class,
             'vicehead' => \App\Http\Middleware\EnsureUserIsVice::class,
+            'statamic.elevate_off' => \App\Http\Middleware\ForceStatamicElevatedSession::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
