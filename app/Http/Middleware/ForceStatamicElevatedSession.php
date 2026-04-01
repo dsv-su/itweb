@@ -30,7 +30,6 @@ class ForceStatamicElevatedSession
 
         if (
             $enabled
-            && app()->environment('local')
             && $request->is('cp', 'cp/*')
         ) {
             // Statamic checks this session key to determine elevation.
