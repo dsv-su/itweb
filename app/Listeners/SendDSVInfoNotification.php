@@ -52,9 +52,9 @@ class SendDSVInfoNotification
 
     private function dsv_info()
     {
-        $this->file = base_path() . '/systemconfig/internt.ini';
+        $this->file = base_path() . '/systemconfig/it.ini';
         if (!file_exists($this->file)) {
-            $this->file = base_path() . '/systemconfig/internt.ini.example';
+            $this->file = base_path() . '/systemconfig/it.ini.example';
         }
         $this->system_config = parse_ini_file($this->file, true);
 
@@ -63,9 +63,9 @@ class SendDSVInfoNotification
 
     private function dsv_teachers()
     {
-        $this->file = base_path() . '/systemconfig/internt.ini';
+        $this->file = base_path() . '/systemconfig/it.ini';
         if (!file_exists($this->file)) {
-            $this->file = base_path() . '/systemconfig/internt.ini.example';
+            $this->file = base_path() . '/systemconfig/it.ini.example';
         }
         $this->system_config = parse_ini_file($this->file, true);
 
@@ -74,9 +74,9 @@ class SendDSVInfoNotification
 
     private function dsv_phd()
     {
-        $this->file = base_path() . '/systemconfig/internt.ini';
+        $this->file = base_path() . '/systemconfig/it.ini';
         if (!file_exists($this->file)) {
-            $this->file = base_path() . '/systemconfig/internt.ini.example';
+            $this->file = base_path() . '/systemconfig/it.ini.example';
         }
         $this->system_config = parse_ini_file($this->file, true);
 
