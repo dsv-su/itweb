@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'download' => \App\Http\Middleware\EnsureUserForDownload::class,
             'vicehead' => \App\Http\Middleware\EnsureUserIsVice::class,
             'statamic.elevate_off' => \App\Http\Middleware\ForceStatamicElevatedSession::class,
+            'pp.title' => \App\Http\Middleware\SetProjectProposalsTitle::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
