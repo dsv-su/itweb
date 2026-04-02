@@ -28,7 +28,12 @@ class EnsureUserForShow
             abort(401);
         }
         $dashboard = Dashboard::find($id);
-        $valid_viewers = [$dashboard->user_id, $dashboard->manager_id, $dashboard->fo_id, $dashboard->head_id];
+        $valid_viewers = [
+            $dashboard->user_id,
+            $dashboard->manager_id,
+            $dashboard->fo_id,
+            $dashboard->head_id,
+        ];
 
         if(in_array($user->id, $valid_viewers)) {
             return $next($request);

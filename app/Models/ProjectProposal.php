@@ -41,6 +41,18 @@ class ProjectProposal extends Model
         );
     }
 
+    public function allowView()
+    {
+        $user = Auth::user();
+        $dashboard = Dashboard::where('request_id', $this->id)->first();
+
+        $allowed_roles_I = [$dashboard?->user_id, $dashboard?->vice_id, $dashboard?->fo_id];
+        $allowed_roles_II = is_array($dashboard?->unit_heads) ? $dashboard->unit_heads : [$dashboard->unit_heads];
+        $allowed_roles = array_filter(array_merge($allowed_roles_I, $allowed_roles_II)); // Remove null values
+
+        // && $dashboard->state == 'fo_approved' //alternative for only approved proposals
+        return (in_array($user->id, $allowed_roles));
+    }
     public function allowEdit()
     {
         $user = Auth::user();

@@ -21,6 +21,7 @@ class ReviewController extends Controller
     {
         $this->middleware(['web', 'auth', 'dsv']);
         $this->middleware('review')->except(['pp_view']);
+        $this->middleware('view')->only(['pp_view']);
     }
 
     public function pp_view(ProjectProposal $proposal)
