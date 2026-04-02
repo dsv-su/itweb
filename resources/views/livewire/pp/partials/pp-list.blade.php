@@ -122,7 +122,6 @@
                     x-collapse
                     x-cloak
                     class="motion-reduce:transition-none"
-                    x-trap.inert.noscroll="activeAccordion === id"
                 >
                     <div class="p-4 pt-0 text-gray-800 dark:text-neutral-200">
                         <!-- Proposal Details (Responsive Grid) -->
@@ -229,17 +228,17 @@
                                             Resume
                                         </a>
                                     @endif
-
-                                    <a
-                                        href="{{ route('pp.review.view', $proposal->id) }}"
-                                        class="inline-flex items-center px-2 py-1.5 bg-white border border-green-700 text-green-800 rounded-md font-semibold text-xs
-                                               hover:bg-green-700 hover:text-white
-                                               focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-700
-                                               dark:bg-transparent dark:text-green-300 dark:border-green-400 dark:hover:bg-green-700 dark:hover:text-white"
-                                    >
-                                        View
-                                    </a>
-
+                                    @if($proposal->allowView())
+                                        <a
+                                            href="{{ route('pp.review.view', $proposal->id) }}"
+                                            class="inline-flex items-center px-2 py-1.5 bg-white border border-green-700 text-green-800 rounded-md font-semibold text-xs
+                                                   hover:bg-green-700 hover:text-white
+                                                   focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-700
+                                                   dark:bg-transparent dark:text-green-300 dark:border-green-400 dark:hover:bg-green-700 dark:hover:text-white"
+                                        >
+                                            View
+                                        </a>
+                                    @endif
                                     @if($proposal->allowEdit())
                                         <a
                                             href="{{ route('pp.edit', $proposal->id) }}"

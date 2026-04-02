@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'dsv' => \App\Http\Middleware\DSVStaffEntitlement::class,
             'review' => \App\Http\Middleware\EnsureUserForReview::class,
             'show' => \App\Http\Middleware\EnsureUserForShow::class,
+            'view' => \App\Http\Middleware\EnsureUserForView::class,
             'fo' => \App\Http\Middleware\EnsureUserIsFO::class,
             'checklang' => \App\Http\Middleware\CheckLocalizaion::class,
             'locale' => \App\Http\Middleware\Switchlocale::class,
