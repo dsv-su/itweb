@@ -135,7 +135,7 @@ class SendProposalReminders extends Command
         return null;
     }
 
-    private function recentlySent(ProjectProposal $proposal, string $type, int $days = 1): bool
+    private function recentlySent(ProjectProposal $proposal, string $type, int $days = 3): bool
     {
         if (!$proposal->last_reminder_sent_at) {
             return false;
