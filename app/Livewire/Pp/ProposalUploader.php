@@ -69,9 +69,9 @@ class ProposalUploader extends Component
         }
 
         // Pending dashboard
-        if ($this->dashboard->state === 'pending') {
+        /*if ($this->dashboard->state === 'pending') {
             return 0;
-        }
+        }*/
 
         // Files: ensure array
         $files = $this->proposal->files;

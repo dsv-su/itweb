@@ -1,12 +1,7 @@
-<b>PLEASE NOTE! </b>
-<br>
-<b>ProjectProposal is currently in test mode, and all created proposals are fictitious and intended for testing purposes only.</b>
-<br><br>
-------------------------------------------------------------
 <br>
 To: {{$head->name}}
 <br>
-SUBJECT: Reminder: Please review <strong><i>{{$dashboard->name}}</i></strong>
+SUBJECT: Reminder - Please review <strong><i>{{$dashboard->name}}</i></strong>
 <br>
 ------------------------------------------------------------
 <br><br>
@@ -19,7 +14,9 @@ If you would like the applicant to complete or modify any part of the submission
 Thank you in advance for your prompt attention to this matter.
 <br><br>
 OVERVIEW:
-<br><br>
+<br>
+------------------
+<br>
 <b>Proposal:</b> {{$dashboard->name}}
 <br>
 <b>Requester:</b> {{$user->name}}
@@ -29,8 +26,8 @@ OVERVIEW:
 <b>ProposalID:</b> {{$dashboard->request_id}}
 <br><br>
 You can review the details and take necessary action by accessing the proposal through the following link:
-<br><br>
-<a href="{{ url('') }}/pp/review/{{$dashboard->request_id}}">Direct link to {{$dashboard->name}}</a>
+<br>Direct link to: <br>
+<a href="{{ url('') }}/projectproposals/review/{{$dashboard->request_id}}">{{$dashboard->name}}</a>
 <br><br>
 ------------------------------------------------------------
 <br>
