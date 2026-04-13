@@ -137,20 +137,52 @@ class SendProposalReminders extends Command
             ];
         }
 
-        // User reminder to Report Sent
-        if ($s1 === 'final_approved' && $s2 === 'final_approved' && $s3 === 'submitted') {
-            return [
-                'type' => 'REMIND_USER_TO_REPORT_SENT',
-                'job'  => SendUserReportSentReminderEmail::class,
-            ];
+        // User reminder to Report Sent (only once submission_deadline is reached/passed)
+        if (
+            $dashboardState !== 'denied'
+            && $s1 === 'final_approved' && $s2 === 'final_approved' && $s3 === 'submitted') {
+            $deadlineRaw = data_get($proposal->pp, 'submission_deadline');
+
+            if ($deadlineRaw) {
+                try {
+                    $deadline = Carbon::parse($deadlineRaw)->startOfDay();
+
+                    if (now()->startOfDay()->greaterThanOrEqualTo($deadline)) {
+                        return [
+                            'type' => 'REMIND_USER_TO_REPORT_SENT',
+                            'job'  => SendUserReportSentReminderEmail::class,
+                        ];
+                    }
+                } catch (\Throwable $e) {
+                    // If the date is invalid/unparseable, skip dispatching this reminder.
+                }
+            }
+
+            // If no deadline (or not yet reached), do not dispatch this reminder.
         }
 
-        // User reminder to Report Granted/Rejected
-        if ($s1 === 'sent' && $s2 === 'final_approved' && $s3 === 'submitted') {
-            return [
-                'type' => 'REMIND_USER_TO_REPORT_GRANTED_OR_REJECTED',
-                'job'  => SendUserReportGrantRejectReminderEmail::class,
-            ];
+        // User reminder to Report Granted/Rejected (only once decision_exp is reached/passed)
+        if (
+            $dashboardState !== 'denied'
+            && $s1 === 'sent' && $s2 === 'final_approved' && $s3 === 'submitted') {
+            $decisionExpRaw = data_get($proposal->pp, 'decision_exp');
+
+            if ($decisionExpRaw) {
+                try {
+                    $decisionExp = Carbon::parse($decisionExpRaw)->startOfDay();
+
+                    if (now()->startOfDay()->greaterThanOrEqualTo($decisionExp)) {
+                        return [
+                            'type' => 'REMIND_USER_TO_REPORT_GRANTED_OR_REJECTED',
+                            'job'  => SendUserReportGrantRejectReminderEmail::class,
+                        ];
+                    }
+                } catch (\Throwable $e) {
+                    // If the date is invalid/unparseable, skip dispatching this reminder.
+                }
+            }
+
+            // If no decision_exp (or not yet reached), do not dispatch this reminder.
         }
 
         return null;
