@@ -163,7 +163,6 @@ class ProposalController extends Controller
                 'name' => $request->title,
                 'created' => $createdTs,
                 'status_stage1' => 'pending',
-                'status_stage2' => 'pending',
                 'status_stage3' => 'saved',
                 'pp' => $this->buildPpPayload($request, [
                     'submitted' => $submittedAt->toISOString(),

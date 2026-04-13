@@ -56,7 +56,7 @@ class EnsureUserForReview
 
         $allowedReviewers = $reviewers[$state] ?? null;
 
-        if (is_array($allowedReviewers) && !isset($allowedReviewers['travelrequest'])) {
+        /*if (is_array($allowedReviewers) && !isset($allowedReviewers['travelrequest'])) {
             // Check if the user is in an array (for cases like 'vice_approved')
             if (in_array($user->id, $allowedReviewers['projectproposal'])) {
                 return $next($request);
@@ -68,6 +68,20 @@ class EnsureUserForReview
             if ($user->id == $allowed) {
                 return $next($request);
             }
+        }*/
+
+        // Resolve allowed IDs for this dashboard (supports scalar or per-type arrays)
+        $allowed = is_array($allowedReviewers)
+            ? ($allowedReviewers[$dashboard->type] ?? null)
+            : $allowedReviewers;
+
+        // Normalize to array (so we can handle single ID or multiple IDs)
+        $allowedIds = is_array($allowed)
+            ? $allowed
+            : ($allowed === null ? [] : [$allowed]);
+
+        if (in_array($user->id, $allowedIds, true)) {
+            return $next($request);
         }
 
         abort(403, 'Unauthorized');

@@ -39,12 +39,18 @@ class SendProposalReminders extends Command
         $limit  = (int) $this->option('limit');
 
         $query = ProjectProposal::query()
+            ->where('reminder', 1)
             ->limit($limit);
 
         $count = 0;
 
         $query->chunkById(200, function ($proposals) use (&$count, $dryRun) {
             foreach ($proposals as $proposal) {
+                // Safety guard in case the query gets changed later
+                if ((int) $proposal->reminder !== 1) {
+                    continue;
+                }
+
                 $action = $this->decideAction($proposal);
 
                 if (!$action) {
@@ -84,8 +90,14 @@ class SendProposalReminders extends Command
         $s2 = $proposal->status_stage2;
         $s3 = $proposal->status_stage3;
 
+        // Add dashboard state lookup once
+        $dashboardState = (string) ($proposal->dashboard?->state ?? '');
+
         // User complete
-        if ($s1 === 'submitted' && $s2 === 'pending' && $s3 === 'submitted') {
+        if (
+            $dashboardState === 'submitted'
+            && $s1 === 'submitted' && $s2 === 'pending' && $s3 === 'submitted'
+        ) {
             return [
                 'type' => 'REMINDER_USER_TO_COMPLETE',
                 'job'  => SendCompleteReminderEmail::class,
@@ -93,7 +105,10 @@ class SendProposalReminders extends Command
         }
 
         // Unit Head reminder
-        if ($s1 === 'submitted' && $s2 === 'uploaded' && $s3 === 'submitted') {
+        if (
+            $dashboardState === 'complete'
+            && $s1 === 'submitted' && $s2 === 'uploaded' && $s3 === 'submitted'
+        ) {
             return [
                 'type' => 'REMIND_UH_TO_PROCESS',
                 'job'  => SendUHReminderEmail::class,
@@ -101,7 +116,10 @@ class SendProposalReminders extends Command
         }
 
         // FO reminder
-        if ($s1 === 'head_approved' && $s2 === 'uploaded' && $s3 === 'submitted') {
+        if (
+            $dashboardState === 'head_approved'
+            && $s1 === 'head_approved' && $s2 === 'uploaded' && $s3 === 'submitted'
+        ) {
             return [
                 'type' => 'REMIND_FO_TO_PROCESS',
                 'job'  => SendFOReminderEmail::class,
@@ -109,7 +127,10 @@ class SendProposalReminders extends Command
         }
 
         // Vice reminder
-        if ($s1 === 'fo_approved' && $s2 === 'fo_approved' && $s3 === 'submitted') {
+        if (
+            $dashboardState === 'fo_approved'
+            && $s1 === 'fo_approved' && $s2 === 'fo_approved' && $s3 === 'submitted'
+        ) {
             return [
                 'type' => 'REMIND_VICE_TO_PROCESS',
                 'job'  => SendVHReminderEmail::class,
@@ -135,7 +156,7 @@ class SendProposalReminders extends Command
         return null;
     }
 
-    private function recentlySent(ProjectProposal $proposal, string $type, int $days = 1): bool
+    private function recentlySent(ProjectProposal $proposal, string $type, int $days = 3): bool
     {
         if (!$proposal->last_reminder_sent_at) {
             return false;
