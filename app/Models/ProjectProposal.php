@@ -44,6 +44,12 @@ class ProjectProposal extends Model
     public function allowView()
     {
         $user = Auth::user();
+
+        //Allow SuperAdmin
+        if ($user && $user->isSuperAdmin()) {
+            return true;
+        }
+
         $dashboard = Dashboard::where('request_id', $this->id)->first();
 
         $allowed_roles_I = [$dashboard?->user_id, $dashboard?->vice_id, $dashboard?->fo_id];
@@ -56,6 +62,12 @@ class ProjectProposal extends Model
     public function allowEdit()
     {
         $user = Auth::user();
+
+        //Allow SuperAdmin
+        if ($user && $user->isSuperAdmin()) {
+            return true;
+        }
+
         $dashboard = Dashboard::where('request_id', $this->id)->first();
 
         //$allowed_roles_I = [$dashboard?->user_id, $dashboard?->vice_id, $dashboard?->fo_id];

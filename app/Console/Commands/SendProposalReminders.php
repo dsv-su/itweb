@@ -94,12 +94,6 @@ class SendProposalReminders extends Command
         $dashboardState = (string) ($proposal->dashboard?->state ?? '');
 
         // User complete
-        /*if ($s1 === 'submitted' && $s2 === 'pending' && $s3 === 'submitted') {
-            return [
-                'type' => 'REMINDER_USER_TO_COMPLETE',
-                'job'  => SendCompleteReminderEmail::class,
-            ];
-        }*/
         if (
             $dashboardState === 'submitted'
             && $s1 === 'submitted' && $s2 === 'pending' && $s3 === 'submitted'
@@ -111,12 +105,6 @@ class SendProposalReminders extends Command
         }
 
         // Unit Head reminder
-        /*if ($s1 === 'submitted' && $s2 === 'uploaded' && $s3 === 'submitted') {
-            return [
-                'type' => 'REMIND_UH_TO_PROCESS',
-                'job'  => SendUHReminderEmail::class,
-            ];
-        }*/
         if (
             $dashboardState === 'complete'
             && $s1 === 'submitted' && $s2 === 'uploaded' && $s3 === 'submitted'
@@ -128,12 +116,6 @@ class SendProposalReminders extends Command
         }
 
         // FO reminder
-        /*if ($s1 === 'head_approved' && $s2 === 'uploaded' && $s3 === 'submitted') {
-            return [
-                'type' => 'REMIND_FO_TO_PROCESS',
-                'job'  => SendFOReminderEmail::class,
-            ];
-        }*/
         if (
             $dashboardState === 'head_approved'
             && $s1 === 'head_approved' && $s2 === 'uploaded' && $s3 === 'submitted'
@@ -145,12 +127,6 @@ class SendProposalReminders extends Command
         }
 
         // Vice reminder
-        /*if ($s1 === 'fo_approved' && $s2 === 'fo_approved' && $s3 === 'submitted') {
-            return [
-                'type' => 'REMIND_VICE_TO_PROCESS',
-                'job'  => SendVHReminderEmail::class,
-            ];
-        }*/
         if (
             $dashboardState === 'fo_approved'
             && $s1 === 'fo_approved' && $s2 === 'fo_approved' && $s3 === 'submitted'

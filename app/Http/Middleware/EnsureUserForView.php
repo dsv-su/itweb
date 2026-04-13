@@ -22,6 +22,11 @@ class EnsureUserForView
             abort(401);
         }
 
+        //Allow SuperAdmin
+        if ($user && $user->isSuperAdmin()) {
+            return $next($request);
+        }
+
         $routeProposal = $request->route('proposal');
 
         $proposal = $routeProposal instanceof ProjectProposal
