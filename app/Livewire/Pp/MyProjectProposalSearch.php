@@ -41,7 +41,7 @@ class MyProjectProposalSearch extends Component
                 });
             })
             ->orderBy('created_at', 'desc')
-            ->paginate(5);
+            ->paginate(10);
 
 
 

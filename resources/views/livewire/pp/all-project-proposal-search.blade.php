@@ -33,6 +33,7 @@
                 <div class="flex flex-col md:flex-row items-center justify-between gap-3 p-2">
                     @include('livewire.pp.partials.pp-list')
                 </div>
+
             </section>
 
             {{-- Pagination --}}
