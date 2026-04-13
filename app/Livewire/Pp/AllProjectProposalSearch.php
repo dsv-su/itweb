@@ -37,7 +37,7 @@ class AllProjectProposalSearch extends Component
                 })
                 ->where('pp->status', '!=', 'denied') // Dont retrive denied proposals
                 ->orderBy('created_at', 'desc')
-                ->paginate(6);
+                ->paginate(10);
         } else {
             return ProjectProposal::with('dashboard')
                 ->where('status_stage3', '!=', 'pending')
@@ -49,7 +49,7 @@ class AllProjectProposalSearch extends Component
                         );
                 })
                 ->orderBy('created_at', 'desc')
-                ->paginate(6);
+                ->paginate(10);
         }
     }
 

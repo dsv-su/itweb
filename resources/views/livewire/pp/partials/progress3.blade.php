@@ -294,7 +294,7 @@
         @php
             $progress = 100;
             $message  = '';
-            $color    = 'bg-blue-600';
+            $color    = 'bg-green-600';
         @endphp
         @break
 
