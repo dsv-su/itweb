@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'review' => \App\Http\Middleware\EnsureUserForReview::class,
             'show' => \App\Http\Middleware\EnsureUserForShow::class,
             'view' => \App\Http\Middleware\EnsureUserForView::class,
+            'edit' => \App\Http\Middleware\EnsureUserForEdit::class,
             'fo' => \App\Http\Middleware\EnsureUserIsFO::class,
             'checklang' => \App\Http\Middleware\CheckLocalizaion::class,
             'locale' => \App\Http\Middleware\Switchlocale::class,

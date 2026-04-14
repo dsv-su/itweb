@@ -42,6 +42,13 @@ class ProposalController extends Controller
         private ProjectProposalCreateView $proposalCreateView,
     ) {
         $this->middleware(['web', 'auth', 'dsv']);
+        $this->middleware('edit')->only([
+            'pp_edit',
+            'pp_continue',
+            'pp_resume',
+            'pp_complete',
+            'upload'
+        ]);
     }
 
     public function pp_edit(string $id)
