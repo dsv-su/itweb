@@ -104,6 +104,10 @@ class ProjectProposal extends Model
     public function allowResume(): bool
     {
         $user      = Auth::user();
+        //Allow SuperAdmin
+        if ($user && $user->isSuperAdmin()) {
+            return true;
+        }
         $dashboard = Dashboard::where('request_id', $this->id)->first();
 
         // no Dashboard → can’t resume
