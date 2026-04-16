@@ -124,7 +124,7 @@ class ProposalUploader extends Component
         ], $this->resumed ?? []);
 
         $this->allow = in_array($userId, $allowedUserIds)
-            && in_array($this->dashboard->state, $allowedStates);
+            && in_array((string)$this->dashboard->state, $allowedStates);
     }
 
     public function finishUpload($name, $tmpPath, $isMultiple)

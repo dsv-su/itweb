@@ -66,7 +66,7 @@
                             }
                         },
                         uploadFiles(files) {
-                            const $this = this;
+                            const $this = this
                             // Clear previous validation errors before starting a new upload
                             @this.clearUploadErrors();
                             this.isUploading = true

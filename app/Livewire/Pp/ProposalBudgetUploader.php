@@ -87,7 +87,7 @@ class ProposalBudgetUploader extends Component
 
         $this->allow =
             in_array($userId, $allowedUserIds)
-            && in_array($this->dashboard->state, $allowedStates);
+            && in_array((string)$this->dashboard->state, $allowedStates);
     }
 
 

@@ -72,6 +72,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Helpdesk
+     */
+    public function isHelpDesk(): bool
+    {
+        return in_array('helpdesk', $this->getRoles());
+    }
+
+    /**
      * Super Admin
      */
     public function isSuperAdmin(): bool

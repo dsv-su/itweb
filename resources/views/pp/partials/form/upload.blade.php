@@ -21,6 +21,7 @@
             <div class="ms-3">
                 <h3 class="text-blue-600 font-semibold dark:font-medium dark:text-white">Please note!</h3>
                 <p class="mt-2 text-gray-800 dark:text-slate-400">You must upload the proposal's budget, along with a brief description of the proposal.</p>
+                <p class="mt-2 text-gray-800 dark:text-slate-400">The maximum file size is 4 GB.</p>
             </div>
         </div>
     </div>

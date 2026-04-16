@@ -13,8 +13,8 @@ class AdminController extends Controller
     public function __construct()
     {
         $this->middleware(['web', 'auth', 'dsv']);
-        // TODO an 'admin' middleware only admins should access this.
-        // $this->middleware('admin');
+        // Only HelpDesk should access this.
+        $this->middleware('helpdesk');
     }
 
     public function pp(): StatamicView
