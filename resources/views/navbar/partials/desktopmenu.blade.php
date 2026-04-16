@@ -64,7 +64,7 @@
             </a>
         </li>
     @endif
-    @if( auth()->user()->isSuperAdmin())
+    @if( auth()->user()->isSuperAdmin() || auth()->user()->isHelpDesk())
         <li>
             <a  href="{{route('admin.pp.index')}}" class="inline-flex items-center justify-center h-10 px-4 py-2 font-medium transition-colors rounded-md hover:text-neutral-900 dark:hover:text-gray-200">
                 {{__("Admin")}}
