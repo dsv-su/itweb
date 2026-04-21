@@ -177,13 +177,15 @@
                                 <p class="text-sm text-gray-700 dark:text-neutral-300">
                                     <span class="font-semibold">Co-financing needed:</span><br>
                                     @php
-                                        $need = $proposal->pp['cofinancing_needed'] ?? null;
-                                        $cur  = strtoupper($proposal->pp['currency'] ?? '');
+                                        $needRaw = $proposal->pp['cofinancing_needed'] ?? null;
+                                        $cur     = strtoupper($proposal->pp['currency'] ?? '');
+
+                                        $need = ($needRaw !== null && (float) $needRaw != 0.0)
+                                            ? number_format((float) $needRaw, 0, ',', ' ')
+                                            : null;
                                     @endphp
 
-                                    {{ ($need !== null && (float) $need != 0.0)
-                                        ? trim($need . ' ' . $cur)
-                                        : 'No' }}
+                                    {{ $need ? trim($need . ' ' . $cur) : 'No' }}
                                 </p>
 
                                 <!-- OH -->
@@ -202,26 +204,30 @@
                                 <p class="text-sm text-gray-700 dark:text-neutral-300">
                                     <span class="font-semibold">Budget for project:</span><br>
                                     @php
-                                        $need = $proposal->pp['budget_project'] ?? null;
-                                        $cur  = strtoupper($proposal->pp['currency'] ?? '');
+                                        $needRaw = $proposal->pp['budget_project'] ?? null;
+                                        $cur     = strtoupper($proposal->pp['currency'] ?? '');
+
+                                        $need = ($needRaw !== null && (float) $needRaw != 0.0)
+                                            ? number_format((float) $needRaw, 0, ',', ' ')
+                                            : null;
                                     @endphp
 
-                                    {{ ($need !== null && (float) $need != 0.0)
-                                        ? trim($need . ' ' . $cur)
-                                        : 'No' }}
+                                    {{ $need ? trim($need . ' ' . $cur) : 'No' }}
                                 </p>
 
                                 <!-- Budget DSV -->
                                 <p class="text-sm text-gray-700 dark:text-neutral-300">
                                     <span class="font-semibold">Budget for DSV:</span><br>
                                     @php
-                                        $need = $proposal->pp['budget_dsv'] ?? null;
-                                        $cur  = strtoupper($proposal->pp['currency'] ?? '');
+                                        $needRaw = $proposal->pp['budget_dsv'] ?? null;
+                                        $cur     = strtoupper($proposal->pp['currency'] ?? '');
+
+                                        $need = ($needRaw !== null && (float) $needRaw != 0.0)
+                                            ? number_format((float) $needRaw, 0, ',', ' ')
+                                            : null;
                                     @endphp
 
-                                    {{ ($need !== null && (float) $need != 0.0)
-                                        ? trim($need . ' ' . $cur)
-                                        : 'No' }}
+                                    {{ $need ? trim($need . ' ' . $cur) : 'No' }}
                                 </p>
 
                                 <!-- Button group -->
