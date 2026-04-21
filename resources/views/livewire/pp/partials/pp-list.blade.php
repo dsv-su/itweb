@@ -176,7 +176,14 @@
                                 <!-- Co-financing -->
                                 <p class="text-sm text-gray-700 dark:text-neutral-300">
                                     <span class="font-semibold">Co-financing needed:</span><br>
-                                    {{ $proposal->pp['cofinancing'] ?? 'No' }}
+                                    @php
+                                        $need = $proposal->pp['cofinancing_needed'] ?? null;
+                                        $cur  = strtoupper($proposal->pp['currency'] ?? '');
+                                    @endphp
+
+                                    {{ ($need !== null && (float) $need != 0.0)
+                                        ? trim($need . ' ' . $cur)
+                                        : 'No' }}
                                 </p>
 
                                 <!-- OH -->
@@ -194,13 +201,27 @@
                                 <!-- Budget -->
                                 <p class="text-sm text-gray-700 dark:text-neutral-300">
                                     <span class="font-semibold">Budget for project:</span><br>
-                                    {{ $proposal->pp['budget_project'] ?? 'N/A' }}
+                                    @php
+                                        $need = $proposal->pp['budget_project'] ?? null;
+                                        $cur  = strtoupper($proposal->pp['currency'] ?? '');
+                                    @endphp
+
+                                    {{ ($need !== null && (float) $need != 0.0)
+                                        ? trim($need . ' ' . $cur)
+                                        : 'No' }}
                                 </p>
 
                                 <!-- Budget DSV -->
                                 <p class="text-sm text-gray-700 dark:text-neutral-300">
                                     <span class="font-semibold">Budget for DSV:</span><br>
-                                    {{ $proposal->pp['budget_dsv'] ?? 'N/A' }}
+                                    @php
+                                        $need = $proposal->pp['budget_dsv'] ?? null;
+                                        $cur  = strtoupper($proposal->pp['currency'] ?? '');
+                                    @endphp
+
+                                    {{ ($need !== null && (float) $need != 0.0)
+                                        ? trim($need . ' ' . $cur)
+                                        : 'No' }}
                                 </p>
 
                                 <!-- Button group -->
