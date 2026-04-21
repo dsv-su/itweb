@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Jobs\SendToDSV;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Cache;
 
 class SendDSVInfoNotification
 {
@@ -14,40 +15,51 @@ class SendDSVInfoNotification
 
     protected $file;
 
-
-    /**
-     * Handle the event.
-     */
     public function handle(object $event): void
     {
         $news = $event;
 
-        if($news->entry->email_dsv and $news->entry->locale == 'English') {
-            $job = new SendToDSV($this->dsv_info(), $news);
-            // Dispatch Job and continue
-            dispatch($job);
-
-            //Send to testgroup
-            /*$emaillist = explode(";", $this->dsv_test());
-            foreach($emaillist as $email) {
-                $job = new SendToDSV($email, $news);
-                // Dispatch Job and continue
-                dispatch($job);
-            }*/
-
-        }
-        elseif ($news->entry->email_teachers and $news->entry->locale == 'English') {
-            $job = new SendToDSV($this->dsv_teachers(), $news);
-            // Dispatch Job and continue
-            dispatch($job);
-        }
-        elseif ($news->entry->email_phd and $news->entry->locale == 'English') {
-            $job = new SendToDSV($this->dsv_phd(), $news);
-            // Dispatch Job and continue
-            dispatch($job);
+        if (!isset($news->entry)) {
+            return;
         }
 
+        // Identify entry consistently (fallbacks, since Statamic entry id accessor can vary)
+        $entryId = method_exists($news->entry, 'id') ? $news->entry->id() : ($news->entry->id ?? null);
+        if (!$entryId) {
+            return;
+        }
 
+        // Only act for English (as you currently do)
+        $locale = $news->entry->locale ?? (method_exists($news->entry, 'locale') ? $news->entry->locale() : null);
+        if ($locale !== 'English') {
+            return;
+        }
+
+        if ($news->entry->email_dsv) {
+            $this->dispatchOnce($entryId, 'dsv_info', new SendToDSV($this->dsv_info(), $news));
+            return;
+        }
+
+        if ($news->entry->email_teachers) {
+            $this->dispatchOnce($entryId, 'dsv_teachers', new SendToDSV($this->dsv_teachers(), $news));
+            return;
+        }
+
+        if ($news->entry->email_phd) {
+            $this->dispatchOnce($entryId, 'dsv_phd', new SendToDSV($this->dsv_phd(), $news));
+            return;
+        }
+    }
+
+    private function dispatchOnce(string $entryId, string $type, SendToDSV $job): void
+    {
+        $key = "dsv_entry_saved_notification:{$entryId}:{$type}";
+
+        if (!Cache::add($key, true, now()->addMinutes(2))) {
+            return;
+        }
+
+        dispatch($job);
     }
 
     private function dsv_info()

@@ -80,7 +80,7 @@
                         </div>
 
                         <!-- Right side (State label) -->
-                        <div class="w-full md:w-auto flex-shrink-0 ml-auto">
+                        <div class="w-full md:w-auto shrink-0 ml-auto">
                             <!-- Complete/View buttons -->
                             @nocache('livewire.pp.partials.pp-buttons-complete-view')
 

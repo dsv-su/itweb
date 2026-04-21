@@ -1,35 +1,76 @@
-DSV IT Notification - Important Message
-@if($news->email_dsv)
-    for DSV Staff:
-@elseif($news->email_teachers && $news->email_phd)
-    for teachers and Phd students
-@elseif($news->email_teachers)
-    for teachers:
-@elseif ($news->email_phd)
-    for Phd Students:
-@endif
-<br><br>
-<b>{{ $news->title }}</b>
-<br>
-{!! $news->content !!}
-<br><br>
-Author: {{$news->author->name ?? ''}}
-<br><br>
-You can read the entire post at:
-<br>
-<a href="{{ url('') }}{{ $news->uri }}">{{url('')}}{{$news->uri}}</a>
-<br><br>
-@if( collect($news->dsv_attachments)->isNotEmpty() )
-    This email contains an attachment
-    <br><br>
+{{-- DSV IT Notification - Important Message --}}
+
+<h2 style="margin:0 0 12px 0; font-size:18px; line-height:1.3;">
+    DSV IT Notification – Important Message
+</h2>
+
+<p style="margin:0 0 16px 0;">
+    <strong>Audience:</strong>
+    @if($news->email_dsv)
+        DSV staff
+    @elseif($news->email_teachers && $news->email_phd)
+        Teachers and PhD students
+    @elseif($news->email_teachers)
+        Teachers
+    @elseif($news->email_phd)
+        PhD students
+    @else
+        —
+    @endif
+</p>
+
+<hr style="border:none; border-top:1px solid #e5e7eb; margin:16px 0;">
+
+<h3 style="margin:0 0 6px 0; font-size:16px; line-height:1.3;">
+    {{ $news->title }}
+</h3>
+
+<div style="margin:0 0 16px 0;">
+    {!! $news->content !!}
+</div>
+
+<p style="margin:0 0 16px 0;">
+    <strong>Author:</strong> {{ $news->author->name ?? '' }}
+</p>
+
+<p style="margin:0 0 8px 0;">
+    <strong>Read the full post:</strong>
+</p>
+
+@php
+    $postUrl = url('') . ($news->uri ?? '');
+@endphp
+
+<p style="margin:0 0 16px 0;">
+    <a href="{{ $postUrl }}">{{ $postUrl }}</a>
+</p>
+
+@if(collect($news->dsv_attachments)->isNotEmpty())
+    <hr style="border:none; border-top:1px solid #e5e7eb; margin:16px 0;">
+
+    <h4 style="margin:0 0 8px 0; font-size:14px; line-height:1.3;">
+        Attachments
+    </h4>
+
+    <p style="margin:0 0 12px 0;">
+        This email contains attachment(s):
+    </p>
 
     @foreach($news->dsv_attachments as $attach)
-        Title: {{$attach->title}}<br>
-        Download at: <a href="{{url('')}}{{$attach->url}}">Download attachment</a>
-        <br><br>
+        @php
+            $attachmentUrl = url('') . ($attach->url ?? '');
+        @endphp
+
+        <p style="margin:0 0 12px 0;">
+            <strong>Title:</strong> {{ $attach->title }}<br>
+            <strong>Download:</strong> <a href="{{ $attachmentUrl }}">Download attachment</a>
+        </p>
     @endforeach
 @endif
----
-<br>
-This is an automated email, please do not reply to this email.
+
+<hr style="border:none; border-top:1px solid #e5e7eb; margin:16px 0;">
+
+<p style="margin:0; color:#6b7280; font-size:12px; line-height:1.4;">
+    This is an automated email, please do not reply to this email.
+</p>
 
