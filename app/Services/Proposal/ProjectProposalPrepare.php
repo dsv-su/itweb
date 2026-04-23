@@ -13,7 +13,9 @@ class ProjectProposalPrepare
     public function prepareProjectProposalData(?string $id = null)
     {
         $roleIdsUnitHead = $this->getUserIdsByGroup('enhetschef');
-        $unitheads = User::whereIn('id', $roleIdsUnitHead)->get();
+        $unitheads = User::whereIn('id', $roleIdsUnitHead)
+            ->orderBy('unit')   // ASC by default
+            ->get();
         $research_areas = ResearchArea::all();
 
         $proposal = $id

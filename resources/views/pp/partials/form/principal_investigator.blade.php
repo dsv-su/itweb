@@ -1,5 +1,5 @@
 <div class="w-full">
-    <label for="principal_investigator" class="font-sans block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __("Principal Investigator") }}<span class="text-red-600"> *</span>
+    <label for="principal_investigator" class="font-sans block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __("Principal Investigator at DSV") }}<span class="text-red-600"> *</span>
         <button
             id="principal_investigator-button"
             data-modal-target="principal_investigator-modal"

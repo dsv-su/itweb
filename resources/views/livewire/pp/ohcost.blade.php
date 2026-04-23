@@ -1,7 +1,7 @@
 <div class="w-full">
 
     <label for="oh_cost" class="font-sans block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-        {{ $isEu ? __('Percent OH cost covered EU/Wallenberg') : __('Percent OH cost covered') }}
+        {{ $isEu ? __('Percent of OH cost covered EU/Wallenberg') : __('Percent of OH cost covered') }}
         <span class="text-red-600"> *</span>
         <button id="oh_cost-button"
                 data-modal-target="oh_cost-modal"

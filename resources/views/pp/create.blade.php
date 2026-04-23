@@ -169,7 +169,8 @@
                         </div>
                         <!-- Percent OH-costs -->
                         <livewire:pp.ohcost :type="$type" :proposal="$proposal ?? null"/>
-                        <br>
+                        <livewire:pp.premises :type="$type" :proposal="$proposal ?? null"/>
+
 
                         <!-- Co-financing -->
                         {{--}}

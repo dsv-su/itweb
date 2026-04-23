@@ -1,5 +1,5 @@
 <div class="w-full">
-    <label for="budget_dsv" class="font-sans block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __("Years of PhD student") }}<span class="text-red-600"> *</span>
+    <label for="budget_dsv" class="font-sans block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __("Years of PhD co-financing needed") }}<span class="text-red-600"> *</span>
         <button id="budget_phd-button"
                 data-modal-target="budget_phd-modal"
                 data-modal-toggle="budget_phd-modal" class="inline" type="button">
@@ -34,7 +34,7 @@
             name="budget_phd"
             id="budget_phd"
             value="{{ old('budget_phd', $proposal->pp['budget_phd'] ?? '') }}"
-            placeholder="Years of PhD student"
+            placeholder="Years of PhD co-financing"
             @class([
                 'font-mono border text-gray-900 text-sm rounded-lg
                  focus:ring-primary-600 focus:border-primary-600

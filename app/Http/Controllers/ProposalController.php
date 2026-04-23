@@ -197,7 +197,7 @@ class ProposalController extends Controller
                 'unit_head', 'program', 'decision_exp', 'funding_organization',
                 'start_date', 'submission_deadline',
                 'budget_project', 'budget_dsv', 'budget_phd', 'currency',
-                'oh_cost', 'cofinancing_needed',
+                'oh_cost', 'oh_premises', 'cofinancing_needed',
             ]),
             'submitted' => $submittedAt->toISOString(),
             'status' => 'completed',
@@ -474,7 +474,7 @@ class ProposalController extends Controller
             'research_area', 'dsvcoordinating', 'other_coordination', 'eu', 'eu_wallenberg',
             'funding_organization', 'cofinancing', 'other_cofinancing', 'project_duration',
             'unit_head', 'program', 'decision_exp', 'start_date', 'submission_deadline',
-            'budget_project', 'budget_dsv', 'budget_phd', 'currency', 'oh_cost',
+            'budget_project', 'budget_dsv', 'budget_phd', 'currency', 'oh_cost', 'oh_premises',
             'cofinancing_needed',
         ]);
 

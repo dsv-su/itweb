@@ -1,6 +1,6 @@
 <div class="w-full">
     <label for="cofinancing_needed" class="font-sans block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-        {{ __("Amount of Cofinancing needed (SEK)") }}
+        {{ __("Amount of co-financing needed (SEK)") }}
         <span class="text-red-600"> *</span>
         <button id="cofinancing_needed-button"
                 data-modal-target="cofinancing_needed-modal"
