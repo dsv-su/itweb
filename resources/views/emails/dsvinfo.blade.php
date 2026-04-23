@@ -73,4 +73,3 @@
 <p style="margin:0; color:#6b7280; font-size:12px; line-height:1.4;">
     This is an automated email, please do not reply to this email.
 </p>
-

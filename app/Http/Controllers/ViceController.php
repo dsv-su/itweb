@@ -41,12 +41,15 @@ class ViceController extends Controller
     public function oh(Request $request)
     {
         $validated = $request->validate([
-            'oh_max' => 'required|integer|min:1|max:100'
+            'oh_max' => 'required|integer|min:1|max:100',
+            'oh_eu' => 'required|integer|min:1|max:100',
+            'oh_premises' => 'required|integer|min:1|max:50'
         ]);
 
         $oh = SettingsOh::first();
         $oh->oh_max = $request->oh_max;
         $oh->oh_eu = $request->oh_eu;
+        $oh->oh_premises = $request->oh_premises;
         $oh->save();
 
         return redirect()

@@ -78,7 +78,10 @@
             <svg viewBox="0 0 2 2" aria-hidden="true" class="mx-2 inline size-0.5 fill-current"><circle r="1" cx="1" cy="1" /></svg>
             Visit the old ProjectProposals portal.
         </p>
-        <a href="https://projectproposals.dsv.su.se" class="flex-none rounded-full bg-gray-900 px-3.5 py-1 text-sm font-semibold text-white shadow-xs hover:bg-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900">Project Proposals <span aria-hidden="true">&rarr;</span></a>
+        <a href="https://projectproposals.dsv.su.se" class="flex-none rounded-full bg-gray-900 px-3.5 py-1 text-sm font-semibold text-white shadow-xs hover:bg-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900">
+            Project Proposals
+            <span aria-hidden="true">&rarr;</span>
+        </a>
     </div>
     <div class="flex flex-1 justify-end">
         <button id="pp-banner-dismiss" type="button" class="-m-3 p-3 focus-visible:-outline-offset-4">

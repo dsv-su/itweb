@@ -1,6 +1,6 @@
 <div class="w-full sm:col-span-2">
     <label for="unit_head" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-        {{ __("Unit Head for approval") }}<span class="text-red-600"> *</span>
+        {{ __("Unit Head to approve your proposal") }}<span class="text-red-600"> *</span>
         <button id="unithead-button"
                 data-modal-target="unithead-modal"
                 data-modal-toggle="unithead-modal"

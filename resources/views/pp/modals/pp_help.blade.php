@@ -111,7 +111,7 @@
             <div class="flex justify-between mb-4 rounded-t sm:mb-5">
                 <div class="text-lg text-gray-900 md:text-xl dark:text-white">
                     <h3 class="font-semibold ">
-                        {{__("Principal investigator")}}
+                        {{__("Principal investigator at DSV")}}
                     </h3>
 
                 </div>
@@ -125,7 +125,7 @@
             </div>
             <dl>
                 <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{__("Instructions")}}</dt>
-                <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("It is assumed that you are the lead investigator.")}}</dd>
+                <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("It is assumed that you are the lead investigator of this project from the DSV side. In case the main PI is from another institution please indicate that below.")}}</dd>
                 <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{__("More help?")}}</dt>
                 <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("If you need more help contact helpdesk@dsv.su.se")}}</dd>
             </dl>
@@ -315,7 +315,7 @@
             <div class="flex justify-between mb-4 rounded-t sm:mb-5">
                 <div class="text-lg text-gray-900 md:text-xl dark:text-white">
                     <h3 class="font-semibold ">
-                        {{__("Unit head")}}
+                        {{__("Unit Head to approve your proposal")}}
                     </h3>
 
                 </div>
@@ -329,7 +329,7 @@
             </div>
             <dl>
                 <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{__("Instructions")}}</dt>
-                <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("Add the Unit head for the proposals research area to approve the proposal. ")}}</dd>
+                <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("Select the Unit head to approve your proposal")}}</dd>
                 <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{__("More help?")}}</dt>
                 <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("If you need more help contact helpdesk@dsv.su.se")}}</dd>
             </dl>
@@ -515,7 +515,7 @@
             <div class="flex justify-between mb-4 rounded-t sm:mb-5">
                 <div class="text-lg text-gray-900 md:text-xl dark:text-white">
                     <h3 class="font-semibold ">
-                        {{__("Funding organization")}}
+                        {{__("Funding Agency")}}
                     </h3>
 
                 </div>
@@ -529,7 +529,7 @@
             </div>
             <dl>
                 <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{__("Instructions")}}</dt>
-                <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("Select the funding organization.")}}</dd>
+                <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("Select the funding Agency.")}}</dd>
                 <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{__("More help?")}}</dt>
                 <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("If you need more help contact helpdesk@dsv.su.se")}}</dd>
             </dl>
@@ -539,8 +539,10 @@
                         class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium
                                                 rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900">
                     <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 0 010-1.414z"
-                              clip-rule="evenodd"></path>
+                        <path fill-rule="evenodd"
+                              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 0 010-1.414z"
+                              clip-rule="evenodd">
+                        </path>
                     </svg>
                     {{__("Close")}}
                 </button>
@@ -715,7 +717,7 @@
             <div class="flex justify-between mb-4 rounded-t sm:mb-5">
                 <div class="text-lg text-gray-900 md:text-xl dark:text-white">
                     <h3 class="font-semibold ">
-                        {{__("Submission date")}}
+                        {{__("Submission deadline")}}
                     </h3>
 
                 </div>
@@ -729,7 +731,7 @@
             </div>
             <dl>
                 <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{__("Instructions")}}</dt>
-                <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("Enter the submission date.")}}</dd>
+                <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("Enter the date of the submission deadline")}}</dd>
                 <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{__("More help?")}}</dt>
                 <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("If you need more help contact helpdesk@dsv.su.se")}}</dd>
             </dl>
@@ -915,7 +917,7 @@
             <div class="flex justify-between mb-4 rounded-t sm:mb-5">
                 <div class="text-lg text-gray-900 md:text-xl dark:text-white">
                     <h3 class="font-semibold ">
-                        {{__("Years of PhD student requested")}}
+                        {{__("Years of PhD co-financing needed")}}
                     </h3>
 
                 </div>
@@ -929,7 +931,7 @@
             </div>
             <dl>
                 <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{__("Instructions")}}</dt>
-                <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("Please enter the requested years for the PhD student, or 0 if none")}}</dd>
+                <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("Please enter the requested years for the PhD co-financing, or 0 if none")}}</dd>
                 <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{__("More help?")}}</dt>
                 <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("If you need more help contact helpdesk@dsv.su.se")}}</dd>
             </dl>
@@ -1065,7 +1067,7 @@
             <div class="flex justify-between mb-4 rounded-t sm:mb-5">
                 <div class="text-lg text-gray-900 md:text-xl dark:text-white">
                     <h3 class="font-semibold ">
-                        {{__("OH cost")}}
+                        {{__("Percent of OH cost covered")}}
                     </h3>
 
                 </div>
@@ -1099,6 +1101,58 @@
         </div>
     </div>
 </div>
+
+<!-- Premises cost modal -->
+<div id="premises-modal"
+     tabindex="-1"
+     aria-hidden="true"
+     class="hidden fixed inset-0 z-50 items-center justify-center overflow-y-auto overflow-x-hidden"
+>
+    <!-- Backdrop (below the modal) -->
+    <div class="fixed inset-0 bg-black/50 z-0" data-modal-toggle="premises-modal"></div>
+
+    <!-- Modal wrapper (above the backdrop) -->
+    <div class="relative z-10 p-4 w-full max-w-xl">
+        <!-- Modal content -->
+        <div class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
+            <!-- Modal header -->
+            <div class="flex justify-between mb-4 rounded-t sm:mb-5">
+                <div class="text-lg text-gray-900 md:text-xl dark:text-white">
+                    <h3 class="font-semibold ">
+                        {{__("Percent of premises cost covered")}}
+                    </h3>
+
+                </div>
+
+                <button type="button"
+                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
+                        data-modal-toggle="premises-modal">
+                    <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <dl>
+                <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{__("Instructions")}}</dt>
+                <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("Enter the percentage of the premises costs covered. The default premises overhead for DSV for this year is pre-set.")}}</dd>
+                <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{__("More help?")}}</dt>
+                <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("If you need more help contact helpdesk@dsv.su.se")}}</dd>
+            </dl>
+            <div class="flex justify-between items-center">
+
+                <button type="button" data-modal-toggle="premises-modal"
+                        class="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium
+                                                rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900">
+                    <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 0 010-1.414z"
+                              clip-rule="evenodd"></path>
+                    </svg>
+                    {{__("Close")}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Cofinancing needed modal -->
 <div id="cofinancing_needed-modal"
      tabindex="-1"
@@ -1116,7 +1170,7 @@
             <div class="flex justify-between mb-4 rounded-t sm:mb-5">
                 <div class="text-lg text-gray-900 md:text-xl dark:text-white">
                     <h3 class="font-semibold ">
-                        {{__("Co financing needed")}}
+                        {{__("Amount of co-financing needed")}}
                     </h3>
 
                 </div>
@@ -1130,7 +1184,7 @@
             </div>
             <dl>
                 <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{__("Instructions")}}</dt>
-                <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("Enter the budget for the cofinancing needed.")}}</dd>
+                <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("Enter the budget for the co-financing needed.")}}</dd>
                 <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{__("More help?")}}</dt>
                 <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{{__("If you need more help contact helpdesk@dsv.su.se")}}</dd>
             </dl>

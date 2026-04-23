@@ -1,6 +1,6 @@
 <div class="w-full mt-2 sm:col-span-2">
     <label for="funding_organization" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-        {{ __("Funding organization") }}
+        {{ __("Funding Agency") }}
         <button id="funding_organization-button"
                 data-modal-target="funding_organization-modal"
                 data-modal-toggle="funding_organization-modal"
@@ -12,7 +12,7 @@
     </label>
     <div class="w-full" x-data="{open:false, selectedOrganization: null}" x-on:click.away="open=false">
         <button type="button" class="font-mono bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 p-2.5 rounded-lg shadow-inner w-full flex justify-between items-center text-sm focus:outline-none" x-on:click="open=!open">
-            <span class="float-left" x-text="selectedOrganization ?? '{{ $organization->name ?? __("Select Funding organization") }}'"></span>
+            <span class="float-left" x-text="selectedOrganization ?? '{{ $organization->name ?? __("Select Funding Agency") }}'"></span>
             <svg class="h-4 transform float-right fill-current text-black dark:text-gray-200" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 129 129" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 129 129" :class="{'rotate-180': open}">
                 <g>
                     <path d="m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z"/>
@@ -22,7 +22,7 @@
         <div class="absolute z-10 max-w-[640px] rounded shadow-md bg-white" x-show="open" x-cloak>
             <ul class="list-reset p-2 max-h-64 overflow-y-auto text-sm">
                 <li>
-                    <input wire:model.live="search" wire:keydown.enter="save" @keydown.enter="open = false; $event.target.blur()" type="text" class="border-1 rounded h-10 w-full p-2">
+                    <input wire:model.live="search" wire:keydown.enter="save" @keydown.enter="open = false; $event.target.blur()" type="text" class="border rounded h-10 w-full p-2">
                 </li>
                 @forelse ($options as $item)
                     <li class="" wire:click="select({{$item->id}})"  x-on:click="open=false; selectedOrganization='{{$item->name}}'" id="Organization-{{$item->id}}" @keydown.enter="open=false; selectedOrganization='{{$item->name}}'; $event.target.blur()">
