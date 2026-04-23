@@ -121,7 +121,7 @@ class StatsController extends Controller
         $chart['agency'] = $this->buildBarChart(
             'barChartAgency',
             $org,
-            'Funding organization',
+            'Funding Agency',
             $orgStats,
             'rgba(128, 0, 128, 1)'
         );
