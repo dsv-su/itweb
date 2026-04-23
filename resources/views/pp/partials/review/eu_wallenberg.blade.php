@@ -1,7 +1,7 @@
 <div class="w-full sm:col-span-2">
     <!-- Label  -->
     <label for="eu_wallenberg_project" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-        {{ __("Is it an Wallenberg project?") }}<span class="text-red-600"> *</span>
+        {{ __("Is it a Wallenberg project?") }}<span class="text-red-600"> *</span>
         <button id="eu_wallenberg-button"
                 data-modal-target="eu_wallenberg-modal"
                 data-modal-toggle="eu_wallenberg-modal" class="inline" type="button">
