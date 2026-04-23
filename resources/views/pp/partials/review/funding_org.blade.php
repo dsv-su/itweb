@@ -1,6 +1,6 @@
 <div class="w-full sm:col-span-2">
     <label for="funding_organization" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-        {{ __("Founding organization") }}
+        {{ __("Founding Agency") }}
         <button id="funding_organization-button"
                 data-modal-target="funding_organization-modal"
                 data-modal-toggle="funding_organization-modal" class="inline" type="button">
