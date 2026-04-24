@@ -24,16 +24,20 @@ class OrgSelect2 extends Component
         $this->proposal = $proposal;
         $this->editOrg();
     }
-
+    
     public function editOrg()
     {
-        if(!empty($this->proposal->pp['funding_organization'])) {
-            $organization = FundingOrganization::where('name',$this->proposal->pp['funding_organization'])->first();
-            $this->organization = $organization;
-            $this->dispatch('selectedOrganization', $this->organization->id);
+        if (!empty($this->proposal->pp['funding_organization'])) {
+            $organization = FundingOrganization::where('name', $this->proposal->pp['funding_organization'])->first();
+
+            if ($organization) {
+                $this->organization = $organization;
+                $this->dispatch('selectedOrganization', $this->organization->id);
+            } else {
+                $this->organization = new FundingOrganization;
+            }
         }
     }
-
 
     public function getOptionsProperty()
     {
@@ -42,12 +46,13 @@ class OrgSelect2 extends Component
 
     public function save()
     {
-        $country = FundingOrganization::where('name',$this->search)->first();
-        if(!empty($organization)) {
-            $this->organization = $organization;
+        $organization = FundingOrganization::where('name', $this->search)->first();
 
+        if (!empty($organization)) {
+            $this->organization = $organization;
             $this->dispatch('selectedOrganization', $this->organization->id);
         }
+
         $this->search = "";
     }
 
