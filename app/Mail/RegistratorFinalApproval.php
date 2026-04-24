@@ -45,8 +45,14 @@ class RegistratorFinalApproval extends Mailable
      */
     public function content(): Content
     {
+        /*return new Content(
+            view: 'emails.projectproposal.registrator',
+        );*/
         return new Content(
             view: 'emails.projectproposal.registrator',
+            with: [
+                'proposal' => $this->dashboard->proposal,
+            ],
         );
     }
 

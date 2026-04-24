@@ -24,7 +24,7 @@ class OrgSelect2 extends Component
         $this->proposal = $proposal;
         $this->editOrg();
     }
-    
+
     public function editOrg()
     {
         if (!empty($this->proposal->pp['funding_organization'])) {
