@@ -9,9 +9,6 @@ Subject: Application with budget
 Hereby is the application for the project titled <b>{{$dashboard->name}}</b> together with the associated budget documentation.
 Both documents are attached to this email for registration and further processing.
 <br><br>
-Direct link to:
-<a href="{{ url('') }}/pp/view/{{$dashboard->request_id}}">{{$dashboard->name}}</a>
-<br><br>
 OVERVIEW:
 <br>
 --------------
