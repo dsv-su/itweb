@@ -18,10 +18,13 @@ OVERVIEW:
 <b>Principal Investigator at DSV:</b> {{$user->name}}
 <br>
 <b>Created:</b> {{Carbon\Carbon::createFromTimestamp($dashboard->created)->format('Y-m-d')}}
+
+<br><br>
+Proposal details:
+<br>
+--------------
 <br>
 <b>ProposalID:</b> {{$dashboard->request_id}}
-<br><br>
-<b>Proposal details:</b>
 <br>
 <b>Funding organization:</b> {{ data_get($proposal, 'pp.funding_organization', 'N/A') }}
 <br>
