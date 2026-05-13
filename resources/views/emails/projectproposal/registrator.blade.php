@@ -9,9 +9,6 @@ Subject: Application with budget
 Hereby is the application for the project titled <b>{{$dashboard->name}}</b> together with the associated budget documentation.
 Both documents are attached to this email for registration and further processing.
 <br><br>
-Direct link to:
-<a href="{{ url('') }}/pp/view/{{$dashboard->request_id}}">{{$dashboard->name}}</a>
-<br><br>
 OVERVIEW:
 <br>
 --------------
@@ -21,10 +18,13 @@ OVERVIEW:
 <b>Principal Investigator at DSV:</b> {{$user->name}}
 <br>
 <b>Created:</b> {{Carbon\Carbon::createFromTimestamp($dashboard->created)->format('Y-m-d')}}
+
+<br><br>
+Proposal details:
+<br>
+--------------
 <br>
 <b>ProposalID:</b> {{$dashboard->request_id}}
-<br><br>
-<b>Proposal details:</b>
 <br>
 <b>Funding organization:</b> {{ data_get($proposal, 'pp.funding_organization', 'N/A') }}
 <br>

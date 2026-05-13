@@ -28,11 +28,11 @@
         <div class="col-span-12 md:col-span-6 lg:col-span-4 md:order-3 md:grid-cols-2 lg:grid-cols-1 grid gap-2 xl:gap-4">
 
             <!-- Card right top -->
-            @nocache('home.partials.top_right')
+            @include('home.partials.newdsv')
             <!-- End Card -->
 
             <!-- Card right middle-->
-            @include('home.partials.newdsv')
+            @nocache('home.partials.top_right')
             <!-- End Card -->
 
             <!-- Card right bottom -->
