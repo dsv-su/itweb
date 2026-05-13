@@ -1,4 +1,4 @@
-<div class="md:order-3 p-6 relative flex flex-col justify-start items-start text-center rounded-xl border border-susecondary dark:border-gray-800">
+<div class="md:order-1 p-6 relative flex flex-col justify-start items-start text-center rounded-xl border border-susecondary dark:border-gray-800">
 
     <h3 class="text-lg md:text-xl font-semibold text-gray-800 dark:text-gray-200">
         {{__("New at DSV")}}
