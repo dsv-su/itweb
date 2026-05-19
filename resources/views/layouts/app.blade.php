@@ -15,6 +15,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="#">
     <meta name="keywords" content="#">
+    <!-- Set initial theme before paint to avoid FOUC -->
+    <script>
+        (function () {
+            const storageKey = 'color-theme';
+            const classList = document.documentElement.classList;
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            let stored;
+            try { stored = localStorage.getItem(storageKey); } catch (_) {}
+
+            const theme = stored || (prefersDark ? 'dark' : 'light');
+            if (theme === 'dark') classList.add('dark'); else classList.remove('dark');
+        })();
+    </script>
     @livewireStyles
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @vite(['resources/css/site.css'])
