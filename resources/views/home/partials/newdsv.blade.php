@@ -9,13 +9,32 @@
     </p>
 
     <div class="grid grid-cols- mt-2 w-full">
-        <a href="/new-at-dsv"
-           class="inline-flex w-full items-center justify-center gap-x-1.5 text-blue-800 font-medium py-2 px-4 border border-susecondary rounded-lg text-center dark:text-white">
-            {{__("New at DSV")}}
-            <svg class="w-2.5 h-2.5" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M5.27921 2L10.9257 7.64645C11.1209 7.84171 11.1209 8.15829 10.9257 8.35355L5.27921 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-            </svg>
-        </a>
+
+        <?php
+        use Statamic\Facades\Entry;
+        use Statamic\Facades\Site;
+
+        $entry = Entry::query()
+            ->where('collection', 'it')
+            ->where('slug', 'new-at-dsv')
+            ->first();
+
+        $site = Site::current()->handle();
+
+        $localized = $entry ? $entry->in($site) : null;
+        ?>
+
+        @if ($localized)
+            <a href="{{ $localized->url() }}"
+               aria-label="More ways for help"
+               class="inline-flex w-full items-center justify-center gap-x-1.5 text-blue-800 font-medium py-2 px-4 border border-susecondary rounded-lg text-center dark:text-white"
+            >
+                {{__("New at DSV")}}
+                <svg class="w-2.5 h-2.5" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M5.27921 2L10.9257 7.64645C11.1209 7.84171 11.1209 8.15829 10.9257 8.35355L5.27921 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                </svg>
+            </a>
+        @endif
     </div>
 
 </div>
