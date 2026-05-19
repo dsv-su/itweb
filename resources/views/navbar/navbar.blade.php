@@ -2,7 +2,23 @@
     <div class="relative flex flex-nowrap w-full h-14 px-3 mx-auto bg-white items-center justify-between
             md:px-6 lg:px-8 dark:border-gray-600 dark:bg-gray-900 overflow-visible"
             >
-        <a href="{{ config('app.url') }}" class="flex items-center mr-4 min-w-0">
+
+        <?php
+        use Statamic\Facades\Entry;
+        use Statamic\Facades\Site;
+
+        $entry = Entry::query()
+            ->where('collection', 'pages')
+            ->where('slug', 'home')
+            ->first();
+
+        $site = Site::current()->handle();
+
+        $localized = $entry ? $entry->in($site) : null;
+        ?>
+
+        @if ($localized)
+        <a  href="{{ $localized->url() }}" class="flex items-center mr-4 min-w-0">
             <div class="flex items-center opacity-90 h-full ml-2 dark:text-white">
                 <span class="px-1.5 py-1 text-xl leading-none border-2 border-black rounded-lg dark:border-white">
                     DSV
@@ -16,6 +32,7 @@
                 <span class="hidden md:block font-rock text-lg whitespace-nowrap dark:text-white">Dev</span>
             @endif
         </a>
+        @endif
 
         <!-- Mobile actions -->
         <div class="flex items-center gap-1 md:hidden shrink-0">
