@@ -3,8 +3,15 @@
         x-data="{
             open: false,
             activeIndex: -1,
+            init() {
+                this.$watch('$wire.q', () => {
+                    this.activeIndex = -1;
+                });
+            },
             items() {
-                return Array.from(this.$refs.results?.querySelectorAll('[role=option]') ?? []);
+                return Array.from(
+                    this.$refs.results?.querySelectorAll('[role=option]') || []
+                );
             },
             setActive(i) {
                 const els = this.items();
@@ -13,25 +20,43 @@
                 this.activeIndex = Math.max(0, Math.min(i, els.length - 1));
 
                 const el = els[this.activeIndex];
-                el?.focus?.({ preventScroll: true });
-                el?.scrollIntoView?.({ block: 'nearest' });
+
+                el?.scrollIntoView?.({
+                    block: 'nearest'
+                });
             },
             onKeydown(e) {
                 if (!this.open) return;
 
                 if (e.key === 'ArrowDown') {
                     e.preventDefault();
-                    this.setActive(this.activeIndex + 1);
+
+                    this.setActive(
+                        this.activeIndex >= this.items().length - 1
+                            ? 0
+                            : this.activeIndex + 1
+                    );
+
                 } else if (e.key === 'ArrowUp') {
                     e.preventDefault();
-                    this.setActive(this.activeIndex - 1);
+
+                    this.setActive(
+                        this.activeIndex <= 0
+                            ? this.items().length - 1
+                            : this.activeIndex - 1
+                    );
+
                 } else if (e.key === 'Enter') {
+
                     const el = this.items()[this.activeIndex];
+
                     if (el) {
                         e.preventDefault();
                         el.click();
                     }
+
                 } else if (e.key === 'Escape') {
+
                     this.open = false;
                     this.activeIndex = -1;
                     this.$refs.search?.blur();
@@ -59,15 +84,16 @@
                 placeholder="{{ __('Search') }}"
                 aria-label="{{ __('Search') }}"
                 @focus="open = true"
-                @blur="open = false"
+                @blur="setTimeout(() => open = false, 150)"
+                @keydown="onKeydown($event)"
+                x-ref="search"
                 class="absolute inset-y-0 left-0 h-full rounded-full border-0 bg-transparent px-5 pr-12 text-black outline-none
-                       transition-all duration-300 ease-out
-                       opacity-0 pointer-events-none w-0
-                       group-hover:opacity-100 group-hover:pointer-events-auto group-hover:w-full
-                       focus:opacity-100 focus:pointer-events-auto focus:w-full
-                       dark:text-gray-200 dark:placeholder:text-gray-400"
+           transition-all duration-300 ease-out
+           opacity-0 pointer-events-none w-0
+           group-hover:opacity-100 group-hover:pointer-events-auto group-hover:w-full
+           focus:opacity-100 focus:pointer-events-auto focus:w-full
+           dark:text-gray-200 dark:placeholder:text-gray-400"
             >
-
             <button
                 type="button"
                 class="absolute right-0 top-0 grid h-8 md:h-10 w-8 md:w-10 place-items-center rounded-full transition-colors duration-300 ease-out
@@ -96,8 +122,9 @@
 
             <div class="absolute right-0 top-full z-20 mt-2 w-72 md:w-96">
                 <div
+                    x-ref="results"
                     class="origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5
-                           dark:bg-gray-800 dark:text-white"
+                            dark:bg-gray-800 dark:text-white"
                     role="listbox"
                     aria-label="{{ __('Search results') }}"
                 >
@@ -120,9 +147,14 @@
 
                             @if ($url)
                                 <a
+                                    x-ref="option"
                                     href="{{ $url }}"
-                                    class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white"
                                     role="option"
+                                    tabindex="-1"
+                                    :class="activeIndex === {{ $loop->index }}
+                                    ? 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white'
+                                    : ''"
+                                    class="block px-4 py-2 hover:bg-gray-100 hover:text-gray-900"
                                 >
                                     <div class="flex items-center justify-between gap-3">
                                         <span class="font-medium">{{ $title }}</span>
