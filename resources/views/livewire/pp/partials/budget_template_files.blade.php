@@ -60,25 +60,28 @@
                             </svg>
                             <span class="sr-only">Delete</span>
                         </button>
-
-                        <select
-                            {{-- Livewire-safe binding key --}}
-                            wire:model.live="templateLang.{{ $safeKey }}"
-                            {{-- keep your file type in sync initially --}}
-                            @selected(false)
-                            class="bg-yellow-50 text-yellow-700 border border-yellow-400 text-[0.65rem] font-medium
-                               me-1 px-1 py-1 rounded hover:text-yellow-800
-                               dark:bg-yellow-800 dark:text-yellow-300 appearance-none leading-none">
-                            <option value="eng">English</option>
-                            <option value="swe">Swedish</option>
-                            <option value="eu">EU</option>
-                        </select>
-
-                        {{-- Ensure templateLang has an initial value if not set --}}
-                        @php
-                            // This is only visual; real init should be in component mount/storefiles.
-                            // But it prevents "blank select" if templateLang isn't populated yet.
-                        @endphp
+                        <div class="relative inline-block">
+                            <select
+                                {{-- Livewire-safe binding key --}}
+                                wire:model.live="templateLang.{{ $safeKey }}"
+                                {{-- keep your file type in sync initially --}}
+                                @selected(false)
+                                class="appearance-none bg-yellow-50 text-yellow-700 border border-yellow-400 text-[0.65rem] font-medium
+                                   me-1 px-1 py-1 rounded hover:text-yellow-800
+                                   dark:bg-yellow-800 dark:text-yellow-300 appearance-none leading-none">
+                                <option value="eng">English</option>
+                                <option value="swe">Swedish</option>
+                                <option value="eu">EU</option>
+                            </select>
+                            <svg
+                                class="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 size-3 text-yellow-700 dark:text-yellow-300"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                aria-hidden="true">
+                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
                     @endif
 
                     <button

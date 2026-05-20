@@ -4,12 +4,12 @@
     <!-- PP header -->
     @include('pp.partials.header')
     <section class="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5">
-        <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
+        <div class="mx-auto max-w-screen-2xl px-4 lg:px-12">
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
                 <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
                     <div class="w-full">
                         <div class="w-full pt-10 px-4 sm:px-6 md:px-8 lg:ps-[22rem]">
-                            <div class="lg:max-w-5xl mx-auto xl:max-w-6xl xl:ms-0 xl:me-48 xl:pe-12">
+                            <div class="max-w-none mx-auto xl:ms-0 xl:me-48 xl:pe-12">
                                 <header class="border-b pb-10 mb-10 dark:border-gray-700">
                                     <p class="mb-2 text-sm font-semibold text-blue-600">Vice Head</p>
                                     <h1 class="block text-2xl font-bold text-gray-800 sm:text-3xl dark:text-white">Project Proposals Settings</h1>
