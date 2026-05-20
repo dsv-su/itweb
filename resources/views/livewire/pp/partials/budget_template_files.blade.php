@@ -12,7 +12,7 @@
             <div class="mb-2 flex justify-between items-center">
                 <div class="flex items-center gap-x-3">
                 <span class="inline-block px-2 py-1 text-xs
-                    {{ in_array($pp_file['type'] ?? '', ['eng','swe','eu']) ? 'text-green-600 border-green-600' : 'text-gray-500 border-gray-200' }}
+                    {{ in_array($pp_file['type'] ?? '', ['eng','swe','eu', 'mcn']) ? 'text-green-600 border-green-600' : 'text-gray-500 border-gray-200' }}
                     border rounded-lg text-center dark:border-neutral-700 dark:text-neutral-500">
 
                     <svg class="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -60,28 +60,21 @@
                             </svg>
                             <span class="sr-only">Delete</span>
                         </button>
-                        <div class="relative inline-block">
-                            <select
-                                {{-- Livewire-safe binding key --}}
-                                wire:model.live="templateLang.{{ $safeKey }}"
-                                {{-- keep your file type in sync initially --}}
-                                @selected(false)
-                                class="appearance-none bg-yellow-50 text-yellow-700 border border-yellow-400 text-[0.65rem] font-medium
-                                   me-1 px-1 py-1 rounded hover:text-yellow-800
-                                   dark:bg-yellow-800 dark:text-yellow-300 appearance-none leading-none">
-                                <option value="eng">English</option>
-                                <option value="swe">Swedish</option>
-                                <option value="eu">EU</option>
-                            </select>
-                            <svg
-                                class="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 size-3 text-yellow-700 dark:text-yellow-300"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                aria-hidden="true">
-                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
+
+                        <select
+                            {{-- Livewire-safe binding key --}}
+                            wire:model.live="templateLang.{{ $safeKey }}"
+                            {{-- keep your file type in sync initially --}}
+                            @selected(false)
+                            class="bg-yellow-50 text-yellow-700 border border-yellow-400 text-[0.65rem] font-medium
+                               me-1 px-1 py-1 rounded hover:text-yellow-800
+                               dark:bg-yellow-800 dark:text-yellow-300 appearance-none leading-none">
+                            <option value="eng">DSV English</option>
+                            <option value="swe">DSV Swedish</option>
+                            <option value="eu">EU</option>
+                            <option value="mcn">Marie Curie Networks</option>
+
+                        </select>
                     @endif
 
                     <button

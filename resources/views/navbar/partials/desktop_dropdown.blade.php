@@ -45,7 +45,7 @@
                         </svg>
                         {{ __("DSV Standard Budget (Swedish)") }}
                     </span>
-                    <span class="block leading-5 opacity-50">
+                    <span class="block font-light leading-5 text-gray-600 dark:text-gray-600">
                         {{__('Template for all project applications')}}
                     </span>
                 </a>
@@ -54,10 +54,21 @@
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline-block mb-2 size-4">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
-                        {{ __("DSV Standard Budget EU") }}
+                        {{ __("EU Horizon Standard Budget EU") }}
                     </span>
-                    <span class="block leading-5 opacity-50">
+                    <span class="block font-light leading-5 text-gray-600 dark:text-gray-600">
                         {{__('Template for Horizon EU project applications')}}
+                    </span>
+                </a>
+                <a  href="{{route('budget.template', 'mcn')}}" @click="navigationMenuClose()" class="block px-3.5 py-3 text-sm rounded hover:bg-neutral-100">
+                    <span class="block mb-1 font-medium text-black">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline-block mb-2 size-4">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                        {{ __("Marie Curie Networks") }}
+                    </span>
+                    <span class="block font-light leading-5 text-gray-600 dark:text-gray-600">
+                        {{__('Template for Marie Curie Networks applications')}}
                     </span>
                 </a>
             </div>
