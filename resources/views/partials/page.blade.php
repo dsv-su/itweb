@@ -4,7 +4,7 @@
             <div class="mx-auto max-w-6xl px-4 sm:px-6 md:px-6">
                 <div class="py-4">
                     <article class="prose mt-4 mb-4 max-w-none rounded-xl bg-white p-8 antialiased shadow-xl dark:prose-invert dark:bg-gray-800 dark:text-white">
-                        <h1 class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                        <h1 class="mb-4 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
                             {!! $page->title !!}
                         </h1>
 

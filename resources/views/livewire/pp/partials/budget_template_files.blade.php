@@ -12,7 +12,7 @@
             <div class="mb-2 flex justify-between items-center">
                 <div class="flex items-center gap-x-3">
                 <span class="inline-block px-2 py-1 text-xs
-                    {{ in_array($pp_file['type'] ?? '', ['eng','swe','eu']) ? 'text-green-600 border-green-600' : 'text-gray-500 border-gray-200' }}
+                    {{ in_array($pp_file['type'] ?? '', ['eng','swe','eu', 'mcn']) ? 'text-green-600 border-green-600' : 'text-gray-500 border-gray-200' }}
                     border rounded-lg text-center dark:border-neutral-700 dark:text-neutral-500">
 
                     <svg class="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -69,16 +69,12 @@
                             class="bg-yellow-50 text-yellow-700 border border-yellow-400 text-[0.65rem] font-medium
                                me-1 px-1 py-1 rounded hover:text-yellow-800
                                dark:bg-yellow-800 dark:text-yellow-300 appearance-none leading-none">
-                            <option value="eng">English</option>
-                            <option value="swe">Swedish</option>
+                            <option value="eng">DSV English</option>
+                            <option value="swe">DSV Swedish</option>
                             <option value="eu">EU</option>
-                        </select>
+                            <option value="mcn">Marie Curie Networks</option>
 
-                        {{-- Ensure templateLang has an initial value if not set --}}
-                        @php
-                            // This is only visual; real init should be in component mount/storefiles.
-                            // But it prevents "blank select" if templateLang isn't populated yet.
-                        @endphp
+                        </select>
                     @endif
 
                     <button

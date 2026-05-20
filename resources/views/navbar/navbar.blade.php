@@ -227,7 +227,7 @@
                     {{ else }}
                     <li>
                         <a href="{{ url }}" aria-label="Nav link"
-                           class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
+                           class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-gray-700 md:p-0 md:dark:text-blue-500 md:hover:text-blue-700 dark:bg-white md:dark:bg-transparent"
                            aria-current="page">{{ title }}</a>
                     </li>
                     {{ /if }}

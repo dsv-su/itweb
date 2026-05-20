@@ -167,7 +167,7 @@ Route::prefix('projectproposals')
 |--------------------------------------------------------------------------
 */
 Route::get('budget/{type}', [\App\Http\Controllers\ProposalDownloadController::class, 'budget'])
-    ->whereIn('type', ['eng','swe','eu']) // allowed types
+    ->whereIn('type', ['eng','swe','eu','mcn']) // allowed types
     ->name('budget.template');
 
 Route::get('manual', [\App\Http\Controllers\ProposalDownloadController::class, 'usermanual'])->name('usermanual');

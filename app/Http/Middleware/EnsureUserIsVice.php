@@ -21,7 +21,7 @@ class EnsureUserIsVice
             abort(401);
         }
 
-        if($user->isVice()) {
+        if($user->isVice() || $user->isSuperAdmin()) {
             return $next($request);
         }
 
