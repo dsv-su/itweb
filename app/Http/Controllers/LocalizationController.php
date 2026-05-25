@@ -48,6 +48,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
+use Statamic\Facades\Site;
 
 class LocalizationController extends Controller
 {
@@ -59,10 +60,14 @@ class LocalizationController extends Controller
             return back();
         }
 
+        // 1) Laravel locale
         App::setLocale($locale);
         session()->put('locale', $locale);
         session(['localisation' => App::getLocale()]);
 
+        // 2) Statamic site (Antlers)
+        $site = Site::get($locale) ?: Site::default();
+        Site::setCurrent($site->handle());
         $previous = url()->previous();
         $parsed = parse_url($previous);
         $path = $parsed['path'] ?? '/';

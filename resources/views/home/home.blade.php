@@ -40,13 +40,13 @@
             <!-- End Card bottom-->
 
             <!-- Mobile links -->
-            @include('home.partials.moblie_links.daisy')
+            {{--}}@include('home.partials.moblie_links.daisy')
             @include('home.partials.moblie_links.forum')
             @include('home.partials.moblie_links.handledning')
             @include('home.partials.moblie_links.ilearn')
             @include('home.partials.moblie_links.otrs')
             @include('home.partials.moblie_links.play')
-            @include('home.partials.moblie_links.project_proposals')
+            @include('home.partials.moblie_links.project_proposals'){{--}}
             <!-- end mobile links -->
 
         </div>

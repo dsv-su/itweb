@@ -8,7 +8,7 @@
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
                 <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
                     <div class="w-full">
-                        <div class="w-full pt-10 px-4 sm:px-6 md:px-8 lg:ps-[22rem]">
+                        <div class="w-full pt-10 px-4 sm:px-6 md:px-8 lg:ps-88">
                             <div class="max-w-none mx-auto xl:ms-0 xl:me-48 xl:pe-12">
                                 <header class="border-b pb-10 mb-10 dark:border-gray-700">
                                     <p class="mb-2 text-sm font-semibold text-blue-600">Vice Head</p>
