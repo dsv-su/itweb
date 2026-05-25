@@ -48,8 +48,6 @@ document.addEventListener('livewire:load', () => {
 
 window.Chart = Chart
 
-// ... existing code ...
-
 function syncThemeIcons() {
   const isDark = document.documentElement.classList.contains('dark')
 

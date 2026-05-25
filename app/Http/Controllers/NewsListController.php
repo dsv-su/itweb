@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\App;
+use Statamic\Facades\Collection;
 use Statamic\View\View as StatamicView;
 use Statamic\Statamic;
 
@@ -10,17 +10,11 @@ class NewsListController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['checklang', 'locale']);
+        $this->middleware(['checklang']);
     }
 
-    public function list(string $collection)
+    public function list(string $lang, string $collection)
     {
-        return $this->renderList($collection);
-    }
-
-    public function swelist(string $collection)
-    {
-        App::setLocale('sv');
         return $this->renderList($collection);
     }
 
@@ -29,6 +23,8 @@ class NewsListController extends Controller
         // Basic hardening: only allow letters/numbers/dash/underscore
         abort_unless(preg_match('/^[a-z0-9\-_]+$/i', $collection), 404);
 
+        abort_unless(Collection::findByHandle($collection), 404);
+
         $collections = Statamic::tag('collection:' . $collection)
             ->where('collection', $collection)
             ->sort('date:desc')
@@ -36,7 +32,6 @@ class NewsListController extends Controller
 
         return (new StatamicView)
             ->template('news.list')
-            //->layout('mylayout')
             ->with([
                 'type' => 'news',
                 'collections' => $collections,

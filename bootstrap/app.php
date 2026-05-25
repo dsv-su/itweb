@@ -21,7 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'edit' => \App\Http\Middleware\EnsureUserForEdit::class,
             'fo' => \App\Http\Middleware\EnsureUserIsFO::class,
             'helpdesk' => \App\Http\Middleware\EnsureUserIsHelpDesk::class,
-            'checklang' => \App\Http\Middleware\CheckLocalizaion::class,
+            'checklang' => \App\Http\Middleware\CheckLocalization::class,
             'locale' => \App\Http\Middleware\Switchlocale::class,
             'download' => \App\Http\Middleware\EnsureUserForDownload::class,
             'vicehead' => \App\Http\Middleware\EnsureUserIsVice::class,

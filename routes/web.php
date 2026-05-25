@@ -7,8 +7,7 @@ use Illuminate\Support\Facades\Route;
 if (class_exists(AuthHandler::class))
     $login = app()->make('SystemService')->authorize()->global->login_route;
 
-//Setting for SU idplogin
-Route::get('/sulogin', 'SystemController@SUlogin')->name('sulogin');
+Route::get('/sulogin', [SystemController::class, 'SUlogin'])->name('sulogin');
 Route::get($login, [SystemController::class, 'login'])->name('login');
 
 // Locale constraint
@@ -92,19 +91,18 @@ Route::post('/fo', [\App\Http\Controllers\FOController::class, 'settings_fo'])
 Route::post('/fo_eu', [\App\Http\Controllers\FOController::class, 'settings_fo_eu'])
     ->name('fo_eu');
 
-Route::get('/assign_fo', [\App\Http\Controllers\AssignFOController::class, 'index'])
-    ->name('assign.fo');
+//Route::get('/assign_fo', [\App\Http\Controllers\AssignFOController::class, 'index'])
+//    ->name('assign.fo');
 
 /*
 |--------------------------------------------------------------------------
 | News list entries
 |--------------------------------------------------------------------------
 */
-Route::get('/en/newslist/{collection}', [\App\Http\Controllers\NewsListController::class, 'list'])
-    ->name('newslist.en');
 
-Route::get('/sv/newslist/{collection}', [\App\Http\Controllers\NewsListController::class, 'swelist'])
-    ->name('newslist.sv');
+Route::get('/{lang}/newslist/{collection}', [\App\Http\Controllers\NewsListController::class, 'list'])
+    ->where('lang', $langConstraint)
+    ->name('newslist');
 
 /*
 |--------------------------------------------------------------------------
