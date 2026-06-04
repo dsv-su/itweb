@@ -6,13 +6,33 @@
                     dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                placeholder="{{__("Please refine your search by typing to filter ID, User, Purpose, or ProjectID")}}">
     </div>
-    <!-- Pagination -->
-    <nav class="flex justify-end items-center dark:text-white" aria-label="Pagination">
-        {{ $dashboards->links() }}
-    </nav>
-    <!-- End Pagination -->
+    <div class="mb-6 flex justify-center">
+        <div class="inline-flex rounded-lg border border-gray-200 bg-white p-1 shadow-sm dark:border-gray-700 dark:bg-gray-800" role="group" aria-label="{{ __('Request type filter') }}">
+            <button
+                type="button"
+                wire:click="$set('requestType', 'travelrequest')"
+                wire:loading.attr="disabled"
+                class="rounded-md px-4 py-2 text-xs font-medium transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 {{ $requestType === 'travelrequest' ? 'bg-blue-600 text-white shadow-sm dark:bg-blue-500' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white' }}"
+            >
+                {{ __('Travelrequest') }}
+            </button>
+            <button
+                type="button"
+                wire:click="$set('requestType', 'projectproposal')"
+                wire:loading.attr="disabled"
+                class="rounded-md px-4 py-2 text-xs font-medium transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 {{ $requestType === 'projectproposal' ? 'bg-blue-600 text-white shadow-sm dark:bg-blue-500' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white' }}"
+            >
+                {{ __('Projectproposal') }}
+            </button>
+        </div>
+    </div>
+    @if ($dashboards->hasPages())
+        <div class="mb-6">
+            {{ $dashboards->onEachSide(1)->links('livewire.partials.request-search-pagination') }}
+        </div>
+    @endif
 
-    <div class="mt-8 relative overflow-x-auto shadow-md sm:rounded-lg">
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-white">
             <tr>
@@ -31,85 +51,46 @@
                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 dark:text-white">
 
                     <th scope="row" class="px-4 py-3 text-xs text-gray-900 whitespace-nowrap dark:text-white">
-                        {{--}}
-                        @if($dashboard->type == 'travelrequest')
-                            <span class="bg-blue-100 text-xs mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-white border border-blue-400">
-                            {{__("Travelrequest")}}
-                            </span>
-                        @else
-                            {{$dashboard->type}}
-                        @endif
-                        {{--}}
                         <span class="bg-blue-100 text-xs mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-white border border-blue-400">
-                            {{$dashboard->type}}
+                            {{ $dashboard->type === 'travelrequest' ? __('Travelrequest') : ucfirst(str_replace('_', ' ', (string) $dashboard->type)) }}
                         </span>
                     </th>
                     <td class="px-4 py-3 text-xs">{{$dashboard->name}}</td>
                     <td class="px-4 py-3 text-xs">{{$dashboard->request_id}}</td>
-                    <td class="px-4 py-3 text-xs">
-                        @switch($dashboard->state)
-                            @case('submitted')
-                                <span class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">
-                                    {{__("Submitted")}}
-                                </span>
-                            @break
-                            @case('manager_approved')
-                                <span class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">
-                                    {{__("Processing")}}
-                                </span>
-                            @break
-                            @case('manager_denied')
-                                <span class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400">
-                                    {{__("Denied")}}
-                                </span>
-                            @break
-                            @case('manager_returned')
-                                <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">
-                                    {{__("Returned by manager")}}
-                                </span>
-                            @break
-                            @case('fo_approved')
-                                <span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400">
-                                    {{__("Completed")}}
-                                </span>
-                            @break
-                            @case('fo_denied')
-                                <span class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400">
-                                    {{__("Denied")}}
-                                </span>
-                            @break
-                            @case('fo_returned')
-                                <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">
-                                    {{__("Returned")}}
-                                </span>
-                            @break
-                            @case('head_approved')
-                                <span class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">
-                                    {{__("Processing")}}
-                                </span>
-                            @break
-                            @case('head_denied')
-                                <span class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400">
-                                    {{__("Denied")}}
-                                </span>
-                            @break
-                            @case('head_returned')
-                                <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">
-                                    {{__("Returned")}}
-                                </span>
-                            @break
-                        @endswitch
+                    <td class="px-4 py-3 text-xs whitespace-nowrap">
+                        @php
+                            $state = (string) $dashboard->state;
+                            $stateLabel = match ($state) {
+                                'submitted' => __('Submitted'),
+                                'manager_approved', 'head_approved' => __('Processing'),
+                                'manager_denied', 'head_denied', 'fo_denied' => __('Denied'),
+                                'manager_returned' => __('Returned by manager'),
+                                'fo_returned', 'head_returned' => __('Returned'),
+                                'fo_approved' => __('Completed'),
+                                'final_approved' => __('Final Approved'),
+                                default => __(ucwords(str_replace('_', ' ', $state))),
+                            };
+                            $stateClass = match ($state) {
+                                'fo_approved', 'final_approved' => 'border-green-200 bg-green-50 text-green-700 dark:border-green-500/40 dark:bg-green-500/10 dark:text-green-300',
+                                'manager_denied', 'head_denied', 'fo_denied' => 'border-red-200 bg-red-50 text-red-700 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300',
+                                'manager_returned', 'fo_returned', 'head_returned' => 'border-gray-200 bg-gray-50 text-gray-700 dark:border-gray-500/40 dark:bg-gray-500/10 dark:text-gray-300',
+                                default => 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-500/40 dark:bg-blue-500/10 dark:text-blue-300',
+                            };
+                        @endphp
+
+                        <span class="inline-flex min-w-[7.75rem] items-center justify-center rounded-md border px-3 py-1.5 text-xs font-medium leading-4 {{ $stateClass }}">
+                            {{ $stateLabel }}
+                        </span>
                     </td>
-                    <td class="px-4 py-3 text-xs">{{\App\Models\User::find($dashboard->user_id)->name}}</td>
+                    <td class="px-4 py-3 text-xs">{{ $dashboard->user?->name ?? __('Unknown user') }}</td>
                     <td class="px-4 py-3 text-xs">{{\Carbon\Carbon::createFromTimestamp($dashboard->created)->toDateString()}}</td>
-                    <td>
+                    <td class="px-4 py-3 whitespace-nowrap">
                         <a type="button" href="{{route('fo-request-show', $dashboard->request_id)}}"
-                           class="text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300
-                                rounded-lg text-xs px-3 py-2 text-center me-2 mb-2 dark:border-green-500 dark:text-green-500 dark:hover:text-white dark:hover:bg-green-600 dark:focus:ring-green-800">
+                           class="inline-flex items-center justify-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-offset-gray-800">
                             {{__("Show")}}
                         </a>
                     </td>
-                    <td>
+                    <td class="px-4 py-3 whitespace-nowrap">
                         @if($dashboard->state == 'fo_approved' && $dashboard->type == 'travelrequest')
                             <a type="button" href="{{route('travel-request-pdf', $dashboard->request_id)}}"
                                class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300
@@ -125,11 +106,9 @@
                                 {{__("Download")}}
                             </a>
                         @else
-                            <div class="mt-1 text-yellow-400 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300
-                                        rounded-lg text-xs px-3 py-2 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white
-                                        dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+                            <span class="inline-flex items-center justify-center rounded-md border border-yellow-300 bg-yellow-50 px-3 py-1.5 text-xs font-medium text-yellow-700 dark:border-yellow-500/40 dark:bg-yellow-500/10 dark:text-yellow-300">
                                 {{__("Processing")}}
-                            </div>
+                            </span>
 
 
                         @endif
