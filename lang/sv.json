@@ -167,6 +167,9 @@
     "Travel dates": "Resedatum",
     "Select the departure and return dates for this trip": "Välj avrese- och returdatum för denna resa",
     "Projectleader": "Projekledare",
-    "Select who should review and approve this duty travel request": "Välj vem som ska granska och godkänna denna resebegäran"
+    "Select who should review and approve this duty travel request": "Välj vem som ska granska och godkänna denna resebegäran",
+    "Request details": "Resebegäran syfte",
+    "Name this request and describe the purpose of the mission": "Namnge denna begäran och beskriv syftet med resebegäran",
+    "Select the project and destination country for this duty travel request": "Välj projekt och destinationsland för resebeäran"
 
 }

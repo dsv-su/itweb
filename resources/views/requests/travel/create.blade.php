@@ -35,74 +35,102 @@
                 @endif
 
                 <div class="grid gap-4 mb-4 sm:grid-cols-2 sm:gap-6 sm:mb-5">
-                    <div class="w-full">
-                        @include('requests.travel.partials.form.field-label', [
-                            'for' => 'name',
-                            'label' => __('You may change this name'),
-                            'modal' => 'name',
-                            'class' => 'font-sans',
-                        ])
-
-                        <input
-                            type="text"
-                            name="name"
-                            id="name"
-                            class="{{ $inputClass }}"
-                            value="{{ old('name', $travelRequest?->name ?? $defaultName) }}"
-                            placeholder="{{ __('Name') }}"
-                            required
-                        >
-
-                        @include('requests.travel.partials.form.field-error', [
-                            'field' => 'name',
-                            'scrollToForm' => true,
-                        ])
-                    </div>
-
                     <div class="sm:col-span-2">
-                        @include('requests.travel.partials.form.field-label', [
-                            'for' => 'purpose',
-                            'label' => __('Purpose of the mission with the web address of the conference'),
-                            'required' => true,
-                            'modal' => 'purpose',
-                        ])
+                        <section class="rounded-xl border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800/70">
+                            <div class="rounded-t-xl border-b border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
+                                <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+                                    {{ __('Request details') }}
+                                </h3>
+                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                    {{ __('Name this request and describe the purpose of the mission') }}
+                                </p>
+                            </div>
 
-                        <textarea
-                            id="purpose"
-                            rows="4"
-                            name="purpose"
-                            class="@error('purpose') border-red-500 @enderror {{ $textareaClass }}"
-                            placeholder="{{ __('Describe the purpose of your mission') }}"
-                        >{{ old('purpose', $travelRequest?->purpose ?? '') }}</textarea>
+                            <div class="grid gap-4 px-4 py-5 sm:grid-cols-2 sm:gap-6 sm:px-5">
+                                <div class="w-full">
+                                    @include('requests.travel.partials.form.field-label', [
+                                        'for' => 'name',
+                                        'label' => __('You may change this name'),
+                                        'modal' => 'name',
+                                        'class' => 'font-sans',
+                                    ])
 
-                        @include('requests.travel.partials.form.field-error', [
-                            'field' => 'purpose',
-                            'scrollToForm' => true,
-                        ])
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        id="name"
+                                        class="{{ $inputClass }}"
+                                        value="{{ old('name', $travelRequest?->name ?? $defaultName) }}"
+                                        placeholder="{{ __('Name') }}"
+                                        required
+                                    >
+
+                                    @include('requests.travel.partials.form.field-error', [
+                                        'field' => 'name',
+                                        'scrollToForm' => true,
+                                    ])
+                                </div>
+
+                                <div class="w-full">
+                                    @include('requests.travel.partials.form.field-label', [
+                                        'for' => 'paper',
+                                        'label' => __('Paper accepted'),
+                                        'modal' => 'paper',
+                                    ])
+
+                                    <select
+                                        id="paper"
+                                        name="paper"
+                                        data-value="{{ $paperValue }}"
+                                        class="{{ $selectClass }}"
+                                    >
+                                        <option value="0" @selected($paperValue === 0)>{{ __('No') }}</option>
+                                        <option value="1" @selected($paperValue === 1)>{{ __('Yes') }}</option>
+                                    </select>
+                                </div>
+
+                                <div class="sm:col-span-2">
+                                    @include('requests.travel.partials.form.field-label', [
+                                        'for' => 'purpose',
+                                        'label' => __('Purpose of the mission with the web address of the conference'),
+                                        'required' => true,
+                                        'modal' => 'purpose',
+                                    ])
+
+                                    <textarea
+                                        id="purpose"
+                                        rows="4"
+                                        name="purpose"
+                                        class="@error('purpose') border-red-500 @enderror {{ $textareaClass }}"
+                                        placeholder="{{ __('Describe the purpose of your mission') }}"
+                                    >{{ old('purpose', $travelRequest?->purpose ?? '') }}</textarea>
+
+                                    @include('requests.travel.partials.form.field-error', [
+                                        'field' => 'purpose',
+                                        'scrollToForm' => true,
+                                    ])
+                                </div>
+                            </div>
+                        </section>
                     </div>
 
-                    <div class="w-full">
-                        @include('requests.travel.partials.form.field-label', [
-                            'for' => 'paper',
-                            'label' => __('Paper accepted'),
-                            'modal' => 'paper',
-                        ])
+                    <div class="relative z-30 sm:col-span-2">
+                        <section class="rounded-xl border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800/70">
+                            <div class="rounded-t-xl border-b border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
+                                <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+                                    {{ __('Project') }} & {{ __('Country') }}
+                                </h3>
+                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                    {{ __('Select the project and destination country for this duty travel request') }}
+                                </p>
+                            </div>
 
-                        <select
-                            id="paper"
-                            name="paper"
-                            data-value="{{ $paperValue }}"
-                            class="{{ $selectClass }}"
-                        >
-                            <option value="0" @selected($paperValue === 0)>{{ __('No') }}</option>
-                            <option value="1" @selected($paperValue === 1)>{{ __('Yes') }}</option>
-                        </select>
-                    </div>
+                            <div class="grid min-w-0 gap-4 px-4 py-5 sm:grid-cols-2 sm:gap-6 sm:px-5">
+                                @include('requests.travel.partials.projecttab')
 
-                    <div class="grid gap-4 sm:grid-cols-2 sm:gap-6 sm:col-span-2">
-                        @include('requests.travel.partials.projecttab')
-
-                        <livewire:travel-type :resume="$isResume ? $travelRequest->country : null" />
+                                <livewire:travel-type :resume="$isResume ? $travelRequest->country : null" />
+                            </div>
+                        </section>
                     </div>
 
                     <div class="sm:col-span-2">
