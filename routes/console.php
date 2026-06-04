@@ -13,3 +13,6 @@ Schedule::command('proposals:cleanup-abandoned --days=1')
 
 Schedule::command('send-proposal-reminders')
     ->dailyAt('21:00');
+
+Schedule::command('update-allowance')
+    ->dailyAt('21:00');

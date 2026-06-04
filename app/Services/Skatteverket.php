@@ -4,100 +4,95 @@ namespace App\Services;
 
 use App\Models\Country;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
+use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 
 class Skatteverket
 {
-    protected $endpoint, $client, $resource;
-    protected $list;
+    private const BASE_URI = 'https://skatteverket.entryscape.net/rowstore';
 
-    public function __construct()
+    private const DAILY_ALLOWANCE_DATASET = '/dataset/70ccea31-b64c-4bf5-84c7-673f04f32505';
+
+    private const REFERENCED_ALLOWANCES = [
+        'Se Myanmar' => 'Myanmar',
+        'Se Danmark' => 'Danmark',
+        'Se Övriga länder och områden' => 'Övriga länder och områden',
+        'Se Nordmakedonien' => 'Nordmakedonien, f.d. Makedonien',
+        'Se Italien' => 'Italien',
+        'Se Eswatini' => 'Eswatini',
+    ];
+
+    protected Client $client;
+
+    public function __construct(?Client $client = null)
     {
-        $this->client = new Client();
+        $this->client = $client ?? new Client;
     }
 
-    public function getResource($endpoint)
+    public function getResource(string $endpoint): ResponseInterface
     {
         try {
-            return $this->client->request('GET', 'https://skatteverket.entryscape.net/rowstore'. $endpoint, [
-                'headers' => ['Accept' =>  "application/json"]
+            return $this->client->request('GET', self::BASE_URI.$endpoint, [
+                'headers' => ['Accept' => 'application/json'],
             ]);
-        } catch (ClientException $e) {
+        } catch (GuzzleException $e) {
             report($e);
-            abort(404);
+            abort(404, 'Could not retrieve Skatteverket resource.');
         }
     }
 
-    //Retrieving countries
-    public function getCountry()
+    public function getCountry(?int $year = null): bool
     {
-        //Retrive allowances
-        $year = 2025;
-        $this->array_resource = json_decode($this->getResource('/dataset/70ccea31-b64c-4bf5-84c7-673f04f32505?%C3%A5r=' . $year . '&_limit=500&_offset=0')->getBody()->getContents(), TRUE);
+        $year ??= now()->year;
 
-        foreach ($this->array_resource['results'] as $result_country) {
-            $country = Country::updateOrCreate(
-                ['country' => $result_country['land eller område']],
-                ['allowance' => $result_country['normalbelopp'],
-                  'year' =>  $result_country['år']]
+        $query = http_build_query([
+            'år' => $year,
+            '_limit' => 500,
+            '_offset' => 0,
+        ], '', '&', PHP_QUERY_RFC3986);
+
+        $resource = json_decode(
+            $this->getResource(self::DAILY_ALLOWANCE_DATASET.'?'.$query)->getBody()->getContents(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        foreach ($resource['results'] ?? [] as $resultCountry) {
+            Country::updateOrCreate(
+                ['country' => $resultCountry['land eller område']],
+                [
+                    'allowance' => $resultCountry['normalbelopp'],
+                    'year' => $resultCountry['år'],
+                ]
             );
-
         }
+
         return true;
     }
 
-    public function checkAllowance()
+    public function checkAllowance(): void
     {
-        $countries = Country::all();
-        foreach($countries as $country) {
-            switch($country->allowance) {
-                //Burma
-                case('Se Myanmar'):
-                    $assign = Country::where('country', 'Myanmar')->first();
-                    $country->allowance = $assign->allowance;
-                    break;
-                //Grönland
-                case('Se Danmark'):
-                    $assign = Country::where('country', 'Danmark')->first();
-                    $country->allowance = $assign->allowance;
-                    break;
-                //Hong Kong
-                case('Se Kina'):
-                    $assign = Country::where('country', 'Kina')->first();
-                    $country->allowance = $assign->allowance;
-                    break;
-                //Iran
-                case('Se Övriga länder och områden'):
-                    $assign = Country::where('country', 'Övriga länder och områden')->first();
-                    $country->allowance = $assign->allowance;
-                    break;
-                //Makedonien
-                case('Se Nordmakedonien'):
-                    $assign = Country::where('country', 'Nordmakedonien, f.d. Makedonien')->first();
-                    $country->allowance = $assign->allowance;
-                    break;
-                //Puerto Rico
-                case('Se USA'):
-                    $assign = Country::where('country', 'USA')->first();
-                    $country->allowance = $assign->allowance;
-                    break;
-                //San Marino
-                case('Se Italien'):
-                    $assign = Country::where('country', 'Italien')->first();
-                    $country->allowance = $assign->allowance;
-                    break;
-                //Swaziland
-                case('Se Eswatini'):
-                    $assign = Country::where('country', 'Eswatini')->first();
-                    $country->allowance = $assign->allowance;
-                    break;
-                //Vitryssland
-                case('Se Belarus'):
-                    $assign = Country::where('country', 'Belarus')->first();
-                    $country->allowance = $assign->allowance;
-                    break;
-            }
-            $country->save();
-        }
+        $allowancesByCountry = Country::query()->pluck('allowance', 'country');
+
+        Country::query()
+            ->whereIn('allowance', array_keys(self::REFERENCED_ALLOWANCES))
+            ->each(function (Country $country) use ($allowancesByCountry): void {
+                $referencedCountry = self::REFERENCED_ALLOWANCES[$country->allowance];
+                $allowance = $allowancesByCountry->get($referencedCountry);
+
+                if ($allowance === null) {
+                    report(new RuntimeException("Missing referenced allowance country: {$referencedCountry}"));
+
+                    return;
+                }
+
+                if ($country->allowance === $allowance) {
+                    return;
+                }
+
+                $country->update(['allowance' => $allowance]);
+            });
     }
 }

@@ -1,5 +1,22 @@
 @extends('layouts.app')
 
+@php
+    $isResume = $type === 'resume';
+    $travelRequest = $isResume ? $tr : null;
+    $dashboardRequest = $isResume ? $dashboard : null;
+
+    $defaultName = 'Travelrequest for ' . auth()->user()->name;
+    $paperValue = (int) old('paper', $travelRequest?->paper ?? 0);
+
+    $formatTravelDate = fn ($timestamp) => $timestamp
+        ? \Carbon\Carbon::createFromTimestamp($timestamp)->format('Y-m-d')
+        : '';
+
+    $inputClass = 'font-mono bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-200 dark:focus:ring-primary-500 dark:focus:border-primary-500';
+    $selectClass = 'font-mono bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-200 dark:focus:ring-primary-500 dark:focus:border-primary-500';
+    $textareaClass = 'font-mono block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:placeholder:text-gray-200 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500';
+@endphp
+
 @section('content')
     @include('dsvheader')
     @include('navbar.navbar')
@@ -13,218 +30,183 @@
             <form method="post" action="{{ route('travel-submit') }}">
                 @csrf
 
-                @if($type === 'resume')
-                    <input type="hidden" name="id" value="{{ $tr->id }}">
+                @if($isResume)
+                    <input type="hidden" name="id" value="{{ $travelRequest->id }}">
                 @endif
 
                 <div class="grid gap-4 mb-4 sm:grid-cols-2 sm:gap-6 sm:mb-5">
-                    <!-- Name -->
                     <div class="w-full">
-                        <label for="name" class="font-sans block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            {{ __('You may change this name') }}
-                            <button
-                                id="name-button"
-                                data-modal-target="name-modal"
-                                data-modal-toggle="name-modal"
-                                class="inline"
-                                type="button"
-                            >
-                                <svg class="w-[16px] h-[16px] inline text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M8 9h2v5m-2 0h4M9.408 5.5h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                                </svg>
-                            </button>
-                        </label>
+                        @include('requests.travel.partials.form.field-label', [
+                            'for' => 'name',
+                            'label' => __('You may change this name'),
+                            'modal' => 'name',
+                            'class' => 'font-sans',
+                        ])
 
                         <input
                             type="text"
                             name="name"
                             id="name"
-                            class="font-mono bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-200 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                            value="{{ old('name', $tr->name ?? ('Travelrequest for ' . auth()->user()->name)) }}"
+                            class="{{ $inputClass }}"
+                            value="{{ old('name', $travelRequest?->name ?? $defaultName) }}"
                             placeholder="{{ __('Name') }}"
                             required
                         >
 
-                        @error('name')
-                            <p class="mt-3 text-sm leading-6 text-red-600" x-init="$el.closest('form').scrollIntoView()">
-                                {{ __('This is a required input') }}
-                            </p>
-                        @enderror
+                        @include('requests.travel.partials.form.field-error', [
+                            'field' => 'name',
+                            'scrollToForm' => true,
+                        ])
                     </div>
 
-                    <!-- Purpose -->
                     <div class="sm:col-span-2">
-                        <label for="purpose" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            {{ __('Purpose of the mission with the web address of the conference') }}
-                            <span class="text-red-600"> *</span>
-
-                            <button
-                                id="purpose-button"
-                                data-modal-target="purpose-modal"
-                                data-modal-toggle="purpose-modal"
-                                class="inline"
-                                type="button"
-                            >
-                                <svg class="w-[16px] h-[16px] inline text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M8 9h2v5m-2 0h4M9.408 5.5h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                                </svg>
-                            </button>
-                        </label>
+                        @include('requests.travel.partials.form.field-label', [
+                            'for' => 'purpose',
+                            'label' => __('Purpose of the mission with the web address of the conference'),
+                            'required' => true,
+                            'modal' => 'purpose',
+                        ])
 
                         <textarea
                             id="purpose"
                             rows="4"
                             name="purpose"
-                            class="@error('purpose') border-red-500 @enderror font-mono block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:placeholder:text-gray-200 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            class="@error('purpose') border-red-500 @enderror {{ $textareaClass }}"
                             placeholder="{{ __('Describe the purpose of your mission') }}"
-                        >{{ old('purpose', $tr->purpose ?? '') }}</textarea>
+                        >{{ old('purpose', $travelRequest?->purpose ?? '') }}</textarea>
 
-                        @error('purpose')
-                            <p class="mt-3 text-sm leading-6 text-red-600" x-init="$el.closest('form').scrollIntoView()">
-                                {{ __('This is a required input') }}
-                            </p>
-                        @enderror
+                        @include('requests.travel.partials.form.field-error', [
+                            'field' => 'purpose',
+                            'scrollToForm' => true,
+                        ])
                     </div>
 
-                    <!-- Paper accepted -->
                     <div class="w-full">
-                        <label for="paper" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            {{ __('Paper accepted') }}
-                            <button
-                                id="paper-button"
-                                data-modal-target="paper-modal"
-                                data-modal-toggle="paper-modal"
-                                class="inline"
-                                type="button"
-                            >
-                                <svg class="w-[16px] h-[16px] inline text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M8 9h2v5m-2 0h4M9.408 5.5h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                                </svg>
-                            </button>
-                        </label>
+                        @include('requests.travel.partials.form.field-label', [
+                            'for' => 'paper',
+                            'label' => __('Paper accepted'),
+                            'modal' => 'paper',
+                        ])
 
                         <select
                             id="paper"
                             name="paper"
-                            data-value="{{ old('paper', $tr->paper ?? 0) }}"
-                            class="font-mono bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-200 dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            data-value="{{ $paperValue }}"
+                            class="{{ $selectClass }}"
                         >
-                            @php($paperValue = (int) old('paper', $tr->paper ?? 0))
                             <option value="0" @selected($paperValue === 0)>{{ __('No') }}</option>
                             <option value="1" @selected($paperValue === 1)>{{ __('Yes') }}</option>
                         </select>
                     </div>
-                    <br>
-                    <!-- Project -->
-                    @include('requests.travel.partials.projecttab')
 
-                    <!-- Country -->
-                    <livewire:travel-type :resume="$type === 'resume' ? $tr->country : null" />
+                    <div class="grid gap-4 sm:grid-cols-2 sm:gap-6 sm:col-span-2">
+                        @include('requests.travel.partials.projecttab')
 
-                    <!-- Project leader -->
-                    <livewire:select2.projectleader-select2 />
-
-                    <!-- Unit head -->
-                    <div>
-                        <label for="unit_head" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            {{ __('Unit Head') }}<span class="text-red-600"> *</span>
-                            <button
-                                id="unithead-button"
-                                data-modal-target="unithead-modal"
-                                data-modal-toggle="unithead-modal"
-                                class="inline"
-                                type="button"
-                            >
-                                <svg class="w-[16px] h-[16px] inline text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M8 9h2v5m-2 0h4M9.408 5.5h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                                </svg>
-                            </button>
-                        </label>
-
-                        <select
-                            id="unit_head"
-                            name="unit_head"
-                            class="font-mono bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-200 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        >
-                            @foreach($unitheads as $unithead)
-                                <option
-                                    value="{{ $unithead->id }}"
-                                    @selected($type === 'resume' && $unithead->id == $dashboard->head_id)
-                                >
-                                    {{ $unithead->name }}
-                                </option>
-                            @endforeach
-                        </select>
-
-                        @error('unit_head')
-                            <p class="mt-3 text-sm leading-6 text-red-600">{{ __('This is a required input') }}</p>
-                        @enderror
+                        <livewire:travel-type :resume="$isResume ? $travelRequest->country : null" />
                     </div>
 
-                    <!-- Departure / return -->
-                    <div date-rangepicker datepicker-format="yyyy-mm-dd" class="flex flex-col sm:flex-row sm:col-span-2 items-center dark:text-gray-200">
-                        <div class="flex flex-col w-full sm:w-1/2">
-                            <label for="startInput" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                                {{ __('From') }}
-                            </label>
-
-                            <div class="relative w-full sm:w-auto">
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                    <svg class="w-4 h-4 text-blue-700 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
-                                    </svg>
-                                </div>
-
-                                <input
-                                    name="departure"
-                                    id="startInput"
-                                    type="text"
-                                    value="{{ old('departure', ($type === 'resume' && isset($tr?->departure)) ? \Carbon\Carbon::createFromTimestamp($tr->departure)->format('Y-m-d') : '') }}"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:placeholder:text-gray-200 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="{{ __('Select date start') }}"
-                                >
-
-                                @error('departure')
-                                    <p class="mt-3 text-sm leading-6 text-red-600">{{ __('This is a required input') }}</p>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col w-full sm:w-1/2 sm:mt-0 mt-4">
-                            <label for="endInput" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                                {{ __('To') }}
-                            </label>
-
-                            <div class="relative w-full sm:w-auto">
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                    <svg class="w-4 h-4 text-blue-700 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
-                                    </svg>
-                                </div>
-
-                                <input
-                                    name="return"
-                                    id="endInput"
-                                    type="text"
-                                    value="{{ old('return', ($type === 'resume' && isset($tr?->return)) ? \Carbon\Carbon::createFromTimestamp($tr->return)->format('Y-m-d') : '') }}"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:placeholder:text-gray-200 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="{{ __('Select date end') }}"
-                                >
-
-                                @error('return')
-                                    <p class="mt-3 text-sm leading-6 text-red-600">{{ __('This is a required input') }}</p>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Expenses -->
                     <div class="sm:col-span-2">
-                        <label for="expenses" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                            {{ __('Expenses') }}
-                        </label>
+                        <section class="rounded-xl border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800/70">
+                            <div class="rounded-t-xl border-b border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
+                                <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+                                    {{ __('Projectleader') }} & {{ __('Unit Head') }}
+                                </h3>
+                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                    {{ __('Select who should review and approve this duty travel request') }}
+                                </p>
+                            </div>
 
-                        <livewire:travel-request-expenses :tr="$type === 'resume' ? $tr : null" />
+                            <div class="grid gap-4 px-5 py-5 sm:grid-cols-2 sm:gap-6">
+                                <livewire:select2.projectleader-select2 />
+
+                                <div>
+                                    @include('requests.travel.partials.form.field-label', [
+                                        'for' => 'unit_head',
+                                        'label' => __('Unit Head'),
+                                        'required' => true,
+                                        'modal' => 'unithead',
+                                    ])
+
+                                    <select
+                                        id="unit_head"
+                                        name="unit_head"
+                                        class="{{ $selectClass }}"
+                                    >
+                                        @foreach($unitheads as $unithead)
+                                            <option
+                                                value="{{ $unithead->id }}"
+                                                @selected($isResume && $unithead->id == $dashboardRequest?->head_id)
+                                            >
+                                                {{ $unithead->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+
+                                    @include('requests.travel.partials.form.field-error', ['field' => 'unit_head'])
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <section class="overflow-hidden rounded-xl border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800/70">
+                            <div class="border-b border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
+                                <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+                                    {{ __('Travel dates') }}
+                                </h3>
+                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                    {{ __('Select the departure and return dates for this trip') }}
+                                </p>
+                            </div>
+
+                            <div
+                                date-rangepicker
+                                datepicker-format="yyyy-mm-dd"
+                                class="flex flex-col px-5 py-5 sm:flex-row sm:gap-4 dark:text-gray-200"
+                            >
+                                @include('requests.travel.partials.form.date-input', [
+                                    'id' => 'startInput',
+                                    'name' => 'departure',
+                                    'label' => __('From'),
+                                    'value' => old('departure', $formatTravelDate($travelRequest?->departure)),
+                                    'placeholder' => __('Select date start'),
+                                ])
+
+                                @include('requests.travel.partials.form.date-input', [
+                                    'id' => 'endInput',
+                                    'name' => 'return',
+                                    'label' => __('To'),
+                                    'value' => old('return', $formatTravelDate($travelRequest?->return)),
+                                    'placeholder' => __('Select date end'),
+                                    'wrapperClass' => 'sm:mt-0 mt-4',
+                                ])
+                            </div>
+                        </section>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <section class="overflow-hidden rounded-xl border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800/70">
+                            <div class="border-b border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
+                                <div class="flex items-center justify-between gap-4">
+                                    <div>
+                                        <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+                                            {{ __('Expenses') }}
+                                        </h3>
+                                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                            {{ __('Estimated costs for the duty travel request') }}
+                                        </p>
+                                    </div>
+
+                                    <span class="hidden rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-200 dark:bg-blue-900/30 dark:text-blue-200 dark:ring-blue-800 sm:inline-flex">
+                                        {{ __('SEK') }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="px-5 py-5">
+                                <livewire:travel-request-expenses :tr="$isResume ? $travelRequest : null" />
+                            </div>
+                        </section>
                     </div>
                 </div>
 
@@ -233,28 +215,30 @@
         </div>
     </section>
 
-    <!-- Modals -->
     @include('requests.travel.modals.travel_help')
 
     @push('scripts')
         <script>
-            // Keeps Flowbite date-range picker from auto-setting the other input
-            const startInput = document.getElementById('startInput');
-            const endInput = document.getElementById('endInput');
+            const travelDateEvents = {
+                startInput: 'changeStartDate',
+                endInput: 'changeEndDate',
+            };
 
-            if (startInput) {
-                startInput.addEventListener('changeDate', function (e) {
-                    Livewire.dispatch('changeStartDate', { date: e.detail.datepicker.inputField.value });
-                    e.detail.datepicker.hide();
-                });
-            }
+            Object.entries(travelDateEvents).forEach(([inputId, eventName]) => {
+                const input = document.getElementById(inputId);
 
-            if (endInput) {
-                endInput.addEventListener('changeDate', function (e) {
-                    Livewire.dispatch('changeEndDate', { date: e.detail.datepicker.inputField.value });
-                    e.detail.datepicker.hide();
+                if (!input) {
+                    return;
+                }
+
+                input.addEventListener('changeDate', (event) => {
+                    Livewire.dispatch(eventName, {
+                        date: event.detail.datepicker.inputField.value,
+                    });
+
+                    event.detail.datepicker.hide();
                 });
-            }
+            });
         </script>
     @endpush
 @endsection
