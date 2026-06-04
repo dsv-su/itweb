@@ -18,6 +18,7 @@
         ?>
 
         @if ($localized)
+        <!-- DSV Logo -->
         <a  href="{{ $localized->url() }}" class="flex items-center mr-4 min-w-0">
             <div class="flex items-center opacity-90 h-full ml-2 dark:text-white">
                 <span class="px-1.5 py-1 text-xl leading-none border-2 border-black rounded-lg dark:border-white">
@@ -32,6 +33,7 @@
                 <span class="hidden md:block font-rock text-lg whitespace-nowrap dark:text-white">Dev</span>
             @endif
         </a>
+        <!-- end DSV Logo -->
         @endif
 
         <!-- Mobile actions -->

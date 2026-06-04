@@ -1,11 +1,15 @@
 {
   "resources/css/site.css": {
-    "file": "assets/site-B7UXQ8lJ.css",
-    "src": "resources/css/site.css",
-    "isEntry": true,
+    "file": "assets/site-B5c5SD95.css",
     "name": "site",
     "names": [
       "site.css"
+    ],
+    "src": "resources/css/site.css",
+    "isEntry": true,
+    "assets": [
+      "assets/Nunito-VariableFont_wght-D2sADkEI.ttf",
+      "assets/RockSalt-Regular-CHgLtmW_.ttf"
     ]
   },
   "resources/fonts/Nunito/Nunito-VariableFont_wght.ttf": {
@@ -17,7 +21,7 @@
     "src": "resources/fonts/Rock_Salt/RockSalt-Regular.ttf"
   },
   "resources/js/site.js": {
-    "file": "assets/site-gPwK627X.js",
+    "file": "assets/site-CHKM7afq.js",
     "name": "site",
     "src": "resources/js/site.js",
     "isEntry": true

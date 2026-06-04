@@ -2,12 +2,16 @@
 @import "../../node_modules/flowbite-datepicker/dist/css/datepicker.css";
 @import "tailwindcss";
 
-@config "../../tailwind.config.js";
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* Plugins (Tailwind v4 CSS-first way) */
 @plugin "@tailwindcss/typography";
 @plugin "flowbite/plugin";
+
+@source "../../app";
+@source "../../content";
+@source "../../resources";
+@source "../../vendor/haringsrob/livewire-datepicker/resources";
 
 /* Let Tailwind scan Flowbite for classnames */
 @source "../../node_modules/flowbite";
