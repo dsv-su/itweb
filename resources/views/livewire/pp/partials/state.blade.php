@@ -60,7 +60,7 @@
     @case('fo_denied')
     @case('denied')
         @php
-            $state = 'DENIED';
+            $state = 'REJECTED';
             $bgcolor = 'bg-red-100';
             $textcolor = 'text-red-800';
         @endphp
