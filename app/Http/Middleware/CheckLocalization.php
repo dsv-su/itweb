@@ -31,17 +31,20 @@ class CheckLocalization
         } elseif ($lang === 'sv' || $lang === 'en') {
             $locale = $lang;
         } else {
-            $locale = config('app.fallback_locale', 'en');
+            $locale = session('locale', config('app.fallback_locale', 'en'));
         }
 
-        //App::setLocale($locale);
         // 1) Laravel locale (Blade translations, validation, etc.)
         App::setLocale($locale);
 
         // 2) Statamic site (Antlers content localization)
-        $site = Site::get($locale) ?: Site::default();
+        $site = Site::get($locale)
+            ?: Site::all()->first(fn ($site) => $site->shortLocale() === $locale || $site->lang() === $locale)
+            ?: Site::default();
 
-        Site::setCurrent($site->handle());
+        if ($site) {
+            Site::setCurrent($site->handle());
+        }
 
         return $next($request);
     }

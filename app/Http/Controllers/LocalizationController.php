@@ -66,8 +66,13 @@ class LocalizationController extends Controller
         session(['localisation' => App::getLocale()]);
 
         // 2) Statamic site (Antlers)
-        $site = Site::get($locale) ?: Site::default();
-        Site::setCurrent($site->handle());
+        $site = Site::get($locale)
+            ?: Site::all()->first(fn ($site) => $site->shortLocale() === $locale || $site->lang() === $locale)
+            ?: Site::default();
+
+        if ($site) {
+            Site::setCurrent($site->handle());
+        }
         $previous = url()->previous();
         $parsed = parse_url($previous);
         $path = $parsed['path'] ?? '/';
