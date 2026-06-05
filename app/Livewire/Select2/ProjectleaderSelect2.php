@@ -18,10 +18,9 @@ class ProjectleaderSelect2 extends Component
         'clearprojectleader'
     ];
 
-    public function mount()
+    public function mount(?string $projectleaderId = null)
     {
-        //Retrive auth user
-        $this->projectleader = Auth::user();
+        $this->projectleader = User::find($projectleaderId) ?: Auth::user();
     }
 
     public function getOptionsProperty()

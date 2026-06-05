@@ -28,6 +28,11 @@ class EnsureUserForShow
             abort(401);
         }
         $dashboard = Dashboard::find($id);
+
+        if (! $dashboard) {
+            abort(404);
+        }
+
         $valid_viewers = [
             $dashboard->user_id,
             $dashboard->manager_id,

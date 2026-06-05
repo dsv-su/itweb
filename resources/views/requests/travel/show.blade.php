@@ -28,8 +28,8 @@
         $days = (int) ($tr->days ?? 0);
         $dailyTotal = $daily * $days;
 
-        $valueClass = 'font-mono w-full p-2.5 text-sm rounded-lg border border-gray-300 bg-gray-50 text-gray-900 break-words dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200';
-        $textareaClass = 'font-mono block w-full p-2.5 text-sm rounded-lg border border-gray-300 bg-gray-50 text-gray-900 break-words focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400';
+        $valueClass = 'font-mono w-full p-2.5 text-sm rounded-lg border border-gray-400 bg-white text-gray-950 shadow-sm break-words dark:bg-gray-950 dark:border-gray-500 dark:text-white';
+        $textareaClass = 'font-mono block w-full p-2.5 text-sm rounded-lg border border-gray-400 bg-white text-gray-950 shadow-sm break-words focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-950 dark:border-gray-500 dark:text-white dark:placeholder-gray-400';
         $labelClass = 'block mb-2 text-sm font-medium text-gray-900 dark:text-white';
     @endphp
 
@@ -49,7 +49,7 @@
                     </a>
 
                     @if($isReturned)
-                        <form method="POST" action="{{ route('travel-request-resume', $tr) }}" class="sm:flex-none">
+                        <form method="POST" action="{{ app()->getLocale() === 'sv' ? url('/swe/travelresume/' . $tr->id) : route('travel-request-resume', $tr) }}" class="sm:flex-none">
                             @csrf
                             <button
                                 type="submit"
@@ -276,7 +276,7 @@
                                 <label class="{{ $labelClass }}">
                                     {{ __('Total') }}
                                 </label>
-                                <div class="font-mono w-full rounded-lg border border-blue-200 bg-blue-50 p-2.5 text-sm font-semibold text-blue-900 break-words dark:border-blue-800 dark:bg-blue-900/30 dark:text-blue-100">
+                                <div class="font-mono w-full rounded-lg border border-blue-400 bg-white p-2.5 text-sm font-semibold text-blue-950 shadow-sm break-words dark:border-blue-500 dark:bg-gray-950 dark:text-blue-100">
                                     {{ $tr->total ?? 0 }} SEK
                                 </div>
                             </div>

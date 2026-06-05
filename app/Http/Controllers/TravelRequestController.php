@@ -25,7 +25,7 @@ class TravelRequestController extends Controller
 
     public function __construct()
     {
-        $this->middleware('show')->except(['create', 'resume', 'submit']);
+        $this->middleware('show')->except(['create', 'resume', 'resumeLocalized', 'submit']);
         $this->middleware(['checklang', 'locale']);
     }
 
@@ -36,6 +36,16 @@ class TravelRequestController extends Controller
      * @return \Statamic\View\View
      */
     public function show($id)
+    {
+        return $this->showTravelRequest($id);
+    }
+
+    public function showLocalized(string $lang, $id)
+    {
+        return $this->showTravelRequest($id);
+    }
+
+    private function showTravelRequest($id)
     {
         $dashboard = Dashboard::findOrFail($id);
         $tr = TravelRequest::findOrFail($dashboard->request_id);
@@ -54,6 +64,16 @@ class TravelRequestController extends Controller
 
     public function resume(TravelRequest $tr)
     {
+        return $this->resumeTravelRequest($tr);
+    }
+
+    public function resumeLocalized(string $lang, TravelRequest $tr)
+    {
+        return $this->resumeTravelRequest($tr);
+    }
+
+    private function resumeTravelRequest(TravelRequest $tr)
+    {
         $viewData = $this->prepareTravelRequestData();
 
         // Fetching dashboard
@@ -61,6 +81,14 @@ class TravelRequestController extends Controller
         $viewData['type'] = 'resume';
         $viewData['tr'] = $tr;
         $viewData['dashboard'] = $dashboard;
+
+        if ($dashboard?->head_id && ! $viewData['unitheads']->contains('id', $dashboard->head_id)) {
+            $unitHead = User::find($dashboard->head_id);
+
+            if ($unitHead) {
+                $viewData['unitheads']->push($unitHead);
+            }
+        }
 
         return $this->createView('requests.travel.create', 'mylayout', $viewData);
     }

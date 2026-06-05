@@ -20,6 +20,7 @@ class ReviewController extends Controller
     public function __construct()
     {
         $this->middleware(['web', 'auth', 'dsv']);
+        $this->middleware(['checklang', 'locale']);
         $this->middleware('review')->except(['pp_view']);
         $this->middleware('view')->only(['pp_view']);
     }
@@ -81,6 +82,16 @@ class ReviewController extends Controller
     }
 
     public function show($id)
+    {
+        return $this->showTravelRequest($id);
+    }
+
+    public function showLocalized(string $lang, $id)
+    {
+        return $this->showTravelRequest($id);
+    }
+
+    private function showTravelRequest($id)
     {
         $dashboard = Dashboard::findOrFail($id);
         $tr = TravelRequest::findOrFail($dashboard->request_id);

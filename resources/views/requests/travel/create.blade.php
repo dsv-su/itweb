@@ -145,7 +145,7 @@
                             </div>
 
                             <div class="grid gap-4 px-5 py-5 sm:grid-cols-2 sm:gap-6">
-                                <livewire:select2.projectleader-select2 />
+                                <livewire:select2.projectleader-select2 :projectleader-id="old('project_leader', $isResume ? $dashboardRequest?->manager_id : null)" />
 
                                 <div>
                                     @include('requests.travel.partials.form.field-label', [
@@ -163,7 +163,7 @@
                                         @foreach($unitheads as $unithead)
                                             <option
                                                 value="{{ $unithead->id }}"
-                                                @selected($isResume && $unithead->id == $dashboardRequest?->head_id)
+                                                @selected((string) old('unit_head', $isResume ? $dashboardRequest?->head_id : '') === (string) $unithead->id)
                                             >
                                                 {{ $unithead->name }}
                                             </option>

@@ -35,11 +35,17 @@ Route::get('/{lang}/travel', [\App\Http\Controllers\TravelRequestController::cla
 Route::get('/travel/show/{travelRequest}', [\App\Http\Controllers\TravelRequestController::class, 'show'])
     ->name('travel-request-show');
 
+Route::get('/{lang}/travel/show/{travelRequest}', [\App\Http\Controllers\TravelRequestController::class, 'showLocalized'])
+    ->where('lang', $langConstraint);
+
 Route::post('/travel', [\App\Http\Controllers\TravelRequestController::class, 'submit'])
     ->name('travel-submit');
 
-Route::post('/travelresume/{tr}', [\App\Http\Controllers\TravelRequestController::class, 'resume'])
+Route::match(['get', 'post'], '/travelresume/{tr}', [\App\Http\Controllers\TravelRequestController::class, 'resume'])
     ->name('travel-request-resume');
+
+Route::match(['get', 'post'], '/{lang}/travelresume/{tr}', [\App\Http\Controllers\TravelRequestController::class, 'resumeLocalized'])
+    ->where('lang', $langConstraint);
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +54,9 @@ Route::post('/travelresume/{tr}', [\App\Http\Controllers\TravelRequestController
 */
 Route::get('/travel/review/{travelRequest}', [\App\Http\Controllers\ReviewController::class, 'show'])
     ->name('travel-request-review');
+
+Route::get('/{lang}/travel/review/{travelRequest}', [\App\Http\Controllers\ReviewController::class, 'showLocalized'])
+    ->where('lang', $langConstraint);
 
 Route::post('/review/{travelRequest}', [\App\Http\Controllers\ReviewController::class, 'review'])
     ->name('review');
