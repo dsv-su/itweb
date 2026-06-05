@@ -102,7 +102,7 @@
                         {{ __("Available e-services") }}
                     </div>
                     <div class="grid grid-cols-3 gap-4 p-4">
-                        <a href="{{ route('travel-request-create') }}" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group">
+                        <a href="{{ app()->getLocale() === 'sv' ? url('/swe/travel') : route('travel-request-create') }}" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group">
                             <svg class="mx-auto mb-2 w-5 h-5 text-blue-600 group-hover:text-white dark:text-white dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 9V4a3 3 0 0 0-6 0v5m9.92 10H2.08a1 1 0 0 1-1-1.077L2 6h14l.917 11.923A1 1 0 0 1 15.92 19Z"/>
                             </svg>
