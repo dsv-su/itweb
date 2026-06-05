@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Review;
 
 use App\Models\Dashboard;
@@ -13,8 +14,11 @@ use RuntimeException;
 class RequestReviewHandler
 {
     protected Dashboard $dashboard;
+
     protected User $reviewer;
+
     protected string $comment;
+
     protected WorkflowHandler $workflowhandler;
 
     protected string $decision;
@@ -26,7 +30,7 @@ class RequestReviewHandler
         $this->comment = trim((string) $comment);
         $this->decision = $decision;
 
-        $this->workflowhandler = new WorkflowHandler((int)$this->dashboard->workflow_id);
+        $this->workflowhandler = new WorkflowHandler((int) $this->dashboard->workflow_id);
     }
 
     public function review(): void
@@ -38,7 +42,7 @@ class RequestReviewHandler
     private function registerCommentAndTransition(): void
     {
         if ($this->dashboard->type !== 'travelrequest') {
-            throw new RuntimeException('Unsupported dashboard type: ' . (string) $this->dashboard->type);
+            throw new RuntimeException('Unsupported dashboard type: '.(string) $this->dashboard->type);
         }
 
         $tr = TravelRequest::query()->findOrFail($this->dashboard->request_id);
@@ -48,19 +52,21 @@ class RequestReviewHandler
             throw new RuntimeException('Reviewer is not allowed to review this request in the current state.');
         }
 
-        $commentId = match ($role) {
-            'manager' => $this->managerComment('travelrequest', $tr->id, $this->reviewer->id, $this->comment)->id,
-            'head' => $this->headComment('travelrequest', $tr->id, $this->reviewer->id, $this->comment)->id,
-            'fo' => $this->foComment('travelrequest', $tr->id, $this->reviewer->id, $this->comment)->id,
-            default => throw new RuntimeException('Unsupported role: ' . $role),
+        $comment = match ($role) {
+            'manager' => $this->managerComment('travelrequest', $tr->id, $this->reviewer->id, $this->comment),
+            'head' => $this->headComment('travelrequest', $tr->id, $this->reviewer->id, $this->comment),
+            'fo' => $this->foComment('travelrequest', $tr->id, $this->reviewer->id, $this->comment),
+            default => throw new RuntimeException('Unsupported role: '.$role),
         };
 
-        if ($role === 'manager') {
-            $tr->manager_comment_id = $commentId;
-        } elseif ($role === 'head') {
-            $tr->head_comment_id = $commentId;
-        } elseif ($role === 'fo') {
-            $tr->fo_comment_id = $commentId;
+        if ($comment) {
+            if ($role === 'manager') {
+                $tr->manager_comment_id = $comment->id;
+            } elseif ($role === 'head') {
+                $tr->head_comment_id = $comment->id;
+            } elseif ($role === 'fo') {
+                $tr->fo_comment_id = $comment->id;
+            }
         }
 
         // Persist the new dashboard state (this is what your await() checks)
@@ -77,18 +83,18 @@ class RequestReviewHandler
         $map = [
             'manager' => [
                 'approve' => 'manager_approved',
-                'return'  => 'manager_returned',
-                'deny'    => 'manager_denied',
+                'return' => 'manager_returned',
+                'deny' => 'manager_denied',
             ],
             'head' => [
                 'approve' => 'head_approved',
-                'return'  => 'head_returned',
-                'deny'    => 'head_denied',
+                'return' => 'head_returned',
+                'deny' => 'head_denied',
             ],
             'fo' => [
                 'approve' => 'fo_approved',
-                'return'  => 'fo_returned',
-                'deny'    => 'fo_denied',
+                'return' => 'fo_returned',
+                'deny' => 'fo_denied',
             ],
         ];
 
@@ -127,22 +133,22 @@ class RequestReviewHandler
         $map = [
             'manager' => [
                 'approve' => 'managerApprove',
-                'return'  => 'managerReturn',
-                'deny'    => 'managerDeny',
+                'return' => 'managerReturn',
+                'deny' => 'managerDeny',
             ],
             'head' => [
                 'approve' => 'headApprove',
-                'return'  => 'headReturn',
-                'deny'    => 'headDeny',
+                'return' => 'headReturn',
+                'deny' => 'headDeny',
             ],
             'fo' => [
                 'approve' => 'foApprove',
-                'return'  => 'foReturn',
-                'deny'    => 'foDeny',
+                'return' => 'foReturn',
+                'deny' => 'foDeny',
             ],
         ];
 
-        if (!isset($map[$role][$decision])) {
+        if (! isset($map[$role][$decision])) {
             throw new InvalidArgumentException("Invalid decision '{$decision}' for role '{$role}'.");
         }
 
@@ -152,7 +158,7 @@ class RequestReviewHandler
 
     private function assertValidDecision(string $decision): void
     {
-        if (!in_array($decision, ['approve', 'return', 'deny'], true)) {
+        if (! in_array($decision, ['approve', 'return', 'deny'], true)) {
             throw new InvalidArgumentException("Invalid decision: {$decision}");
         }
     }
@@ -161,13 +167,10 @@ class RequestReviewHandler
     {
         switch ($type) {
             case 'travelrequest':
-                $id = ManagerComment::updateOrCreate(
-                    ['reqid' => $req_id, 'user_id' => $role_id],
-                    ['comment' => $comment]
-                );
+                $id = $this->createComment(ManagerComment::class, $req_id, $role_id, $comment);
                 break;
             default:
-                throw new RuntimeException('Unsupported comment type: ' . (string) $type);
+                throw new RuntimeException('Unsupported comment type: '.(string) $type);
         }
 
         return $id;
@@ -177,13 +180,10 @@ class RequestReviewHandler
     {
         switch ($type) {
             case 'travelrequest':
-                $id = FoComment::updateOrCreate(
-                    ['reqid' => $req_id, 'user_id' => $role_id],
-                    ['comment' => $comment]
-                );
+                $id = $this->createComment(FoComment::class, $req_id, $role_id, $comment);
                 break;
             default:
-                throw new RuntimeException('Unsupported comment type: ' . (string) $type);
+                throw new RuntimeException('Unsupported comment type: '.(string) $type);
         }
 
         return $id;
@@ -193,15 +193,25 @@ class RequestReviewHandler
     {
         switch ($type) {
             case 'travelrequest':
-                $id = HeadComment::updateOrCreate(
-                    ['reqid' => $req_id, 'user_id' => $role_id],
-                    ['comment' => $comment]
-                );
+                $id = $this->createComment(HeadComment::class, $req_id, $role_id, $comment);
                 break;
             default:
-                throw new RuntimeException('Unsupported comment type: ' . (string) $type);
+                throw new RuntimeException('Unsupported comment type: '.(string) $type);
         }
 
         return $id;
+    }
+
+    private function createComment(string $modelClass, string $requestId, string $userId, string $comment)
+    {
+        if ($comment === '') {
+            return null;
+        }
+
+        return $modelClass::create([
+            'reqid' => $requestId,
+            'user_id' => $userId,
+            'comment' => $comment,
+        ]);
     }
 }

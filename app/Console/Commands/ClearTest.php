@@ -28,7 +28,7 @@ class ClearTest extends Command
      */
     public function handle()
     {
-        /*DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('failed_jobs')->truncate();
         DB::table('workflow_exceptions')->truncate();
         DB::table('workflow_logs')->truncate();
@@ -42,6 +42,8 @@ class ClearTest extends Command
         DB::table('fo_comments')->truncate();
         DB::table('head_comments')->truncate();
         DB::table('project_proposals')->truncate();
+
+        /*
         DB::table('dsv_budgets')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         // Run a specific seeder
@@ -49,8 +51,8 @@ class ClearTest extends Command
             '--class' => 'DsvBudgetsSeeder',
             '--force' => true,
         ]);
-
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         */
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
     }
 }

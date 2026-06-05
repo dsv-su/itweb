@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Models\Dashboard;
 use App\Workflows\States\FOApproved;
 use App\Workflows\States\FODenied;
 use App\Workflows\States\FOReturned;
@@ -12,7 +13,7 @@ use App\Workflows\States\ManagerApproved;
 use App\Workflows\States\ManagerDenied;
 use App\Workflows\States\ManagerReturned;
 use App\Workflows\States\Submitted;
-use App\Models\Dashboard;
+use RuntimeException;
 use Workflow\SignalMethod;
 
 trait WorkflowSignals
@@ -26,14 +27,25 @@ trait WorkflowSignals
 
     private function freshDashboard(): Dashboard
     {
-        $id = $this->stateMachine->id ?? null;
+        if (isset($this->stateMachine)) {
+            $id = $this->stateMachine->id ?? null;
 
-        if (! $id) {
+            if ($id) {
+                return Dashboard::query()->findOrFail($id);
+            }
+
             return $this->stateMachine;
         }
 
-        return Dashboard::query()->findOrFail($id);
+        foreach ($this->arguments ?? [] as $argument) {
+            if ($argument instanceof Dashboard) {
+                return Dashboard::query()->findOrFail($argument->id);
+            }
+        }
+
+        throw new RuntimeException('Unable to resolve dashboard for workflow signal.');
     }
+
     #[SignalMethod]
     public function manager_approve()
     {

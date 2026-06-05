@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\UserIsManagerTransition;
+use App\Jobs\StartTravelRequestWorkflow;
 use App\Models\Country;
 use App\Models\Dashboard;
 use App\Models\SettingsFo;
 use App\Models\TravelRequest;
 use App\Models\User;
-use App\Services\Review\WorkflowHandler;
 use App\Workflows\DSVRequestWorkflow;
 use App\Workflows\Partials\CheckRoleforApprove;
-use App\Jobs\StartTravelRequestWorkflow;
+use App\Workflows\Partials\RequestStates;
+use App\Workflows\ResumeFromFOTravelRequestWorkflow;
+use App\Workflows\ResumeFromHeadTravelRequestWorkflow;
+use App\Workflows\ResumeFromManagerTravelRequestWorkflow;
 use App\Workflows\UserManagerTravelRequestWorkflow;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -171,7 +173,9 @@ class TravelRequestController extends Controller
             'vice_id' => $this->getViceHeadUserId()
         ];
 
-        $dashboard = Dashboard::where('request_id', $request->id)->first();
+        $dashboard = Dashboard::where('request_id', $travelRequest->id)->first();
+        $previousState = $dashboard ? (string) $dashboard->state : null;
+
         if (!$dashboard) {
             $dashboard = Dashboard::create($dashboardData);
         } else {
@@ -181,7 +185,11 @@ class TravelRequestController extends Controller
         //Check if user is manager
         $this->checkRole = new CheckRoleforApprove();
 
-        StartTravelRequestWorkflow::dispatch($dashboard->id);
+        if ($this->isReturnedTravelRequestState($previousState)) {
+            $this->resumeWorkflow($dashboard, $previousState);
+        } else {
+            StartTravelRequestWorkflow::dispatch($dashboard->id);
+        }
 
         return redirect()->route('statamic.site');
     }
@@ -223,6 +231,39 @@ class TravelRequestController extends Controller
         $workflow->start($dashboard);
         $workflow->submit();
         return $workflow;
+    }
+
+    protected function resumeWorkflow(Dashboard $dashboard, string $previousState)
+    {
+        $workflowClass = match ($previousState) {
+            RequestStates::MANAGER_RETURNED => ResumeFromManagerTravelRequestWorkflow::class,
+            RequestStates::HEAD_RETURNED => ResumeFromHeadTravelRequestWorkflow::class,
+            RequestStates::FO_RETURNED => ResumeFromFOTravelRequestWorkflow::class,
+            default => null,
+        };
+
+        abort_unless($workflowClass, 400, 'Cannot resume workflow from current state.');
+
+        $workflow = WorkflowStub::make($workflowClass);
+
+        $dashboard->forceFill([
+            'state' => RequestStates::SUBMITTED,
+            'workflow_id' => $workflow->id(),
+        ])->save();
+
+        $workflow->start($dashboard);
+        $workflow->submit();
+
+        return $workflow;
+    }
+
+    private function isReturnedTravelRequestState(?string $state): bool
+    {
+        return in_array($state, [
+            RequestStates::MANAGER_RETURNED,
+            RequestStates::HEAD_RETURNED,
+            RequestStates::FO_RETURNED,
+        ], true);
     }
 
     private function createView($template, $layout, $data)

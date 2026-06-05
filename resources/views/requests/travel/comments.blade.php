@@ -2,75 +2,101 @@
     @include('requests.travel.progress')
 
     @php
+        $commentUsers = collect([
+            $tr->managercomment->user_id ?? null,
+            $tr->headcomment->user_id ?? null,
+            $tr->focomment->user_id ?? null,
+        ])->filter()->unique()->values();
+
+        $reviewers = $commentUsers->isNotEmpty()
+            ? \App\Models\User::query()->whereIn('id', $commentUsers)->get()->keyBy('id')
+            : collect();
+
         $comments = [
             [
                 'label' => __('Project leader'),
                 'comment' => $tr->manager_comment_id ? ($tr->managercomment->comment ?? null) : null,
                 'user_id' => $tr->manager_comment_id ? ($tr->managercomment->user_id ?? null) : null,
                 'updated_at' => $tr->manager_comment_id ? ($tr->managercomment->updated_at ?? null) : null,
+                'tone' => 'blue',
             ],
             [
                 'label' => __('Unit Head'),
                 'comment' => $tr->head_comment_id ? ($tr->headcomment->comment ?? null) : null,
                 'user_id' => $tr->head_comment_id ? ($tr->headcomment->user_id ?? null) : null,
                 'updated_at' => $tr->head_comment_id ? ($tr->headcomment->updated_at ?? null) : null,
+                'tone' => 'amber',
             ],
             [
                 'label' => __('FO'),
                 'comment' => $tr->fo_comment_id ? ($tr->focomment->comment ?? null) : null,
                 'user_id' => $tr->fo_comment_id ? ($tr->focomment->user_id ?? null) : null,
                 'updated_at' => $tr->fo_comment_id ? ($tr->focomment->updated_at ?? null) : null,
+                'tone' => 'emerald',
             ],
         ];
 
-        // remove empty comment blocks
-        $comments = array_values(array_filter($comments, fn ($c) => filled($c['comment'] ?? null)));
+        $comments = array_values(array_filter($comments, fn ($comment) => filled($comment['comment'] ?? null)));
+
+        $badgeClass = [
+            'blue' => 'border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-400/30 dark:bg-blue-400/10 dark:text-blue-200',
+            'amber' => 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-400/30 dark:bg-amber-400/10 dark:text-amber-200',
+            'emerald' => 'border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-400/30 dark:bg-emerald-400/10 dark:text-emerald-200',
+        ];
+
+        $dotClass = [
+            'blue' => 'bg-blue-500 ring-blue-100 dark:ring-blue-500/20',
+            'amber' => 'bg-amber-500 ring-amber-100 dark:ring-amber-500/20',
+            'emerald' => 'bg-emerald-500 ring-emerald-100 dark:ring-emerald-500/20',
+        ];
     @endphp
 
     @if(count($comments) > 0)
-        <h2 class="mt-4 mb-2 text-base font-bold tracking-tight text-gray-900 dark:text-white sm:text-lg">
-            {{ __('Comments') }}
-        </h2>
-        <hr class="my-2 border-gray-200 dark:border-gray-700">
+        <section class="mt-6 rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900/40">
+            <div class="flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-3 dark:border-gray-700 sm:px-5">
+                <h2 class="text-base font-semibold text-gray-950 dark:text-white">
+                    {{ __('Comments') }}
+                </h2>
 
-        <div class="mt-3 space-y-4">
-            @foreach($comments as $c)
-                <section class="space-y-2">
-                    <span class="inline-flex items-center rounded border border-blue-400 bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-gray-700 dark:text-blue-400">
-                        {{ $c['label'] }}
-                    </span>
+                <span class="inline-flex h-7 min-w-7 items-center justify-center rounded-full border border-gray-200 bg-white px-2 text-xs font-semibold text-gray-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">
+                    {{ count($comments) }}
+                </span>
+            </div>
 
-                    <div class="rounded-2xl border border-gray-200 bg-white p-3 dark:border-neutral-700 dark:bg-neutral-900 sm:p-4">
-                        <div class="text-sm text-gray-800 dark:text-white break-words">
-                            {{ $c['comment'] }}
+            <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                @foreach($comments as $comment)
+                    @php
+                        $reviewer = $comment['user_id'] ? ($reviewers->get($comment['user_id'])?->name ?? __('Unknown user')) : __('Unknown user');
+                        $date = $comment['updated_at'] ? \Carbon\Carbon::parse($comment['updated_at'])->format('Y-m-d') : null;
+                        $tone = $comment['tone'];
+                    @endphp
+
+                    <section class="relative grid gap-3 px-4 py-4 sm:grid-cols-[10rem_1fr] sm:px-5">
+                        <div class="flex items-start gap-3">
+                            <span class="mt-1 h-2.5 w-2.5 shrink-0 rounded-full ring-4 {{ $dotClass[$tone] }}"></span>
+
+                            <div class="min-w-0">
+                                <span class="inline-flex max-w-full items-center rounded-md border px-2 py-1 text-xs font-semibold {{ $badgeClass[$tone] }}">
+                                    {{ $comment['label'] }}
+                                </span>
+
+                                <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                    {{ $reviewer }}
+                                    @if($date)
+                                        <span class="mx-1 text-gray-300 dark:text-gray-600">/</span>
+                                        <time datetime="{{ $date }}">{{ $date }}</time>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="flex flex-wrap items-start gap-x-1.5 gap-y-1 text-xs text-gray-500 dark:text-neutral-400">
-                        <svg class="mt-0.5 size-3 shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M18 6 7 17l-5-5"></path>
-                            <path d="m22 10-7.5 7.5L13 16"></path>
-                        </svg>
-
-                        <span class="min-w-0 break-words">
-                            @if($c['user_id'])
-                                {{ optional(\App\Models\User::find($c['user_id']))->name ?? __('Unknown user') }}
-                            @else
-                                {{ __('Unknown user') }}
-                            @endif
-                        </span>
-
-                        @if($c['updated_at'])
-                            <span class="whitespace-nowrap">
-                                {{ \Carbon\Carbon::parse($c['updated_at'])->format('Y-m-d') }}
-                            </span>
-                        @endif
-                    </div>
-                </section>
-            @endforeach
-        </div>
+                        <blockquote class="min-w-0 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm leading-6 text-gray-800 shadow-sm dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100">
+                            <p class="whitespace-pre-line break-words">{{ $comment['comment'] }}</p>
+                        </blockquote>
+                    </section>
+                @endforeach
+            </div>
+        </section>
     @endif
 
     @if($tr->state === 'fo_approved')

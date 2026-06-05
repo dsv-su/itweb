@@ -17,183 +17,203 @@ use Workflow\WorkflowStub;
 class TravelRequestWorkflow extends Workflow
 {
     use WorkflowSignals;
-    private $stateMachine;
-    protected $checkRole;
 
+    private Dashboard $stateMachine;
 
-    //Wait for statechange
-    public function isSubmitted()
-    {
-        return $this->stateMachine->state->status() === 'submitted';
-    }
+    private int $dashboardId;
 
-    //Manager
-    public function ManagerApproved()
-    {
-        return $this->stateMachine->state->status() === 'manager_approved';
-    }
-
-    public function ManagerReturned()
-    {
-        return $this->stateMachine->state->status() === 'manager_returned';
-    }
-
-    public function ManagerDenied()
-    {
-        return $this->stateMachine->state->status() === 'manager_denied';
-    }
-
-    //Head
-    public function HeadApproved()
-    {
-        return $this->stateMachine->state->status() === 'head_approved';
-    }
-
-    public function HeadReturned()
-    {
-        return $this->stateMachine->state->status() === 'head_returned';
-    }
-
-    public function HeadDenied()
-    {
-        return $this->stateMachine->state->status() === 'head_denied';
-    }
-
-    //Finacial officer
-    public function FOApproved()
-    {
-        return $this->stateMachine->state->status() === 'fo_approved';
-    }
-
-    public function FOReturned()
-    {
-        return $this->stateMachine->state->status() === 'fo_returned';
-    }
-
-    public function FODenied()
-    {
-        return $this->stateMachine->state->status() === 'fo_denied';
-    }
+    protected CheckRoleforApprove $checkRole;
 
     public function __construct(
-        public StoredWorkflow $storedWorkflow, Dashboard $dashboard, ...$arguments)
-    {
+        public StoredWorkflow $storedWorkflow,
+        Dashboard $dashboard,
+        ...$arguments
+    ) {
         parent::__construct($storedWorkflow, $dashboard, $arguments);
+
         $this->stateMachine = $dashboard;
-        $this->checkRole = new CheckRoleforApprove();
+        $this->dashboardId = $dashboard->id;
+        $this->checkRole = new CheckRoleforApprove;
+    }
+
+    public function isSubmitted(): bool
+    {
+        return $this->isState(RequestStates::SUBMITTED);
+    }
+
+    public function ManagerApproved(): bool
+    {
+        return $this->isState(RequestStates::MANAGER_APPROVED);
+    }
+
+    public function ManagerReturned(): bool
+    {
+        return $this->isState(RequestStates::MANAGER_RETURNED);
+    }
+
+    public function ManagerDenied(): bool
+    {
+        return $this->isState(RequestStates::MANAGER_DENIED);
+    }
+
+    public function HeadApproved(): bool
+    {
+        return $this->isState(RequestStates::HEAD_APPROVED);
+    }
+
+    public function HeadReturned(): bool
+    {
+        return $this->isState(RequestStates::HEAD_RETURNED);
+    }
+
+    public function HeadDenied(): bool
+    {
+        return $this->isState(RequestStates::HEAD_DENIED);
+    }
+
+    public function FOApproved(): bool
+    {
+        return $this->isState(RequestStates::FO_APPROVED);
+    }
+
+    public function FOReturned(): bool
+    {
+        return $this->isState(RequestStates::FO_RETURNED);
+    }
+
+    public function FODenied(): bool
+    {
+        return $this->isState(RequestStates::FO_DENIED);
     }
 
     public function execute(Dashboard $dashboard)
     {
-        //Manager
-        if($this->checkRole->isSameUserManager($dashboard->id)) {
+        $dashboardId = $dashboard->id;
+        $this->dashboardId = $dashboardId;
+        $this->checkRole ??= new CheckRoleforApprove;
 
-            // User and Manager is same person
+        if (! $this->checkRole->isSameUserManager($dashboardId)) {
+            yield ActivityStub::make(NewRequestNotification::class, RequestStates::MANAGER, $dashboardId);
 
-        } else {
+            yield WorkflowStub::await(
+                fn () => $this->ManagerApproved() || $this->ManagerDenied() || $this->ManagerReturned()
+            );
 
-            //Fire email to manager
-            yield ActivityStub::make(NewRequestNotification::class, RequestStates::MANAGER, $dashboard->id);
+            if ($this->isFinalManagerDecision()) {
+                yield from $this->syncStateAndNotify($dashboardId);
 
-            //Wait for manager to process request
-            yield WorkflowStub::await(fn () => $this->ManagerApproved() || $this->ManagerDenied() || $this->ManagerReturned());
-
-            // Handle managers decision
-            $newState = $this->getState();
-
-            // Activities
-            $commonActivities = $this->getCommonActivities($dashboard->id);
-
-            switch ($newState) {
-                case RequestStates::MANAGER_APPROVED:
-                    // Request has been approved by manager
-                    yield $commonActivities[0];
-                    break;
-                case RequestStates::MANAGER_RETURNED:
-                case RequestStates::MANAGER_DENIED:
-                    // Request had been returned or denied by manager
-                    foreach ($commonActivities as $activity) {
-                        yield $activity;
-                    }
-                    //End workflow
-                    return $this->stateMachine->state->status();
+                return $this->getState();
             }
 
+            yield $this->syncRequestState($dashboardId);
         }
 
-        //UnitHead
-        if($this->checkRole->isSameManagerHead($dashboard->id)) {
-
-            // Manager and Head is same person
-            // Notify FO
-            yield ActivityStub::make(NewRequestNotification::class, RequestStates::FINANCIAL_OFFICER, $dashboard->id);
-
+        if ($this->checkRole->isSameManagerHead($dashboardId)) {
+            yield ActivityStub::make(NewRequestNotification::class, RequestStates::FINANCIAL_OFFICER, $dashboardId);
         } else {
+            yield ActivityStub::make(NewRequestNotification::class, RequestStates::UNIT_HEAD, $dashboardId);
 
-            // Notify Head
-            yield ActivityStub::make(NewRequestNotification::class, RequestStates::UNIT_HEAD, $dashboard->id);
+            yield WorkflowStub::await(
+                fn () => $this->HeadApproved() || $this->HeadDenied() || $this->HeadReturned()
+            );
 
-            //Wait for Head to process request
-            yield WorkflowStub::await(fn () => $this->HeadApproved() || $this->HeadDenied() || $this->HeadReturned());
+            if ($this->isFinalHeadDecision()) {
+                yield from $this->syncStateAndNotify($dashboardId);
 
-            //Handle Head decision
-            $newState = $this->getState();
-            $commonActivities = $this->getCommonActivities($dashboard->id);
-
-            switch ($newState) {
-                case RequestStates::HEAD_RETURNED:
-                case RequestStates::HEAD_DENIED:
-                    //Request has been returned or denied by head
-                    foreach ($commonActivities as $activity) {
-                        yield $activity;
-                    }
-                    //End workflow
-                    return $this->stateMachine->state->status();
+                return $this->getState();
             }
 
-            yield $commonActivities[0];
-            //Notify FO
-            yield ActivityStub::make(NewRequestNotification::class, RequestStates::FINANCIAL_OFFICER, $dashboard->id);
-
+            yield $this->syncRequestState($dashboardId);
+            yield ActivityStub::make(NewRequestNotification::class, RequestStates::FINANCIAL_OFFICER, $dashboardId);
         }
 
-        //FO
-        yield WorkflowStub::await(fn () => $this->FOApproved() || $this->FODenied() || $this->FOReturned());
+        yield WorkflowStub::await(
+            fn () => $this->FOApproved() || $this->FODenied() || $this->FOReturned()
+        );
 
-        //Handle FO decision
-        $newState = $this->getState();
-        $commonActivities = $this->getCommonActivities($dashboard->id);
+        yield from $this->syncStateAndNotify($dashboardId);
 
-        switch ($newState) {
-            case RequestStates::FO_RETURNED:
-            case RequestStates::FO_DENIED:
-                //Request has been returned or denied by fo
-                foreach ($commonActivities as $activity) {
-                    yield $activity;
-                }
-                //End workflow
-                return $this->stateMachine->state->status();
-        }
-
-        //Request has been approved by fo
-        foreach ($commonActivities as $activity) {
-            yield $activity;
-        }
-
-        //End workflow
-        return $this->stateMachine->state->status();
+        return $this->getState();
     }
 
-    protected function getState()
+    protected function getState(): ?string
     {
-        return $this->stateMachine->state->status();
+        $dashboardId = $this->resolveDashboardId();
+
+        if (! $dashboardId) {
+            return null;
+        }
+
+        $fresh = Dashboard::query()->find($dashboardId);
+
+        if (! $fresh) {
+            return null;
+        }
+
+        return is_object($fresh->state) ? $fresh->state->status() : (string) $fresh->state;
     }
 
-    protected function getCommonActivities($userRequest)
+    private function resolveDashboardId(): ?int
+    {
+        if (isset($this->dashboardId)) {
+            return $this->dashboardId;
+        }
+
+        if (isset($this->stateMachine) && $this->stateMachine->id) {
+            $this->dashboardId = $this->stateMachine->id;
+
+            return $this->dashboardId;
+        }
+
+        foreach ($this->arguments ?? [] as $argument) {
+            if ($argument instanceof Dashboard) {
+                $this->dashboardId = $argument->id;
+
+                return $this->dashboardId;
+            }
+        }
+
+        return null;
+    }
+
+    protected function getCommonActivities(int $dashboardId): array
     {
         return [
-            ActivityStub::make(StateUpdateTransition::class, $userRequest),
-            ActivityStub::make(StateUpdateNotification::class, $userRequest),
+            ActivityStub::make(StateUpdateTransition::class, $dashboardId),
+            ActivityStub::make(StateUpdateNotification::class, $dashboardId),
         ];
+    }
+
+    private function isState(string $state): bool
+    {
+        return $this->getState() === $state;
+    }
+
+    protected function isFinalManagerDecision(): bool
+    {
+        return in_array($this->getState(), [
+            RequestStates::MANAGER_RETURNED,
+            RequestStates::MANAGER_DENIED,
+        ], true);
+    }
+
+    protected function isFinalHeadDecision(): bool
+    {
+        return in_array($this->getState(), [
+            RequestStates::HEAD_RETURNED,
+            RequestStates::HEAD_DENIED,
+        ], true);
+    }
+
+    protected function syncRequestState(int $dashboardId)
+    {
+        return ActivityStub::make(StateUpdateTransition::class, $dashboardId);
+    }
+
+    protected function syncStateAndNotify(int $dashboardId): iterable
+    {
+        foreach ($this->getCommonActivities($dashboardId) as $activity) {
+            yield $activity;
+        }
     }
 }

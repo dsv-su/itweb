@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use \Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class TravelRequest extends Model
 {
-    use HasFactory;
-    use Search;
-    use HasUuids;
+    use HasFactory, HasUuids, Search;
 
     protected $fillable = [
         'created',
@@ -34,7 +33,7 @@ class TravelRequest extends Model
         'total',
         'manager_comment_id',
         'fo_comment_id',
-        'head_comment_id'
+        'head_comment_id',
     ];
 
     protected $searchable = [
@@ -46,25 +45,25 @@ class TravelRequest extends Model
     /**
      * Get the manager comment associated with the travelrequest.
      */
-    public function managercomment(): HasOne
+    public function managercomment(): BelongsTo
     {
-        return $this->hasOne(ManagerComment::class, 'reqid');
+        return $this->belongsTo(ManagerComment::class, 'manager_comment_id');
     }
 
     /**
      * Get the fo comment associated with the travelrequest.
      */
-    public function focomment(): HasOne
+    public function focomment(): BelongsTo
     {
-        return $this->hasOne(FoComment::class, 'reqid');
+        return $this->belongsTo(FoComment::class, 'fo_comment_id');
     }
 
     /**
      * Get the head comment associated with the travelrequest.
      */
-    public function headcomment(): HasOne
+    public function headcomment(): BelongsTo
     {
-        return $this->hasOne(HeadComment::class, 'reqid');
+        return $this->belongsTo(HeadComment::class, 'head_comment_id');
     }
 
     /**

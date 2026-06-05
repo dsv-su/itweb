@@ -7,6 +7,7 @@ use App\Mail\NotifyUserChangedState;
 use App\Models\Dashboard;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
+use RuntimeException;
 use Workflow\Activity;
 
 class StateUpdateNotification extends Activity
@@ -15,62 +16,74 @@ class StateUpdateNotification extends Activity
 
     public function execute(int $dashboardId)
     {
-        //Retrive request dashboard
-        $id = $dashboardId;
-        $this->dashboard = Dashboard::find($id);
+        $this->dashboard = Dashboard::findOrFail($dashboardId);
 
-        //Users
-        $user = User::find($this->dashboard->user_id);
-        $manager = User::find($this->dashboard->manager_id);
-        $fo = User::find($this->dashboard->fo_id);
-        //$head = User::find($this->dashboard->head_id);
-        if(!is_null($headsIDs = $this->getHeadUserIds())) {
-            $heads = User::whereIn('id', $headsIDs)->get();
-        }
+        $user = User::findOrFail($this->dashboard->user_id);
+        $state = (string) $this->dashboard->state;
 
-        $vice = User::find($this->dashboard->vice_id);
-
-        //Notify user of changed Request State
-        $state = (string)$this->dashboard->state;
-
-        switch($state) {
-            case('manager_returned'):
-            case('manager_denied'):
-                //Notify
-                Mail::to($user->email)->send(new NotifyUserChangedState($user, $manager, $this->dashboard));
+        switch ($state) {
+            case 'manager_returned':
+            case 'manager_denied':
+                Mail::to($user->email)->send(
+                    new NotifyUserChangedState($user, User::findOrFail($this->dashboard->manager_id), $this->dashboard)
+                );
                 break;
-            case('fo_returned'):
-            case('fo_denied'):
-                //Notify
-                Mail::to($user->email)->send(new NotifyUserChangedState($user, $fo, $this->dashboard));
+            case 'fo_returned':
+            case 'fo_denied':
+                Mail::to($user->email)->send(
+                    new NotifyUserChangedState($user, User::findOrFail($this->dashboard->fo_id), $this->dashboard)
+                );
                 break;
-            case('head_returned'):
-            case('head_denied'):
-                //Notify
-                Mail::to($user->email)->send(new NotifyUserChangedState($user, $heads[0], $this->dashboard));
+            case 'head_returned':
+            case 'head_denied':
+                Mail::to($user->email)->send(
+                    new NotifyUserChangedState($user, $this->headReviewer(), $this->dashboard)
+                );
                 break;
-            case('vice_returned'):
-            case('vice_denied'):
-            case('final_returned'):
-            case('final_denied'):
-                //Notify
-                Mail::to($user->email)->send(new NotifyUserChangedState($user, $vice, $this->dashboard));
+            case 'vice_returned':
+            case 'vice_denied':
+            case 'final_returned':
+            case 'final_denied':
+                Mail::to($user->email)->send(
+                    new NotifyUserChangedState($user, User::findOrFail($this->dashboard->vice_id), $this->dashboard)
+                );
                 break;
-            case('final_approved'):
-                //Approved Request
-                //Notify
+            case 'final_approved':
                 Mail::to($user->email)->send(new NotifyRequestApproved($user, $this->dashboard));
                 break;
-            case('fo_approved'):
-                if($this->dashboard->type == 'travelrequest') {
+            case 'fo_approved':
+                if ($this->dashboard->type == 'travelrequest') {
                     Mail::to($user->email)->send(new NotifyRequestApproved($user, $this->dashboard));
                 }
                 break;
         }
     }
 
-    private function getHeadUserIds()
+    private function headReviewer(): User
     {
-        return $this->dashboard->unit_heads;
+        $headIds = $this->getHeadUserIds();
+
+        $head = $headIds
+            ? User::whereIn('id', $headIds)->first()
+            : User::find($this->dashboard->head_id);
+
+        if (! $head) {
+            throw new RuntimeException("No head reviewer found for dashboard {$this->dashboard->id}.");
+        }
+
+        return $head;
+    }
+
+    private function getHeadUserIds(): array
+    {
+        if (is_array($this->dashboard->unit_heads)) {
+            return array_filter($this->dashboard->unit_heads);
+        }
+
+        if ($this->dashboard->unit_heads) {
+            return [$this->dashboard->unit_heads];
+        }
+
+        return [];
     }
 }
