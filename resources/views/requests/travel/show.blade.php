@@ -28,6 +28,23 @@
         $days = (int) ($tr->days ?? 0);
         $dailyTotal = $daily * $days;
 
+        $reviewerIds = collect([
+            $dashboard->manager_id ?? null,
+            $dashboard->head_id ?? null,
+        ])->filter()->unique()->values();
+
+        $reviewers = $reviewerIds->isNotEmpty()
+            ? \App\Models\User::query()->whereIn('id', $reviewerIds)->get()->keyBy('id')
+            : collect();
+
+        $projectLeaderName = ($dashboard->manager_id ?? null)
+            ? ($reviewers->get($dashboard->manager_id)?->name ?? __('NN'))
+            : __('NN');
+
+        $unitHeadName = ($dashboard->head_id ?? null)
+            ? ($reviewers->get($dashboard->head_id)?->name ?? __('NN'))
+            : __('NN');
+
         $valueClass = 'font-mono w-full p-2.5 text-sm rounded-lg border border-gray-400 bg-white text-gray-950 shadow-sm break-words dark:bg-gray-950 dark:border-gray-500 dark:text-white';
         $textareaClass = 'font-mono block w-full p-2.5 text-sm rounded-lg border border-gray-400 bg-white text-gray-950 shadow-sm break-words focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-950 dark:border-gray-500 dark:text-white dark:placeholder-gray-400';
         $labelClass = 'block mb-2 text-sm font-medium text-gray-900 dark:text-white';
@@ -168,6 +185,39 @@
                                 </label>
                                 <div class="{{ $valueClass }}">
                                     {{ $tr->country }}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="sm:col-span-2">
+                    <section class="overflow-hidden rounded-xl border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800/70">
+                        <div class="border-b border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
+                            <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+                                {{ __('Projectleader') }} & {{ __('Unit Head') }}
+                            </h3>
+                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                {{ __('Reviewers for this duty travel request') }}
+                            </p>
+                        </div>
+
+                        <div class="grid gap-4 px-4 py-5 sm:grid-cols-2 sm:gap-6 sm:px-5">
+                            <div>
+                                <label class="{{ $labelClass }}">
+                                    {{ __('Project leader') }}
+                                </label>
+                                <div class="{{ $valueClass }}">
+                                    {{ $projectLeaderName }}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="{{ $labelClass }}">
+                                    {{ __('Unit Head') }}
+                                </label>
+                                <div class="{{ $valueClass }}">
+                                    {{ $unitHeadName }}
                                 </div>
                             </div>
                         </div>

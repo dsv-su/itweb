@@ -84,7 +84,7 @@
             id="apps-dropdown-desktop"
         >
             <div class="block py-2 px-4 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-200">
-                {{ __("Available e-services") }}
+                {{ __("Available forms and services") }}
             </div>
             <div class="grid grid-cols-3 gap-4 p-4">
                 <a href="{{ app()->getLocale() === 'sv' ? url('/swe/travel') : route('travel-request-create') }}" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group">
@@ -202,20 +202,20 @@
 <div id="workflow-notification-tooltip" role="tooltip"
      class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
      data-popper-placement="top">
-    Notifications
+    {{__("Notifications")}}
     <div class="tooltip-arrow" data-popper-arrow></div>
 </div>
 
 <div id="workflow-requests-tooltip" role="tooltip"
      class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
      data-popper-placement="top">
-    E-forms
+    {{__("Services")}}
     <div class="tooltip-arrow" data-popper-arrow></div>
 </div>
 
 <div id="lists-requests-tooltip" role="tooltip"
      class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
      data-popper-placement="top">
-    List user requests
+    {{__("Requests and preferences")}}
     <div class="tooltip-arrow" data-popper-arrow></div>
 </div>

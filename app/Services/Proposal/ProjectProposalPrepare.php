@@ -14,6 +14,7 @@ class ProjectProposalPrepare
     {
         $roleIdsUnitHead = $this->getUserIdsByGroup('enhetschef');
         $unitheads = User::whereIn('id', $roleIdsUnitHead)
+            ->whereNotNull('unit')   // ensure unit is populated
             ->orderBy('unit')   // ASC by default
             ->get();
         $research_areas = ResearchArea::all();

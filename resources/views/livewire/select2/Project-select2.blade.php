@@ -1,5 +1,5 @@
 <div>
-    <label for="project" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __("Project") }}<span class="text-red-600"> *</span>
+    <label for="project" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __("Project") }}
         <button id="project-button"
                 data-modal-target="project-modal"
                 data-modal-toggle="project-modal" class="inline" type="button">
