@@ -1,8 +1,8 @@
 <div class="relative ml-2 mr-1 md:order-0">
     @php
         $searchUrl = app()->getLocale() === 'sv'
-            ? route('search.localized', array_filter(['lang' => 'swe', 'q' => filled($q) ? $q : null]))
-            : route('search', filled($q) ? ['q' => $q] : []);
+            ? route('search.localized', ['lang' => 'swe'])
+            : route('search');
     @endphp
 
     <a

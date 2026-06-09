@@ -18,7 +18,7 @@
 
 <div class="flex flex-wrap items-center justify-between">
     <div class="flex items-center">
-        <livewire:search />
+        @include('navbar.partials.search_link')
         <livewire:indicator />
 
         @include('navbar.partials.dark_toggle')
