@@ -32,6 +32,7 @@
                 <form action="{{ $searchRoute }}" method="GET" role="search" class="mt-7">
                     <div class="flex flex-col gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3 shadow-sm dark:border-gray-700 dark:bg-gray-900 sm:flex-row sm:items-center">
                         <label for="site-search" class="sr-only">{{ __('Search') }}</label>
+                        <input id="collection-filter" name="collection" type="hidden" value="{{ $collection }}">
                         <div class="relative flex-1">
                             <svg class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500 dark:text-gray-400" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
@@ -48,7 +49,7 @@
                             >
                         </div>
 
-                        <button type="submit" class="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-blue-700 px-5 text-sm font-semibold text-white transition hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-200 dark:bg-blue-500 dark:hover:bg-blue-400 dark:focus:ring-blue-500/30">
+                        <button type="submit" class="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-susecondary bg-susecondary px-5 text-sm font-semibold text-blue-950 transition hover:bg-susecondary focus:outline-none focus:ring-4 focus:ring-blue-200 dark:border-susecondary dark:bg-susecondary dark:text-gray-950 dark:focus:ring-blue-500/30">
                             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
                                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -57,26 +58,35 @@
                         </button>
                     </div>
 
-                    <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:max-w-3xl">
-                        <div>
-                            <label for="collection-filter" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
-                                {{ __('Filter by content type') }}
-                            </label>
-                            <select id="collection-filter"
+                    <div class="mt-3 rounded-lg border border-gray-200 bg-gray-50 p-3 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                        <div class="flex flex-wrap justify-center gap-2" role="group" aria-label="{{ __('Filter by content type') }}">
+                            @foreach($collections as $handle => $label)
+                                @continue($handle === 'pages')
+                                @php
+                                    $isSelected = $collection === $handle;
+                                    $buttonClass = $isSelected
+                                        ? 'border-susecondary bg-susecondary text-blue-950 hover:bg-susecondary focus:ring-blue-200 dark:border-susecondary dark:bg-susecondary dark:text-gray-950 dark:focus:ring-blue-500/30'
+                                        : 'border-gray-300 bg-white text-gray-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 focus:ring-blue-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:border-blue-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-blue-500/20';
+                                    $countLabel = $handle !== 'all' && $filterCounts->has($handle)
+                                        ? '(' . $filterCounts->get($handle) . ')'
+                                        : '';
+                                @endphp
+                                <button
+                                    type="submit"
                                     name="collection"
-                                    onchange="this.form.submit()"
-                                    class="h-11 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-950 focus:border-blue-600 focus:ring-blue-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
-                                @foreach($collections as $handle => $label)
-                                    <option value="{{ $handle }}" @selected($collection === $handle)>
-                                        {{ $label }}
-                                        @if($handle !== 'all' && $filterCounts->has($handle))
-                                            ({{ $filterCounts->get($handle) }})
-                                        @endif
-                                    </option>
-                                @endforeach
-                            </select>
+                                    value="{{ $handle }}"
+                                    onclick="document.getElementById('collection-filter').disabled = true"
+                                    class="inline-flex h-10 items-center justify-center rounded-md border px-3 text-sm font-semibold transition focus:outline-none focus:ring-4 {{ $buttonClass }}"
+                                    aria-pressed="{{ $isSelected ? 'true' : 'false' }}"
+                                >
+                                    {{ $label }}
+                                    <span class="ml-1 text-xs opacity-80">{{ $countLabel }}</span>
+                                </button>
+                            @endforeach
                         </div>
+                    </div>
 
+                    <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:max-w-3xl">
                         <div>
                             <label for="sort-filter" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">
                                 {{ __('Sort results') }}
