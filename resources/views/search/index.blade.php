@@ -148,7 +148,7 @@
                                     @endif
                                 </div>
 
-                                <span class="inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset {{ $collectionStyles[$result['collection']] ?? 'bg-gray-100 text-gray-700 ring-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:ring-gray-600' }}">
+                                <span class="inline-flex max-w-full shrink-0 items-center self-start rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset sm:self-auto {{ $collectionStyles[$result['collection']] ?? 'bg-gray-100 text-gray-700 ring-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:ring-gray-600' }}">
                                     {{ $result['collection_label'] }}
                                 </span>
                             </div>
