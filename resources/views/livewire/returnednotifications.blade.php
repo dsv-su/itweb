@@ -1,12 +1,33 @@
 <div wire:poll.keep-alive>
-    <!-- Returned Notifications -->
     @foreach($returned as $return)
-        <a @if($return->type == 'travelrequest')
-            href="{{route('travel-request-show', $return->id)}}"
-           @else
-            href="{{route('pp.show', 'my')}}"
-           @endif
-           wire:click="read({{$return->id}})"
+        @php
+            $isTravelRequest = $return->type === 'travelrequest';
+            $route = $isTravelRequest
+                ? route('travel-request-show', $return->id)
+                : route('pp.show', 'my');
+
+            $state = (string) $return->state;
+            $isUnread = $return->status === 'unread';
+
+            $stateLabel = match ($state) {
+                'submitted' => __('Submitted'),
+                'manager_approved', 'fo_approved' => __('Processing'),
+                'manager_denied', 'fo_denied', 'head_denied' => __('Rejected'),
+                'vice_denied' => __('Denied by Vice head'),
+                'manager_returned', 'fo_returned', 'head_returned' => __('Returned'),
+                'vice_returned' => __('Returned by Vice head'),
+                'head_approved' => __('Approved'),
+                default => __(ucwords(str_replace('_', ' ', $state))),
+            };
+
+            $sentBadgeClass = $isUnread
+                ? 'bg-green-100 text-green-800 dark:text-green-400 border-green-400'
+                : 'bg-gray-100 text-gray-800 dark:text-gray-400 border-gray-500';
+        @endphp
+
+        <a wire:key="returned_notification_{{ $return->id }}"
+           href="{{ $route }}"
+           wire:click="read({{ $return->id }})"
            class="flex bg-red-200 py-3 px-4 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600">
             <div class="flex-shrink-0 mt-4">
                 <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
@@ -14,55 +35,16 @@
                 </svg>
             </div>
             <div class="pl-3 w-full">
-                <div class="text-gray-900 dark:text-white font-semibold text-sm mb-1.5 ">[{{$return->id}}] {{$return->name}}</div>
+                <div class="text-gray-900 dark:text-white font-semibold text-sm mb-1.5">[{{ $return->id }}] {{ $return->name }}</div>
                 <div class="text-xs font-medium text-primary-700 dark:text-white">
-                    @if($return->status == 'unread')
-                        <span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400">
-                              @else
-                                <span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">
-                              @endif
-                                    {{__("Sent")}}
-                                    </span>
-                                {{Carbon\Carbon::createFromTimestamp($return->created)->toDateString()}}
-                                | Status:
-                                <span class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400">
-                                @switch($return->state)
-                                        @case('submitted')
-                                        {{__("Submitted")}}
-                                        @break
-                                        @case('manager_approved')
-                                        {{__("Processing")}}
-                                        @break
-                                        @case('manager_denied')
-                                        {{__("Denied")}}
-                                        @break
-                                        @case('manager_returned')
-                                        {{__("Returned")}}
-                                        @break
-                                        @case('fo_approved')
-                                        {{__("Processing")}}
-                                        @break
-                                        @case('fo_denied')
-                                        {{__("Denied")}}
-                                        @break
-                                        @case('fo_returned')
-                                        {{__("Returned")}}
-                                        @break
-                                        @case('head_approved')
-                                        {{__("Approved")}}
-                                        @break
-                                        @case('head_denied')
-                                        {{__("Denied")}}
-                                        @break
-                                        @case('head_returned')
-                                        {{__("Returned")}}
-                                        @break
-                                        @case('vice_returned')
-                                        {{__("Returned")}}
-                                        @break
-                                    @endswitch
-                              </span>
-
+                    <span class="{{ $sentBadgeClass }} text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 border">
+                        {{ __('Sent') }}
+                    </span>
+                    {{ Carbon\Carbon::createFromTimestamp($return->created)->toDateString() }}
+                    | {{ __('Status') }}:
+                    <span class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400">
+                        {{ $stateLabel }}
+                    </span>
                 </div>
             </div>
         </a>

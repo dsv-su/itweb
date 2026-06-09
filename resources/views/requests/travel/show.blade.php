@@ -187,6 +187,20 @@
                                     {{ $tr->country }}
                                 </div>
                             </div>
+
+                            <div class="sm:col-span-2">
+                                <label for="comments" class="{{ $labelClass }}">
+                                    {{ __('Comments') }}
+                                </label>
+                                <textarea
+                                    id="comments"
+                                    rows="3"
+                                    name="comments"
+                                    readonly
+                                    class="{{ $textareaClass }}"
+                                    placeholder="{{ __('No comments') }}"
+                                >{{ $tr->comments ?? '' }}</textarea>
+                            </div>
                         </div>
                     </section>
                 </div>

@@ -129,6 +129,26 @@
                                 @include('requests.travel.partials.projecttab')
 
                                 <livewire:travel-type :resume="$isResume ? $travelRequest->country : null" />
+
+                                <div class="sm:col-span-2">
+                                    @include('requests.travel.partials.form.field-label', [
+                                        'for' => 'comments',
+                                        'label' => __('Comments'),
+                                    ])
+
+                                    <textarea
+                                        id="comments"
+                                        rows="3"
+                                        name="comments"
+                                        class="@error('comments') border-red-500 @enderror {{ $textareaClass }}"
+                                        placeholder="{{ __('Add any comments about the project or destination country') }}"
+                                    >{{ old('comments', $travelRequest?->comments ?? '') }}</textarea>
+
+                                    @include('requests.travel.partials.form.field-error', [
+                                        'field' => 'comments',
+                                        'scrollToForm' => true,
+                                    ])
+                                </div>
                             </div>
                         </section>
                     </div>

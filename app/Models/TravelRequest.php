@@ -19,6 +19,7 @@ class TravelRequest extends Model
         'purpose',
         'project',
         'country',
+        'comments',
         'paper',
         'contribution',
         'other',

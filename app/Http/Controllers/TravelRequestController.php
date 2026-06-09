@@ -127,7 +127,7 @@ class TravelRequestController extends Controller
 
         // Create or update TravelRequest
         $travelRequestData = $request->only([
-            'name', 'purpose', 'project', 'country', 'paper', 'contribution',
+            'name', 'purpose', 'project', 'country', 'comments', 'paper', 'contribution',
             'other_costs', 'days', 'flight', 'hotel', 'daily',
             'conference', 'other_costs', 'total'
         ]);
@@ -200,6 +200,7 @@ class TravelRequestController extends Controller
             'purpose' => 'required',
             'project_leader' => 'required',
             'unit_head' => 'required',
+            'comments' => ['nullable', 'string', 'max:5000'],
         ];
 
         $rules['country'] = ['required_without:countrytype'];
