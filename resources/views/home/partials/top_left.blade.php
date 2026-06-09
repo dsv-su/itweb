@@ -1,7 +1,6 @@
-<div class="md:order-1 relative p-6 flex flex-col justify-center items-start text-center rounded-xl
-                border border-susecondary dark:border-gray-800">
+<div class="relative flex flex-col items-start justify-center rounded-xl border border-susecondary p-6 text-center md:order-1 dark:border-gray-800">
     <div class="mt-0 text-left">
-        <h3 class="text-lg md:text-xl font-semibold text-gray-800 dark:text-gray-200">
+        <h3 class="text-lg font-semibold text-gray-800 md:text-xl dark:text-gray-200">
             DSV Helpdesk
         </h3>
         <p class="mt-2 text-sm font-medium text-gray-500 dark:text-gray-300">
@@ -9,7 +8,7 @@
         </p>
         <p class="mt-2 text-sm font-medium text-gray-500 dark:text-gray-300">
             {{__("Email")}}:
-            <a href="mailto:helpdesk@dsv.su.se" aria-label="Helpdesk email" class="inline-flex items-center gap-x-1.5 text-blue-800 font-medium dark:text-gray-200">
+            <a href="mailto:helpdesk@dsv.su.se" aria-label="Helpdesk email" class="inline-flex items-center gap-x-1.5 font-medium text-blue-800 dark:text-gray-200">
                 helpdesk@dsv.su.se
             </a>
         </p>
@@ -17,8 +16,7 @@
             SU, tel 08-16 1999
         </p>
 
-        <?php
-
+        @php
         use Statamic\Facades\Entry;
         use Statamic\Facades\Site;
 
@@ -30,12 +28,12 @@
         $site = Site::current()->handle();
 
         $localized = $entry ? $entry->in($site) : null;
-        ?>
+        @endphp
 
         @if ($localized)
             <a href="{{ $localized->url() }}"
                aria-label="More ways for help"
-               class="mt-4 inline-flex items-center gap-x-1.5 text-blue-800 font-medium dark:text-gray-200"
+               class="mt-4 inline-flex items-center gap-x-1.5 font-medium text-blue-800 dark:text-gray-200"
             >
                 {{ __('More ways to get help') }}
                 <svg class="w-2.5 h-2.5" width="16" height="16" viewBox="0 0 16 16" fill="none">

@@ -1,16 +1,14 @@
-<div class="md:order-1 p-6 relative flex flex-col justify-start items-start text-center rounded-xl border border-susecondary dark:border-gray-800">
-
-    <h3 class="text-lg md:text-xl font-semibold text-gray-800 dark:text-gray-200">
+<div class="relative flex flex-col items-start justify-start rounded-xl border border-susecondary p-6 text-center md:order-1 dark:border-gray-800">
+    <h3 class="text-lg font-semibold text-gray-800 md:text-xl dark:text-gray-200">
         {{__("New at DSV")}}
     </h3>
 
-    <p class="w-full text-left text-gray-500 dark:text-gray-300">
+    <p class="mt-2 w-full text-left text-gray-500 dark:text-gray-300">
         {{__("Here is a collection of links to help you get started with the basics.")}}
     </p>
 
-    <div class="grid grid-cols- mt-2 w-full">
-
-        <?php
+    <div class="mt-3 w-full">
+        @php
         use Statamic\Facades\Entry;
         use Statamic\Facades\Site;
 
@@ -22,12 +20,12 @@
         $site = Site::current()->handle();
 
         $localized = $entry ? $entry->in($site) : null;
-        ?>
+        @endphp
 
         @if ($localized)
             <a href="{{ $localized->url() }}"
-               aria-label="More ways for help"
-               class="inline-flex w-full items-center justify-center gap-x-1.5 text-blue-800 font-medium py-2 px-4 border border-susecondary rounded-lg text-center dark:text-white"
+               aria-label="{{ __('New at DSV') }}"
+               class="inline-flex w-full items-center justify-center gap-x-1.5 rounded-lg border border-susecondary px-4 py-2 text-center font-medium text-blue-800 dark:text-white"
             >
                 {{__("New at DSV")}}
                 <svg class="w-2.5 h-2.5" width="16" height="16" viewBox="0 0 16 16" fill="none">

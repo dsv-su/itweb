@@ -1,6 +1,5 @@
 <div class="md:order-2 relative overflow-hidden rounded-xl">
-    <div class="relative overflow-hidden p-6 flex flex-col justify-start items-start {{--}}md:min-h-[480px]{{--}}md:h-fit text-center rounded-xl
-                    border border-susecondary dark:border-gray-800">
+    <div class="relative flex flex-col items-start justify-start overflow-hidden rounded-xl border border-susecondary p-6 text-center md:h-fit dark:border-gray-800">
         <div class="mt-0 text-left">
             @can('access cp')
                 <a href="/cp/collections/itnews" aria-label="IT news admin" class="float-right hover:border-blue-600">
@@ -9,13 +8,13 @@
                     </svg>
                 </a>
             @endif
-            <h3 class="text-lg md:text-xl font-semibold text-gray-800 dark:text-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800 md:text-xl dark:text-gray-200">
                 {{__("Information from DSV IT")}}
             </h3>
             @nocache('home.partials.itnews')
         </div>
     </div>
-    <div class="absolute top-0 end-0 -z-[1] w-70 h-auto">
+    <div class="absolute end-0 top-0 -z-[1] h-auto w-70">
         <svg width="384" height="268" viewBox="0 0 384 268" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g filter="url(#filter0_f_6966_190390)">
                 <rect x="200.667" y="-57" width="240.294" height="124.936" fill="#E2CCFF" fill-opacity="0.35"></rect>

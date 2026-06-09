@@ -88,10 +88,6 @@ new class extends Component
 
 <div class="w-full sm:col-span-2">
     <div class="relative grow max-w-96 mr-2 md:order-none">
-        <div class="relative flex items-center">
-            {{-- ... existing code ... --}}
-        </div>
-
         @if(!empty($query))
             <div class="fixed top-0 bottom-0 left-0 right-0 z-10" wire:click="resetData"></div>
 
@@ -108,7 +104,7 @@ new class extends Component
                                             dark:hover:bg-gray-300 dark:hover:text-black"
                                     >
                                         <span class="px-4">{{ $users['cn'][0] }}</span>
-                                        {{-- ... existing code ... --}}
+                                        
                                     </a>
                                 @endif
                             @endif

@@ -1,7 +1,7 @@
-<div class="md:order-1 relative border border-susecondary {{--}}border-gray-200{{--}} dark:border-gray-800 rounded-xl">
-    <div class="relative overflow-hidden w-full h-full rounded-xl">
+<div class="relative rounded-xl border border-susecondary dark:border-gray-800 md:order-1">
+    <div class="relative h-full w-full overflow-hidden rounded-xl">
         <livewire:lecturerooms />
-        <div class="px-6 {{--}}mt-6{{--}} flex flex-col {{--}}justify-center{{--}} {{--}}items-start{{--}} md:min-h-[480px] {{--}}text-center{{--}} rounded-xl dark:border-gray-700">
+        <div class="flex flex-col rounded-xl px-6 md:min-h-[480px] dark:border-gray-700">
             <div id="middleHolder">
                 <div class="flex flex-col border-y border-susecondary dark:border-gray-700">
                     <div class="pb-8">
@@ -9,14 +9,12 @@
                     </div>
                 </div>
 
-                <div class="mt-6 justify-center items-start text-center">
-
+                <div class="mt-6 items-start justify-center text-center">
                     @include('home.partials.middle.center')
-
-            </div>
+                </div>
 
                 <div class="flex flex-col border-y dark:border-gray-700">
-                    <h3 class="pt-8 text-left text-lg md:text-xl font-semibold text-gray-800 dark:text-gray-200">
+                    <h3 class="pt-8 text-left text-lg font-semibold text-gray-800 md:text-xl dark:text-gray-200">
                         {{__("PhD information")}}
                         @can('access cp')
                             <a href="/cp/collections/phdnews" aria-label="PhD news admin" class="float-right hover:border-blue-600">
@@ -32,14 +30,13 @@
                     </div>
                 </div>
             </div>
-            <div id="lectureroomHolder" style="display: none;">
+
+            <div id="lectureroomHolder" class="hidden">
                 <livewire:roomstatus />
             </div>
-
-
         </div>
 
-        <div class="absolute top-0 inset-x-0 -z-[1] w-full h-full">
+        <div class="absolute inset-x-0 top-0 -z-[1] h-full w-full">
             <svg class="w-full h-full" width="411" height="476" viewBox="0 0 411 476" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g filter="url(#filter0_f_6966_190348)">
                     <rect x="281.333" y="498" width="240.294" height="124.936" fill="#DAEAFF" fill-opacity="0.9"></rect>
