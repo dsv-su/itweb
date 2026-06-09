@@ -48,6 +48,8 @@ function syncThemeIcons() {
     const isDark = document.documentElement.classList.contains('dark');
 
     document.querySelectorAll('.theme-toggle').forEach((btn) => {
+        btn.setAttribute('aria-pressed', String(isDark));
+
         const darkIcon =
             btn.querySelector('#theme-toggle-dark-icon') ||
             btn.querySelector('[data-toggle-icon="moon"]');

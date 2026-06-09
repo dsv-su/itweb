@@ -25,7 +25,7 @@
                         {{ __('Search') }}
                     </p>
                     <h1 class="mt-2 text-3xl font-bold text-gray-950 dark:text-white sm:text-4xl">
-                        {{ __('Search all documents') }}
+                        {{ __('Search all contents') }}
                     </h1>
                 </div>
 
