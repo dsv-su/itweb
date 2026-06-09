@@ -76,6 +76,7 @@ class LocalizationController extends Controller
         $previous = url()->previous();
         $parsed = parse_url($previous);
         $path = $parsed['path'] ?? '/';
+        $query = isset($parsed['query']) ? '?' . $parsed['query'] : '';
 
         // Normalize path
         $path = '/' . ltrim($path, '/');
@@ -84,18 +85,18 @@ class LocalizationController extends Controller
         if ($locale === 'sv') {
             // Add /swe if not present
             if (!$isSwe) {
-                return redirect('/swe' . $path);
+                return redirect('/swe' . $path . $query);
             }
-            return redirect($path); // already Swedish
+            return redirect($path . $query); // already Swedish
         }
 
         if ($locale === 'en') {
             // Remove /swe if present
             if ($isSwe) {
                 $path = substr($path, 4); // remove "/swe"
-                return redirect($path ?: '/');
+                return redirect(($path ?: '/') . $query);
             }
-            return redirect($path); // already English
+            return redirect($path . $query); // already English
         }
 
         return back();

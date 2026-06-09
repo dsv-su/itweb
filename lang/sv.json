@@ -179,6 +179,13 @@
     "Requests and preferences": "Ärenden och inställningar",
     "Reviewers for this duty travel request": "Granskare för denna resebegäran",
     "Comments": "Kommentarer",
-    "Add any comments about the project or destination country": "Lägg till eventuella kommentarer om projektet eller destinationslandet"
+    "Add any comments about the project or destination country": "Lägg till eventuella kommentarer om projektet eller destinationslandet",
+    "Search": "Sök",
+    "Search all documents": "Sök bland alla it dokument",
+    "Filter by content type": "Filtrera efter innehållstyp",
+    "Sort results": "Sortera resultat",
+    "Most relevant": "Mest relevanta",
+    "Search pages, IT guides, equipment and news": "Sök sidor, IT-guider, utrustning och nyheter",
+    "All content": "Allt innehåll"
 
 }

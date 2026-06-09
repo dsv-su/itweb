@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\SystemController;
+use App\Http\Controllers\SearchController;
 use App\Services\Settings\AuthHandler;
 use Illuminate\Support\Facades\Route;
 
@@ -12,6 +13,14 @@ Route::get($login, [SystemController::class, 'login'])->name('login');
 
 // Locale constraint
 $langConstraint = 'en|sv|swe';
+
+Route::get('/search', SearchController::class)
+    ->middleware('checklang')
+    ->name('search');
+Route::get('/{lang}/search', SearchController::class)
+    ->where('lang', $langConstraint)
+    ->middleware('checklang')
+    ->name('search.localized');
 
 // Language switcher (explicit)
 Route::get('/lang/{lang}', [\App\Http\Controllers\LocalizationController::class, 'index'])
