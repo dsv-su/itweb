@@ -38,7 +38,8 @@
             <tr>
                 <th scope="col" class="px-4 py-3">{{__("Request type")}}</th>
                 <th scope="col" class="px-4 py-3">{{__("Name")}}</th>
-                <th scope="col" class="px-4 py-3">{{__("RequestId")}}</th>
+                <th scope="col" class="px-4 py-3">{{__("Country")}}</th>
+                <th scope="col" class="px-4 py-3">{{__("Total")}}</th>
                 <th scope="col" class="px-4 py-3">{{__("State")}}</th>
                 <th scope="col" class="px-4 py-3">{{__("User")}}</th>
                 <th scope="col" class="px-4 py-3">{{__("Created")}}</th>
@@ -56,7 +57,14 @@
                         </span>
                     </th>
                     <td class="px-4 py-3 text-xs">{{$dashboard->name}}</td>
-                    <td class="px-4 py-3 text-xs">{{$dashboard->request_id}}</td>
+                    <td class="px-4 py-3 text-xs">{{ $dashboard->travel?->country ?? '-' }}</td>
+                    <td class="px-4 py-3 text-xs">
+                        @if($dashboard->travel?->total !== null)
+                            {{ number_format((float) $dashboard->travel->total, 0, '.', ' ') }} SEK
+                        @else
+                            -
+                        @endif
+                    </td>
                     <td class="px-4 py-3 text-xs whitespace-nowrap">
                         @php
                             $state = (string) $dashboard->state;
