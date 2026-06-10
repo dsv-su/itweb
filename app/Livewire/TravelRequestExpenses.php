@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Models\Country;
 use App\Models\TravelRequest;
 use Carbon\Carbon;
-use DateTime;
 use Livewire\Component;
 
 class TravelRequestExpenses extends Component
@@ -27,40 +26,46 @@ class TravelRequestExpenses extends Component
         'changeEndDate' => 'changeEndDate'
     ];
 
-    public function mount()
+    public function mount(?TravelRequest $tr = null)
     {
-        $this->days = 0;
+        $this->tr = $tr;
         $this->flight = $this->tr->flight ?? null;
         $this->hotel = $this->tr->hotel ?? null;
         $this->daily = $this->tr->daily ?? null;
         $this->countryname = $this->tr->country ?? null;
         $this->conference = $this->tr->conference ?? null;
         $this->other_costs = $this->tr->other_costs ?? null;
-        $this->days = $this->tr->days ?? null;
+        $this->days = $this->tr->days ?? 0;
         $this->total = $this->tr->total ?? null;
-        //$this->departure = Carbon::createFromTimestamp($this->tr->departure)->toDateString() ?? null;
+        $this->departure = $this->tr?->departure
+            ? Carbon::createFromTimestamp($this->tr->departure)->toDateString()
+            : null;
+        $this->return = $this->tr?->return
+            ? Carbon::createFromTimestamp($this->tr->return)->toDateString()
+            : null;
+
+        $this->recalculateDays();
+        $this->summarize();
     }
 
     public function changeStartDate($date)
     {
         $this->departure = $date;
-
-        $this->days = Carbon::parse(Carbon::createFromFormat('Y-m-d', $this->departure))->diffInDays(Carbon::createFromFormat('Y-m-d', $this->return ?? $this->departure));
+        $this->recalculateDays();
+        $this->summarize();
     }
 
     public function changeEndDate($date)
     {
         $this->return = $date;
-
-        $this->days = Carbon::parse(Carbon::createFromFormat('Y-m-d', $this->departure ?? $this->return))->diffInDays(Carbon::createFromFormat('Y-m-d', $this->return));
-
+        $this->recalculateDays();
+        $this->summarize();
     }
 
     public function hydrate()
     {
-        if(!empty($this->departure)) {
-            $this->days = Carbon::parse(Carbon::createFromFormat('Y-m-d', $this->departure))->diffInDays(Carbon::createFromFormat('Y-m-d', $this->return));
-        }
+        $this->recalculateDays();
+        $this->summarize();
     }
 
     public function selectedCountry($id)
@@ -69,6 +74,11 @@ class TravelRequestExpenses extends Component
             $this->domestic();
         } else {
             $country = Country::find($id);
+
+            if (!$country) {
+                return;
+            }
+
             $this->daily = $country->allowance;
             $this->countryname = $country->country;
             $this->summarize();
@@ -116,7 +126,7 @@ class TravelRequestExpenses extends Component
         $this->summarize();
     }
 
-    public function updatedOther()
+    public function updatedOtherCosts()
     {
         $this->summarize();
     }
@@ -130,5 +140,18 @@ class TravelRequestExpenses extends Component
     private function summarize()
     {
         $this->total = (int)$this->flight + (int)$this->hotel + ((int)$this->daily * (int)$this->days) + (int)$this->conference + (int)$this->other_costs;
+    }
+
+    private function recalculateDays()
+    {
+        if (!$this->departure || !$this->return) {
+            $this->days = 0;
+            return;
+        }
+
+        $departure = Carbon::createFromFormat('Y-m-d', $this->departure)->startOfDay();
+        $return = Carbon::createFromFormat('Y-m-d', $this->return)->startOfDay();
+
+        $this->days = max(0, (int) $departure->diffInDays($return));
     }
 }

@@ -279,13 +279,19 @@
                     return;
                 }
 
-                input.addEventListener('changeDate', (event) => {
+                const dispatchTravelDate = () => {
                     Livewire.dispatch(eventName, {
-                        date: event.detail.datepicker.inputField.value,
+                        date: input.value,
                     });
+                };
+
+                input.addEventListener('changeDate', (event) => {
+                    dispatchTravelDate();
 
                     event.detail.datepicker.hide();
                 });
+
+                input.addEventListener('change', dispatchTravelDate);
             });
         </script>
     @endpush

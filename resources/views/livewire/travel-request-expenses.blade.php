@@ -17,19 +17,28 @@
                    class="font-mono bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block
                     w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:placeholder:text-gray-200 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
         </div>
-        <!-- Daily allwances -->
+        <!-- Daily allowances -->
         <div class="w-full">
-            <label for="daily" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white @if($days) bg-blue-200 @endif">{{ __("Daily subsistence allowances") }} @if($days) x {{$days}} {{__("days")}} @endif</label>
-            {{--}}
-            <input wire:model.live="daily" type="text" id="daily" name="daily" value="{{ old('daily') ? old('daily'): $daily ?? '' }}"
-                   placeholder="@if(!$daily){{ __("Please select a country destination") }}@endif"
-                   @if($daily) readonly @endif
-                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block
-                    w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-             {{--}}
+            @php
+                $dailyAmount = (int) ($daily ?? 0);
+                $travelDays = (int) ($days ?? 0);
+                $dailyTotal = $dailyAmount * $travelDays;
+            @endphp
+
+            <label for="daily_display" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white @if($travelDays) bg-blue-200 @endif">
+                {{ __("Daily subsistence allowances") }}
+                @if($travelDays)
+                    x {{ $travelDays }} {{ __("days") }}
+                @endif
+            </label>
+
             <div class="font-mono bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block
-                    w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:placeholder:text-gray-200 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                {{$countryname ?? __("Please select a country or domestic")}} @if($countryname): {{$daily}} x {{$days}} = {{ $daily*$days }} @endif
+                    w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:placeholder:text-gray-200 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                 id="daily_display">
+                {{ $countryname ?? __("Please select a country or domestic") }}
+                @if($countryname)
+                    : {{ $dailyAmount }} x {{ $travelDays }} = {{ $dailyTotal }}
+                @endif
             </div>
 
         </div>
@@ -51,7 +60,7 @@
         </div>
         <!--Total-->
         <div class="w-full">
-            <label for="other_costs" class="font-extrabold uppercase block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __("Total") }}</label>
+            <label for="total" class="font-extrabold uppercase block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __("Total") }}</label>
             <input wire:model.live="total" type="text" id="total" name="total" value="{{ old('total') ? old('total'): $tr->total ?? '' }}"
                     placeholder="{{ __("SEK") }}"
                     class="font-mono font-bold bg-blue-300 border border-gray-300 text-black text-sm font-semibold rounded-lg focus:ring-primary-600 focus:border-primary-600 block

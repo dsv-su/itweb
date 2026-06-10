@@ -41,5 +41,6 @@
     </main>
     @include('footer.footer')
     @livewireScripts
+    @stack('scripts')
 </body>
 </html>

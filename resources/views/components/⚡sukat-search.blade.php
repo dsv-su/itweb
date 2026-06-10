@@ -104,7 +104,7 @@ new class extends Component
                                             dark:hover:bg-gray-300 dark:hover:text-black"
                                     >
                                         <span class="px-4">{{ $users['cn'][0] }}</span>
-                                        
+
                                     </a>
                                 @endif
                             @endif
