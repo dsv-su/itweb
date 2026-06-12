@@ -36,8 +36,8 @@
             <!-- Content -->
             <div class="space-y-5 md:space-y-8">
                 <div class="space-y-3">
-                    <h2 class="text-xl font-bold md:text-3xl dark:text-gray-200 dark:before:bg-gray-600"> {!! $page->title !!}</h2>
-                    <p class="text-lg text-gray-800 prose dark:prose-invert dark:text-gray-200 dark:before:bg-gray-600"> {!! $page->content !!}   </p>
+                    <h2 class="news-show-title text-xl font-bold md:text-3xl dark:text-gray-200 dark:before:bg-gray-600"> {!! $page->title !!}</h2>
+                    <div class="news-show-content prose text-lg text-gray-800 dark:prose-invert dark:text-gray-200 dark:before:bg-gray-600"> {!! $page->content !!}   </div>
                 </div>
             </div>
             <!-- End Content -->

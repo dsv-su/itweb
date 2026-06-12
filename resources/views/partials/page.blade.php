@@ -16,7 +16,7 @@
 
                         @foreach($page->content as $content)
                             @if($content->type == "text")
-                                <div class="overflow-x-auto leading-7 text-gray-700 dark:text-gray-100">
+                                <div class="page-rich-content overflow-x-auto leading-7 text-gray-700 dark:text-gray-100">
                                     {!! $content->text !!}
                                 </div>
 

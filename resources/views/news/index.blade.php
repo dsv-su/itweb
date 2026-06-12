@@ -46,8 +46,8 @@
                     <!-- Content -->
                     <div class="space-y-5 md:space-y-8">
                         <div class="space-y-3">
-                            <h2 class="text-xl font-bold md:text-xl dark:text-white"> {!! $page->title !!}</h2>
-                            <p class="text-lg text-gray-800 dark:text-gray-200">{!! \Illuminate\Support\Str::limit($page->content, 16) !!}</p>
+                            <h2 class="news-index-title text-xl font-bold md:text-xl dark:text-white"> {!! $page->title !!}</h2>
+                            <p class="news-index-excerpt text-lg text-gray-800 dark:text-gray-200">{!! \Illuminate\Support\Str::limit($page->content, 16) !!}</p>
                         </div>
                     </div>
                     </a>
@@ -88,8 +88,8 @@
                     <!-- Content -->
                     <div class="space-y-5 md:space-y-8">
                         <div class="space-y-3">
-                            <h2 class="text-xl font-bold md:text-xl dark:text-white"> {!! $page->title !!}</h2>
-                            <p class="text-lg text-gray-800 dark:text-gray-200">{!! \Illuminate\Support\Str::limit($page->content, 16) !!}</p>
+                            <h2 class="news-index-title text-xl font-bold md:text-xl dark:text-white"> {!! $page->title !!}</h2>
+                            <p class="news-index-excerpt text-lg text-gray-800 dark:text-gray-200">{!! \Illuminate\Support\Str::limit($page->content, 16) !!}</p>
                         </div>
                     </div>
                 </a>

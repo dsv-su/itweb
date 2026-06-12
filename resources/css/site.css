@@ -122,6 +122,44 @@
     padding: 10px;
 }
 
+.dark .page-rich-content :where(:not(a)) {
+    color: var(--color-gray-100) !important;
+}
+
+.dark .page-rich-content a {
+    color: var(--color-blue-300) !important;
+}
+
+.dark .news-index-title,
+.dark .news-index-title :where(:not(a)) {
+    color: var(--color-white) !important;
+}
+
+.dark .news-index-excerpt,
+.dark .news-index-excerpt :where(:not(a)) {
+    color: var(--color-gray-200) !important;
+}
+
+.dark .news-index-title a,
+.dark .news-index-excerpt a {
+    color: var(--color-blue-300) !important;
+}
+
+.dark .news-show-title,
+.dark .news-show-title :where(:not(a)) {
+    color: var(--color-gray-200) !important;
+}
+
+.dark .news-show-content,
+.dark .news-show-content :where(:not(a)) {
+    color: var(--color-gray-200) !important;
+}
+
+.dark .news-show-title a,
+.dark .news-show-content a {
+    color: var(--color-blue-300) !important;
+}
+
 /* Fix for preventing titles in navbar from wrapping */
 #navbar-multi-level > ul > li {
     white-space: nowrap; /* Prevent text wrapping for top-level items */
