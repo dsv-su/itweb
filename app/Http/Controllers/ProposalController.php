@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\SendFinalToRegistrator;
+use App\Jobs\SendGrantNotificationRecipients;
 use App\Jobs\SendGrantToRegistrator;
+use App\Jobs\SendSentNotificationRecipients;
 use App\Mail\GrantNotificationVice;
 use App\Mail\SentNotificationVice;
 use App\Models\Dashboard;
@@ -11,6 +13,7 @@ use App\Models\DsvBudget;
 use App\Models\ProjectProposal;
 use App\Models\SettingsFo;
 use App\Models\SettingsFoEu;
+use App\Models\SettingsVice;
 use App\Models\User;
 use App\Services\Proposal\ProjectProposalCreateView;
 use App\Workflows\States\HeadReturned;
@@ -354,6 +357,11 @@ class ProposalController extends Controller
                 $submitter = User::find($dashboard->user_id);
                 $vice = $this->getViceHeadUser();
                 Mail::to($vice->email)->send(new SentNotificationVice($submitter, $vice, $dashboard));
+
+                $recipients = SettingsVice::first()?->sent_notification_recipients ?? [];
+                if (! empty($recipients)) {
+                    SendSentNotificationRecipients::dispatch($submitter, $dashboard, $recipients);
+                }
             });
 
             return redirect()->route('pp.show', 'my')
@@ -394,6 +402,11 @@ class ProposalController extends Controller
                 $submitter = User::find($dashboard->user_id);
                 $vice = $this->getViceHeadUser();
                 Mail::to($vice->email)->send(new GrantNotificationVice($submitter, $vice, $dashboard));
+
+                $recipients = SettingsVice::first()?->grant_notification_recipients ?? [];
+                if (! empty($recipients)) {
+                    SendGrantNotificationRecipients::dispatch($submitter, $dashboard, $recipients);
+                }
             });
 
             return redirect()->route('pp.show', 'my')

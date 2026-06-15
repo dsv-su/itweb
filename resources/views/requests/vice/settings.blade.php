@@ -46,6 +46,20 @@
                                 <br>
                                 <p class="mt-1 text-gray-600 font-semibold dark:text-gray-400">DSV Registrator</p>
                                 @include('requests.vice.partials.registrator')
+                                <section class="mt-10 border-y border-gray-200 py-8 dark:border-gray-700" aria-labelledby="proposal-notifications-heading">
+                                    <div class="grid gap-6">
+                                        <div class="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm dark:border-blue-900/60 dark:bg-blue-950/30">
+                                            <p class="font-semibold text-blue-800 dark:text-blue-300">Sent Notifications</p>
+                                            <p class="mt-1 text-blue-700 dark:text-blue-400">Proposal sent updates</p>
+                                            <livewire:pp.sent-notification-recipients />
+                                        </div>
+                                        <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm dark:border-emerald-900/60 dark:bg-emerald-950/30">
+                                            <p class="font-semibold text-emerald-800 dark:text-emerald-300">Granted Notifications</p>
+                                            <p class="mt-1 text-emerald-700 dark:text-emerald-400">Proposal grant updates</p>
+                                            <livewire:pp.grant-notification-recipients />
+                                        </div>
+                                    </div>
+                                </section>
                                 <!-- Budget template upload -->
                                 <br>
                                 <p class="mt-1 text-gray-600 font-semibold dark:text-gray-400">Budget template</p>

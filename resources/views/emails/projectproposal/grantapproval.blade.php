@@ -11,7 +11,7 @@ Please find the relevant details through the following link:
 
 <br><br>
 Direct link to:
-<a href="{{ url('') }}/projectproposals/view/{{$dashboard->request_id}}">{{$dashboard->name}}</a>
+<a href="{{ url('') }}/projectproposals/review/view/{{$dashboard->request_id}}">{{$dashboard->name}}</a>
 <br><br>
 <br>
 OVERVIEW:

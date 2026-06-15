@@ -7,6 +7,9 @@
 
     $defaultName = 'Travelrequest for ' . auth()->user()->name;
     $paperValue = (int) old('paper', $travelRequest?->paper ?? 0);
+    $instructionsUrl = app()->getLocale() === 'sv'
+        ? url('/swe/more-systems/travel-request-instructions')
+        : url('/more-systems/travel-request-instructions');
 
     $formatTravelDate = fn ($timestamp) => $timestamp
         ? \Carbon\Carbon::createFromTimestamp($timestamp)->format('Y-m-d')
@@ -33,6 +36,19 @@
                 @if($isResume)
                     <input type="hidden" name="id" value="{{ $travelRequest->id }}">
                 @endif
+
+                <a
+                    href="{{ $instructionsUrl }}"
+                    class="mb-5 flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900 transition hover:border-blue-300 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-blue-100 dark:hover:border-blue-800 dark:hover:bg-blue-900/40 dark:focus:ring-offset-gray-900"
+                >
+                    <svg class="mt-0.5 h-5 w-5 shrink-0 text-blue-600 dark:text-blue-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75v10.5m0-10.5c-1.5-1-3.75-1.5-6-1.5v10.5c2.25 0 4.5.5 6 1.5m0-10.5c1.5-1 3.75-1.5 6-1.5v10.5c-2.25 0-4.5.5-6 1.5" />
+                    </svg>
+                    <span>
+                        <span class="block font-medium">{{ __('Read the travel request instructions') }}</span>
+                        <span class="mt-0.5 block text-blue-700 dark:text-blue-200">{{ __('Review the instructions before submitting your duty travel request') }}</span>
+                    </span>
+                </a>
 
                 <div class="grid gap-4 mb-4 sm:grid-cols-2 sm:gap-6 sm:mb-5">
                     <div class="sm:col-span-2">

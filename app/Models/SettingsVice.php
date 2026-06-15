@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class SettingsVice extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'grant_notification_recipients' => 'array',
+        'sent_notification_recipients' => 'array',
+    ];
 }
