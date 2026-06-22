@@ -1,4 +1,4 @@
-<a href="https://projectproposals.dsv.su.se" aria-label="Projectproposals link" class="sm:hidden md:order-10 p-4 relative flex flex-col justify-center items-center md:min-h-fit
+<a href="https://it.dsv.su.se/projectproposals" aria-label="Projectproposals link" class="sm:hidden md:order-10 p-4 relative flex flex-col justify-center items-center md:min-h-fit
                 text-center rounded-xl before:absolute before:inset-0 before:z-10 before:border before:border-gray-200 before:rounded-xl
                 before:transition before:hover:border-2 before:hover:border-blue-600 before:hover:shadow-lg dark:before:border-gray-800 dark:before:hover:border-blue-500">
 
