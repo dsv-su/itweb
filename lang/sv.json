@@ -194,6 +194,10 @@
     "Deny": "Avslå",
     "Return": "Returnera",
     "Approve": "Godkänn",
-    "Update": "Uppdatera"
+    "Update": "Uppdatera",
+    "Please Review and Comment": "Vänligen Granska och kommentera",
+    "Please comment the request": "Vänligen lägg till kommenterer",
+    "Request list": "Lista ärenden",
+    "Project Proposal Settings": "Project Proposal inställningar"
 
 }
