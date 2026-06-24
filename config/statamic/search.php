@@ -34,6 +34,8 @@ return [
                 'collection:equipment',
                 'collection:it',
                 'collection:itnews',
+                'collection:network',
+                'collection:software',
             ],
 
             'fields' => ['title', 'content'],

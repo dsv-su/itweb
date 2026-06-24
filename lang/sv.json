@@ -190,6 +190,10 @@
     "Try another keyword or choose a broader content type filter.": "Prova ett annat sökord eller välj ett bredare filter för innehållstyp.",
     "Clear search": "Rensa sökningen",
     "Read the travel request instructions": "Instruktionerna för reseförfrågan",
-    "Review the instructions before submitting your duty travel request": "Läs igenom instruktionerna innan du skickar in din resebegäran"
+    "Review the instructions before submitting your duty travel request": "Läs igenom instruktionerna innan du skickar in din resebegäran",
+    "Deny": "Avslå",
+    "Return": "Returnera",
+    "Approve": "Godkänn",
+    "Update": "Uppdatera"
 
 }

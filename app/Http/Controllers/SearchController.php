@@ -104,6 +104,8 @@ class SearchController extends Controller
             'equipment' => __('Equipment'),
             'it' => __('IT'),
             'itnews' => __('IT news'),
+            'network' => __('Network'),
+            'software' => __('Software'),
             default => Str::headline($handle),
         };
     }
