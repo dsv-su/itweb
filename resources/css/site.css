@@ -62,6 +62,15 @@
 *, ::after, ::before {
     scroll-behavior: smooth;
 }
+
+@media (prefers-reduced-motion: reduce) {
+    *, ::after, ::before {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
 /*html {
     scroll-behavior: smooth;
 }*/
@@ -160,16 +169,10 @@
     color: var(--color-blue-300) !important;
 }
 
-/* Fix for preventing titles in navbar from wrapping */
-#navbar-multi-level > ul > li {
-    white-space: nowrap; /* Prevent text wrapping for top-level items */
-    overflow-x: auto; /* Allow horizontal scroll if the content is too wide */
-    display: inline-block; /* Ensure items stay inline */
-}
-
+/* Keep desktop navigation aligned without clipping keyboard focus rings. */
 #navbar-multi-level > ul > li > a,
 #navbar-multi-level > ul > li > button {
-    white-space: nowrap; /* Prevent wrapping on top-level links and buttons */
+    white-space: nowrap;
 }
 
 /* Media query for mobile devices */

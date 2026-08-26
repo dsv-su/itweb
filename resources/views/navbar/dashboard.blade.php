@@ -6,11 +6,11 @@
         ->whereIn('group_id', ['ekonomi', 'enhetschef'])
         ->exists();
 
-    $actionButtonClasses = 'hidden md:flex items-center justify-center p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600';
+    $actionButtonClasses = 'hidden md:flex min-w-11 min-h-11 items-center justify-center p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-blue-300 dark:focus-visible:ring-offset-gray-900';
     $dropdownClasses = 'hidden overflow-hidden z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow-lg dark:bg-gray-700 dark:divide-gray-600';
     $dropdownHeaderClasses = 'block py-2 px-4 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-200';
     $dropdownGridClasses = 'grid grid-cols-3 gap-4 p-4';
-    $serviceLinkClasses = 'block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group';
+    $serviceLinkClasses = 'block min-h-11 p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-blue-300 dark:focus-visible:ring-offset-gray-900';
     $serviceIconClasses = 'mx-auto mb-2 w-5 h-5 text-blue-600 dark:text-white';
     $serviceLabelClasses = 'text-sm font-medium text-blue-600 dark:text-white';
     $tooltipClasses = 'absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700';
@@ -30,6 +30,8 @@
             data-dropdown-placement="bottom-end"
             class="{{ $actionButtonClasses }} mr-1"
             aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="notification-dropdown-desktop"
         >
             <span class="sr-only">{{ __("View notifications") }}</span>
             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 21">
@@ -57,6 +59,8 @@
             data-dropdown-placement="bottom-end"
             class="{{ $actionButtonClasses }}"
             aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="apps-dropdown-desktop"
         >
             <span class="sr-only">{{ __("Open e-services") }}</span>
             <svg class="w-[18px] h-[18px] text-gray-800 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
@@ -96,6 +100,8 @@
                 data-dropdown-placement="bottom-end"
                 class="{{ $actionButtonClasses }}"
                 aria-haspopup="true"
+                aria-expanded="false"
+                aria-controls="fo-dropdown"
             >
                 <span class="sr-only">{{ __("Open request tools") }}</span>
                 <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">

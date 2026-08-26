@@ -7,20 +7,21 @@
     $localizedHome = $homeEntry ? $homeEntry->in(\Statamic\Facades\Site::current()->handle()) : null;
     $projectProposalsEnabled = (bool) \App\Models\SettingsOh::query()->value('form_enable');
 
-    $navLinkClasses = 'block py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:p-0 md:hover:text-blue-700 dark:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent md:dark:hover:text-blue-500';
-    $dropdownButtonClasses = 'flex items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white';
-    $dropdownLinkClasses = 'block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white';
-    $mobileActionButtonClasses = 'p-2 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600';
+    $focusClasses = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-blue-300 dark:focus-visible:ring-offset-gray-900';
+    $navLinkClasses = 'flex min-h-11 items-center py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:px-0 md:hover:text-blue-700 dark:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent md:dark:hover:text-blue-500 '.$focusClasses;
+    $dropdownButtonClasses = 'flex min-h-11 items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white '.$focusClasses;
+    $dropdownLinkClasses = 'block min-h-11 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white '.$focusClasses;
+    $mobileActionButtonClasses = 'min-w-11 min-h-11 p-2 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 '.$focusClasses;
     $mobileDropdownClasses = 'hidden fixed left-0 right-0 top-14 z-50 w-screen max-w-none text-base list-none bg-white rounded-lg divide-y divide-gray-100 shadow-lg dark:bg-gray-700 dark:divide-gray-600';
-    $serviceLinkClasses = 'block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group';
+    $serviceLinkClasses = 'block min-h-11 p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group '.$focusClasses;
     $serviceIconClasses = 'mx-auto mb-2 w-5 h-5 text-blue-600 dark:text-white';
     $serviceLabelClasses = 'text-sm font-medium text-blue-600 dark:text-white';
 @endphp
 
-<nav class="bg-white border-b border-susecondary dark:bg-gray-900 dark:border-gray-700">
+<nav id="site-navigation" aria-label="{{ __('Main navigation') }}" class="bg-white border-b border-susecondary dark:bg-gray-900 dark:border-gray-700">
     <div class="relative flex flex-nowrap items-center justify-between w-full h-14 px-3 mx-auto overflow-visible bg-white md:px-6 lg:px-8 dark:border-gray-600 dark:bg-gray-900">
         @if($localizedHome)
-            <a href="{{ $localizedHome->url() }}" class="flex items-center min-w-0 mr-4">
+            <a href="{{ $localizedHome->url() }}" aria-label="{{ __('DSV IT home') }}" class="flex items-center min-w-0 mr-4 {{ $focusClasses }}">
                 <div class="flex items-center h-full ml-2 opacity-90 dark:text-white">
                     <span class="px-1.5 py-1 text-xl leading-none border-2 border-black rounded-lg dark:border-white">
                         DSV
@@ -47,6 +48,8 @@
                     data-dropdown-placement="bottom-end"
                     class="{{ $mobileActionButtonClasses }} mr-1 text-gray-500 dark:text-gray-400"
                     aria-haspopup="true"
+                    aria-expanded="false"
+                    aria-controls="notification-dropdown-mobile"
                 >
                     <span class="sr-only">{{ __("View notifications") }}</span>
                     <svg class="w-6 h-6 text-black dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 21">
@@ -76,6 +79,8 @@
                     data-dropdown-placement="bottom-end"
                     class="{{ $mobileActionButtonClasses }} text-black dark:text-gray-200"
                     aria-haspopup="true"
+                    aria-expanded="false"
+                    aria-controls="apps-dropdown-mobile"
                 >
                     <span class="sr-only">{{ __("Open e-services") }}</span>
                     <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
@@ -112,7 +117,7 @@
                 data-collapse-toggle="navbar-multi-level"
                 type="button"
                 id="menuBtn"
-                class="block hamburger md:hidden focus:outline-none"
+                class="block hamburger md:hidden {{ $focusClasses }}"
                 aria-controls="navbar-multi-level"
                 aria-expanded="false"
             >
@@ -128,14 +133,18 @@
                 class="hidden absolute left-0 top-full w-full z-40 bg-white dark:bg-gray-900 dark:border-gray-700
                        md:static md:z-auto md:flex md:flex-1 md:min-w-0 md:justify-center md:items-center md:w-auto"
             >
-                <ul class="flex flex-col p-4 mt-4 font-medium bg-gray-50 border border-susecondary rounded-lg md:p-0 md:mt-0 md:flex-row md:space-x-8 md:border-0 md:bg-white rtl:space-x-reverse dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                <ul class="flex flex-col p-4 mt-4 font-medium bg-gray-50 border border-susecondary rounded-lg md:p-0 md:mt-0 md:flex-row md:items-center md:gap-8 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                     {{ nav:main }}
                     {{ if children }}
-                    <li>
+                    <li class="relative flex items-center">
                         <button
-                            id="dropdownNavbarLink"
-                            data-dropdown-toggle="dropdownNavbar-{{ title }}"
-                            class="flex items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent"
+                            id="dropdownNavbarLink-{{ id }}"
+                            data-dropdown-toggle="dropdownNavbar-{{ id }}"
+                            type="button"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            aria-controls="dropdownNavbar-{{ id }}"
+                            class="flex min-h-11 items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent {{ $focusClasses }}"
                         >
                             {{ title }}
                             <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
@@ -143,45 +152,54 @@
                             </svg>
                         </button>
 
-                        <div id="dropdownNavbar-{{ title }}" class="absolute top-full left-0 z-10 hidden w-full font-normal bg-white divide-y divide-gray-100 rounded-lg shadow md:w-auto dark:bg-gray-700 dark:divide-gray-600">
-                            <ul class="py-2 text-sm text-gray-700 border border-susecondary rounded-lg dark:text-gray-200" aria-labelledby="dropdownLargeButton">
+                        <div id="dropdownNavbar-{{ id }}" class="absolute top-full left-0 z-10 hidden w-full font-normal bg-white divide-y divide-gray-100 rounded-lg shadow md:w-auto dark:bg-gray-700 dark:divide-gray-600">
+                            <ul class="py-2 text-sm text-gray-700 border border-susecondary rounded-lg dark:text-gray-200" aria-labelledby="dropdownNavbarLink-{{ id }}">
                                 {{ children }}
                                 {{ if children }}
-                                <li aria-labelledby="dropdownNavbarLink">
-                                    <button id="doubleDropdownButton-{{ title }}" data-dropdown-toggle="doubleDropdown-{{ depth }}-{{ title }}" type="button" class="{{ $dropdownButtonClasses }}">
+                                <li>
+                                    <button id="doubleDropdownButton-{{ id }}" data-dropdown-toggle="doubleDropdown-{{ id }}" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="doubleDropdown-{{ id }}" class="{{ $dropdownButtonClasses }}">
                                         {{ title }}
                                         <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                                         </svg>
                                     </button>
 
-                                    <div id="doubleDropdown-{{ depth }}-{{ title }}" class="absolute top-0 left-full z-10 hidden w-full bg-white divide-y divide-gray-100 rounded-lg shadow md:w-auto dark:bg-gray-700">
-                                        <ul class="py-2 pl-6 text-sm text-gray-700 border border-susecondary rounded-lg dark:text-gray-200" aria-labelledby="doubleDropdownButton-{{ title }}">
+                                    <div id="doubleDropdown-{{ id }}" class="absolute top-0 left-full z-10 hidden w-full bg-white divide-y divide-gray-100 rounded-lg shadow md:w-auto dark:bg-gray-700">
+                                        <ul class="py-2 pl-6 text-sm text-gray-700 border border-susecondary rounded-lg dark:text-gray-200" aria-labelledby="doubleDropdownButton-{{ id }}">
                                             {{ children }}
                                             {{ if children }}
-                                            <li aria-labelledby="dropdownNavbarLink">
-                                                <button id="trippleDropdownButton-{{ title }}" data-dropdown-toggle="trippleDropdown-{{ depth }}-{{ title }}" type="button" class="{{ $dropdownButtonClasses }}">
+                                            <li>
+                                                <button id="trippleDropdownButton-{{ id }}" data-dropdown-toggle="trippleDropdown-{{ id }}" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="trippleDropdown-{{ id }}" class="{{ $dropdownButtonClasses }}">
                                                     {{ title }}
                                                     <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                                                     </svg>
                                                 </button>
 
-                                                <div id="trippleDropdown-{{ depth }}-{{ title }}" class="absolute top-0 left-full z-10 hidden w-full bg-white divide-y divide-gray-100 rounded-lg shadow md:w-auto dark:bg-gray-700">
-                                                    <ul class="py-2 pl-9 text-sm text-gray-700 border border-susecondary rounded-lg dark:text-gray-200" aria-labelledby="trippleDropdownButton-{{ title }}">
+                                                <div id="trippleDropdown-{{ id }}" class="absolute top-0 left-full z-10 hidden w-full bg-white divide-y divide-gray-100 rounded-lg shadow md:w-auto dark:bg-gray-700">
+                                                    <ul class="py-2 pl-9 text-sm text-gray-700 border border-susecondary rounded-lg dark:text-gray-200" aria-labelledby="trippleDropdownButton-{{ id }}">
                                                         {{ children }}
                                                         {{ if children }}
-                                                        <li aria-labelledby="dropdownNavbarLink">
-                                                            <button id="lastDropdownButton-{{ title }}" data-dropdown-toggle="lastDropdown-{{ depth }}-{{ title }}" data-dropdown-placement="right-start" type="button" class="{{ $dropdownButtonClasses }}">
+                                                        <li>
+                                                            <button id="lastDropdownButton-{{ id }}" data-dropdown-toggle="lastDropdown-{{ id }}" data-dropdown-placement="right-start" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="lastDropdown-{{ id }}" class="{{ $dropdownButtonClasses }}">
                                                                 {{ title }}
                                                                 <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                                                                 </svg>
                                                             </button>
+                                                            <div id="lastDropdown-{{ id }}" class="absolute top-0 left-full z-10 hidden w-full bg-white rounded-lg shadow md:w-auto dark:bg-gray-700">
+                                                                <ul class="py-2 pl-9 text-sm text-gray-700 border border-susecondary rounded-lg dark:text-gray-200" aria-labelledby="lastDropdownButton-{{ id }}">
+                                                                    {{ children }}
+                                                                    <li>
+                                                                        <a href="{{ url }}" class="{{ $dropdownLinkClasses }}" {{ if is_current }}aria-current="page"{{ /if }}>{{ title }}</a>
+                                                                    </li>
+                                                                    {{ /children }}
+                                                                </ul>
+                                                            </div>
                                                         </li>
                                                         {{ else }}
                                                         <li>
-                                                            <a href="{{ url }}" aria-label="Nav link" class="{{ $dropdownLinkClasses }}">
+                                                            <a href="{{ url }}" class="{{ $dropdownLinkClasses }}" {{ if is_current }}aria-current="page"{{ /if }}>
                                                                 {{ title }}
                                                             </a>
                                                         </li>
@@ -192,7 +210,7 @@
                                             </li>
                                             {{ else }}
                                             <li>
-                                                <a href="{{ url }}" aria-label="Nav link" class="{{ $dropdownLinkClasses }}">
+                                                <a href="{{ url }}" class="{{ $dropdownLinkClasses }}" {{ if is_current }}aria-current="page"{{ /if }}>
                                                     {{ title }}
                                                 </a>
                                             </li>
@@ -203,7 +221,7 @@
                                 </li>
                                 {{ else }}
                                 <li>
-                                    <a href="{{ url }}" aria-label="Nav link" class="{{ $dropdownLinkClasses }}">
+                                    <a href="{{ url }}" class="{{ $dropdownLinkClasses }}" {{ if is_current }}aria-current="page"{{ /if }}>
                                         {{ title }}
                                     </a>
                                 </li>
@@ -213,8 +231,8 @@
                         </div>
                     </li>
                     {{ else }}
-                    <li>
-                        <a href="{{ url }}" aria-label="Nav link" class="{{ $navLinkClasses }}" aria-current="page">
+                    <li class="relative flex items-center">
+                        <a href="{{ url }}" class="{{ $navLinkClasses }}" {{ if is_current }}aria-current="page"{{ /if }}>
                             {{ title }}
                         </a>
                     </li>
@@ -254,8 +272,9 @@
             });
 
             document.addEventListener('keydown', (event) => {
-                if (event.key === 'Escape') {
+                if (event.key === 'Escape' && isOpen() && window.innerWidth < 768) {
                     setOpen(false);
+                    btn.focus();
                 }
             });
 
@@ -275,5 +294,83 @@
         }
 
         document.addEventListener('livewire:navigated', initNavbarToggle);
+
+        const initAccessibleDropdowns = () => {
+            const nav = document.getElementById('site-navigation');
+            if (!nav || nav.dataset.a11yDropdownsBound === 'true') return;
+
+            nav.dataset.a11yDropdownsBound = 'true';
+
+            const toggles = () => [...nav.querySelectorAll('[data-dropdown-toggle]')];
+            const targetFor = (toggle) => document.getElementById(toggle.dataset.dropdownToggle);
+            const focusables = (target) => [...target.querySelectorAll('a[href], button:not([disabled])')]
+                .filter((item) => item.getClientRects().length > 0 && getComputedStyle(item).visibility !== 'hidden');
+            const syncStates = () => toggles().forEach((toggle) => {
+                const target = targetFor(toggle);
+                if (target) toggle.setAttribute('aria-expanded', String(!target.classList.contains('hidden')));
+            });
+
+            const observer = new MutationObserver(syncStates);
+            toggles().forEach((toggle) => {
+                const target = targetFor(toggle);
+                toggle.setAttribute('aria-haspopup', 'true');
+                toggle.setAttribute('aria-controls', toggle.dataset.dropdownToggle);
+                if (target) observer.observe(target, { attributes: true, attributeFilter: ['class'] });
+            });
+            syncStates();
+
+            nav.addEventListener('keydown', (event) => {
+                const toggle = event.target.closest('[data-dropdown-toggle]');
+                const openTarget = toggles().map((item) => targetFor(item))
+                    .find((target) => target && !target.classList.contains('hidden') && target.contains(event.target));
+
+                if (toggle && ['ArrowDown', 'ArrowRight'].includes(event.key)) {
+                    event.preventDefault();
+                    const target = targetFor(toggle);
+                    if (!target) return;
+                    if (target.classList.contains('hidden')) toggle.click();
+                    setTimeout(() => focusables(target)[0]?.focus(), 0);
+                    return;
+                }
+
+                if (openTarget && ['ArrowDown', 'ArrowUp'].includes(event.key)) {
+                    const items = focusables(openTarget);
+                    const index = items.indexOf(event.target);
+                    if (index === -1) return;
+                    event.preventDefault();
+                    const step = event.key === 'ArrowDown' ? 1 : -1;
+                    items[(index + step + items.length) % items.length]?.focus();
+                    return;
+                }
+
+                if (openTarget && ['Home', 'End'].includes(event.key)) {
+                    const items = focusables(openTarget);
+                    if (!items.length) return;
+                    event.preventDefault();
+                    items[event.key === 'Home' ? 0 : items.length - 1].focus();
+                    return;
+                }
+
+                if (['Escape', 'ArrowLeft'].includes(event.key)) {
+                    const openToggle = toggles().reverse().find((item) => {
+                        const target = targetFor(item);
+                        return target && !target.classList.contains('hidden') &&
+                            (target.contains(event.target) || item === event.target);
+                    });
+                    if (openToggle) {
+                        event.preventDefault();
+                        openToggle.click();
+                        openToggle.focus();
+                    }
+                }
+            });
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initAccessibleDropdowns);
+        } else {
+            initAccessibleDropdowns();
+        }
+        document.addEventListener('livewire:navigated', initAccessibleDropdowns);
     })();
 </script>
