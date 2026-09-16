@@ -2,51 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DsvBudget;
 use App\Models\ProjectProposal;
 use App\Services\Budget\ReCalcBudget;
+use App\Services\Budget\ProposalUnitStats;
+use Illuminate\Http\Request;
 use IcehouseVentures\LaravelChartjs\Facades\Chartjs;
 use Statamic\View\View;
 
 class StatsController extends Controller
 {
-    private const PREAPPROVED_STATES = [
-        //'head_approved',
-        //'fo_approved',
-        'final_approved',
-        'sent',
-    ];
-
-    private const YEAR = 2026;
-
-    private const APPROVED_STATES = [
-        'granted',
-    ];
-
-    public function preapproved()
+    public function preapproved(Request $request)
     {
-        $fromYear = self::YEAR;
-
-        $start = $fromYear . '-01-01';
-        $end   = $fromYear . '-12-31';
-
-        $proposals = ProjectProposal::query()
-            ->whereIn('status_stage1', self::PREAPPROVED_STATES)
-            ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(pp, '$.submission_deadline')) BETWEEN ? AND ?", [$start, $end])
-            ->count();
-
-        $budget = DsvBudget::find(1);
-
-        $fundingOrg = $budget ? json_decode($budget->funding_org, true) : null;
-
-        if ($proposals <= 0 || empty($fundingOrg)) {
-            $viewData['breadcrumb'] = 'Stats are unavailable';
-            $viewData['fromYear'] = $fromYear;
-            return $this->createView('stats.unavailable', 'mylayout', $viewData);
+        $validated = $request->validate([
+            'year' => ['nullable', 'integer', 'between:1000,9999'],
+            'breakdown' => ['nullable', 'in:overview,unit'],
+        ]);
+        $fromYear = (int) ($validated['year'] ?? now()->year);
+        $years = $this->availableYears($fromYear);
+        if (($validated['breakdown'] ?? 'overview') === 'unit') {
+            return $this->perUnit($fromYear, $years, false);
         }
+        $budget = (new ReCalcBudget())->scan($fromYear);
+        $fundingOrg = $budget->funding_org ?? [];
 
-        // Recalculate without redirect side effects
-        $this->recalcBudget(false);
+        if ($budget->preapproved_total <= 0) {
+            $breadcrumb = 'Stats are unavailable';
+            return $this->createView('stats.unavailable', 'mylayout', compact('breadcrumb', 'fromYear', 'years'));
+        }
 
         $labels = [];
         $preapproved = [];
@@ -127,32 +109,27 @@ class StatsController extends Controller
         );
 
         $breadcrumb = 'Stats';
-        return $this->createView('stats.proposal_stats', 'mylayout', compact('chart', 'breadcrumb', 'fromYear'));
+        return $this->createView('stats.proposal_stats', 'mylayout', compact('chart', 'breadcrumb', 'fromYear', 'years'));
     }
 
-    public function approved()
+    public function approved(Request $request)
     {
-        $fromYear = self::YEAR;
-
-        $start = $fromYear . '-01-01';
-        $end   = $fromYear . '-12-31';
-
-        $proposals = ProjectProposal::query()
-            ->whereIn('status_stage1', self::PREAPPROVED_STATES)
-            ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(pp, '$.submission_deadline')) BETWEEN ? AND ?", [$start, $end])
-            ->count();
-        $budget = DsvBudget::find(1);
-
-        $fundingOrg = $budget ? json_decode($budget->funding_org, true) : null;
-
-        if ($proposals <= 0 || empty($fundingOrg)) {
-            $viewData['breadcrumb'] = 'Stats are unavailable';
-            $viewData['fromYear'] = $fromYear;
-            return $this->createView('stats.unavailable', 'mylayout', $viewData);
+        $validated = $request->validate([
+            'year' => ['nullable', 'integer', 'between:1000,9999'],
+            'breakdown' => ['nullable', 'in:overview,unit'],
+        ]);
+        $fromYear = (int) ($validated['year'] ?? now()->year);
+        $years = $this->availableYears($fromYear);
+        if (($validated['breakdown'] ?? 'overview') === 'unit') {
+            return $this->perUnit($fromYear, $years, true);
         }
+        $budget = (new ReCalcBudget())->scan($fromYear);
+        $fundingOrg = $budget->funding_org ?? [];
 
-        // Recalculate without redirect side effects
-        $this->recalcBudget(false);
+        if ($budget->preapproved_total <= 0) {
+            $breadcrumb = 'Stats are unavailable';
+            return $this->createView('stats.unavailable', 'mylayout', compact('breadcrumb', 'fromYear', 'years'));
+        }
 
         $labels = [];
         $phd = [];
@@ -247,7 +224,7 @@ class StatsController extends Controller
         );
 
         $breadcrumb = 'Stats';
-        return $this->createView('stats.proposal_approved', 'mylayout', compact('chart', 'breadcrumb', 'fromYear'));
+        return $this->createView('stats.proposal_approved', 'mylayout', compact('chart', 'breadcrumb', 'fromYear', 'years'));
     }
 
     public function recalcBudget(bool $redirect = true)
@@ -260,6 +237,32 @@ class StatsController extends Controller
         }
 
         return null;
+    }
+
+    private function perUnit(int $fromYear, array $years, bool $granted)
+    {
+        $counts = (new ProposalUnitStats())->counts($fromYear, $granted ? ['granted'] : ['sent', 'granted']);
+        $title = $granted ? 'Granted proposals per unit' : 'Submitted proposals per unit';
+        $description = $granted ? 'Proposals granted by the funder.' : 'Proposals sent to the funder, including those subsequently granted.';
+        $chart = $this->buildBarChart('barChartUnits', array_keys($counts), $granted ? 'Granted proposals' : 'Submitted proposals', array_values($counts), 'rgba(0, 123, 255, 1)')
+            ->options(['scales' => ['y-left' => ['beginAtZero' => true, 'ticks' => ['precision' => 0]]]]);
+        $breadcrumb = 'Stats';
+
+        return $this->createView('stats.proposal_units', 'mylayout', compact('fromYear', 'years', 'counts', 'title', 'description', 'chart', 'breadcrumb'));
+    }
+
+    private function availableYears(int $selectedYear): array
+    {
+        return ProjectProposal::query()
+            ->whereNotNull('pp->submission_deadline')
+            ->pluck('pp->submission_deadline as submission_deadline')
+            ->filter(fn ($deadline) => is_string($deadline) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $deadline))
+            ->map(fn ($deadline) => (int) substr($deadline, 0, 4))
+            ->push(now()->year, $selectedYear)
+            ->unique()
+            ->sortDesc()
+            ->values()
+            ->all();
     }
 
     private function buildBarChart(string $name, array $labels, string $label, array $data, string $color)

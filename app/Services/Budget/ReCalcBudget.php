@@ -9,10 +9,12 @@ use Illuminate\Support\Facades\Artisan;
 
 class ReCalcBudget
 {
-    public function scan()
+    public function scan(?int $year = null): DsvBudget
     {
         // Reset the budget table
-        Artisan::call('clear-areas');
+        if ($year === null) {
+            Artisan::call('clear-areas');
+        }
 
         //Dashboard states to include
         $available_states = [
@@ -31,14 +33,19 @@ class ReCalcBudget
         // Fetch all matching proposals
         $dashboardRequests = Dashboard::whereIn('state', $available_states)
             ->pluck('request_id');
-        $proposals = ProjectProposal::whereIn('id', $dashboardRequests)->get();
-        $budget    = DsvBudget::find(1);
+        $proposals = ProjectProposal::whereIn('id', $dashboardRequests)
+            ->when($year !== null, fn ($query) => $query
+                ->where('pp->submission_deadline', '>=', "$year-01-01")
+                ->where('pp->submission_deadline', '<=', "$year-12-31"))
+            ->get();
+        // Annual reports must not overwrite the shared all-years budget.
+        $budget = $year === null ? DsvBudget::findOrFail(1) : new DsvBudget();
 
         //Fetch and count sent proposals
-        $dashboardSentRequests = Dashboard::whereIn('state', $sent_states)->count();
+        $dashboardSentRequests = Dashboard::whereIn('state', $sent_states)->whereIn('request_id', $proposals->modelKeys())->count();
 
         //Fetch and count granted proposals
-        $dashboardGrantedRequests = Dashboard::whereIn('state', ['granted'])->count();
+        $dashboardGrantedRequests = Dashboard::whereIn('state', ['granted'])->whereIn('request_id', $proposals->modelKeys())->count();
 
         // Initialize per-area accumulators
         $counts             = [];
@@ -158,7 +165,11 @@ class ReCalcBudget
         $budget->setAttribute('cofinanced_total_usd', $totals['promised_dsv']['usd']);
 
         // Save everything
-        $budget->save();
+        if ($year === null) {
+            $budget->save();
+        }
+
+        return $budget;
     }
 
 
