@@ -86,7 +86,8 @@
             </div>
 
             @if($isFoReview)
-                <form method="POST" action="{{ route('fo_review', $dashboard) }}">
+                <form id="fo-review-form" method="POST" action="{{ route('fo_review', $dashboard) }}">
+                    <input type="hidden" name="decision" value="update">
                     @csrf
             @endif
 

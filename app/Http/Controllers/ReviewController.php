@@ -127,6 +127,12 @@ class ReviewController extends Controller
 
         if ($isFo) {
             $this->applyFoUpdates($request, $dashboard);
+
+            if ($request->input('decision', 'update') === 'update') {
+                return redirect()->back()
+                    ->with('status', __('The form has been updated.'))
+                    ->withInput($request->only('comment'));
+            }
         }
 
         //$user = request()->user();

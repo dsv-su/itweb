@@ -211,6 +211,7 @@
     "Unknown user": "Okänd användare",
     "Go to page :page": "Gå till sida :page",
     "Select Projectleader": "Välj projektledare",
-    "Travelrequest for :name": "Resebegäran för :name"
+    "Travelrequest for :name": "Resebegäran för :name",
+    "The form has been updated.": "Formuläret har uppdaterats."
 
 }
