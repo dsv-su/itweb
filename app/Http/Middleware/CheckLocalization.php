@@ -36,6 +36,7 @@ class CheckLocalization
 
         // 1) Laravel locale (Blade translations, validation, etc.)
         App::setLocale($locale);
+        session(['locale' => $locale, 'localisation' => $locale]);
 
         // 2) Statamic site (Antlers content localization)
         $site = Site::get($locale)

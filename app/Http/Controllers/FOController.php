@@ -60,11 +60,7 @@ class FOController extends Controller
 
     public function svlist()
     {
-        App::setLocale('sv');
-
-        return (new StatamicView)
-            ->template('requests.fo.list');
-            //->layout('mylayout');
+        return $this->list();
     }
 
     public function pdfview($id)

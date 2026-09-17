@@ -14,14 +14,8 @@ Route::get($login, [SystemController::class, 'login'])->name('login');
 // Locale constraint
 $langConstraint = 'en|sv|swe';
 
-Route::get('/', function (\Illuminate\Http\Request $request) {
-    session(['locale' => 'sv', 'localisation' => 'sv']);
-    app()->setLocale('sv');
-
-    $query = $request->getQueryString();
-
-    return redirect('/swe' . ($query ? '?' . $query : ''));
-});
+Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])
+    ->middleware(config('statamic.routes.middleware', ['web']));
 
 Route::get('/search', SearchController::class)
     ->middleware('checklang')
@@ -94,7 +88,8 @@ Route::get('/list', [\App\Http\Controllers\FOController::class, 'list'])
 // Localized list (constrained)
 Route::get('/{lang}/list', [\App\Http\Controllers\FOController::class, 'svlist'])
     ->where('lang', $langConstraint)
-    ->middleware('checklang');
+    ->middleware('checklang')
+    ->name('request-list.localized');
 
 Route::get('/show/{id}', [\App\Http\Controllers\FOController::class, 'show'])
     ->middleware('checklang')

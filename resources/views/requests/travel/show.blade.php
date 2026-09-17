@@ -59,7 +59,7 @@
 
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
                     <a
-                        href="{{ url()->previous() }}"
+                        href="{{ route('request-list.localized', ['lang' => app()->getLocale() === 'sv' ? 'swe' : 'en']) }}"
                         class="inline-flex w-full items-center justify-center rounded-lg border border-blue-700 bg-white px-5 py-2.5 text-sm font-semibold text-blue-700 shadow-sm hover:bg-blue-800 hover:text-white dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800 sm:w-auto"
                     >
                         {{ __('Back') }}
