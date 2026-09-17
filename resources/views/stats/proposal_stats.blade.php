@@ -1,55 +1,52 @@
 @extends('layouts.app')
 @section('content')
     @nocache('dsvheader')
-    <!-- PP header -->
     @include('pp.partials.header')
-
     @include('pp.partials.breadcrumb')
-
     @include('pp.partials.flashmessage')
-
     @include('stats.partials.tabs')
 
     <section class="bg-white dark:bg-gray-900">
-        <div class="max-w-6xl px-4 py-8 mx-auto lg:py-16">
+        <div class="max-w-6xl px-4 py-4 mx-auto lg:py-8">
             @include('stats.partials.controls', ['title' => 'Committed Proposals'])
 
-            <!-- First row -->
-            <div class="lg:flex lg:gap-8 mt-6">
-                <div class="w-full lg:w-1/2">
-                    <x-chartjs-component :chart="$chart['researchsubject_preapproved']" />
-                </div>
-
+            <div class="mt-8 space-y-8">
+                    <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
+                        @include('stats.partials.unit-chart', [
+                            'heading' => 'Proposals per research subject',
+                            'unitChart' => $chart['researchsubject_preapproved'],
+                            'badge' => 'Committed',
+                            'note' => null,
+                        ])
+                    </div>
+                    <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
+                        @foreach (['sek', 'eur', 'usd'] as $currency)
+                            @include('stats.partials.unit-chart', [
+                                'heading' => 'Committed budget',
+                                'unitChart' => $chart['researchsubject_commited_'.$currency],
+                                'badge' => strtoupper($currency),
+                                'note' => null,
+                            ])
+                        @endforeach
+                    </div>
+                    <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
+                        @include('stats.partials.unit-chart', [
+                            'heading' => 'PhD years',
+                            'unitChart' => $chart['researchsubject_phd'],
+                            'badge' => 'Years',
+                            'note' => null,
+                        ])
+                        <div class="lg:col-span-2">
+                            @include('stats.partials.unit-chart', [
+                                'heading' => 'Funding agency',
+                                'unitChart' => $chart['agency'],
+                                'badge' => 'Proposals',
+                                'note' => null,
+                            ])
+                        </div>
+                    </div>
+                @include('stats.partials.investigator-chart')
             </div>
-            <!-- Second row -->
-            <div class="lg:flex lg:gap-6 mt-6">
-                <div class="w-full lg:w-1/2">
-                    <x-chartjs-component :chart="$chart['researchsubject_commited_sek']" />
-                </div>
-                <div class="w-full lg:w-1/2">
-                    <x-chartjs-component :chart="$chart['researchsubject_commited_eur']" />
-                </div>
-                <div class="w-full lg:w-1/2">
-                    <x-chartjs-component :chart="$chart['researchsubject_commited_usd']" />
-                </div>
-            </div>
-
-            <!-- Third row -->
-            <div class="lg:flex lg:gap-8 mt-6">
-                <div class="w-full lg:w-1/2">
-                    <h5 class="text-xl dark:text-white">Funding Agency</h5>
-                    <x-chartjs-component :chart="$chart['agency']" />
-                </div>
-                <div class="w-full lg:w-1/2">
-                    <h5 class="text-xl dark:text-white">PhD years</h5>
-                    <x-chartjs-component :chart="$chart['researchsubject_phd']" />
-                </div>
-            </div>
-            {{--}}
-            <div class="flex justify-between items-center">
-                <h3 class="text-2xl dark:text-white">Granted Proposals</h3>
-            </div>
-            {{--}}
         </div>
     </section>
 @endsection
