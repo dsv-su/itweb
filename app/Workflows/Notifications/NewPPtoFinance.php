@@ -5,6 +5,7 @@ namespace App\Workflows\Notifications;
 use App\Mail\NotifyFONewProjectProposal;
 use App\Models\Dashboard;
 use App\Models\User;
+use App\Services\Finance\FinancialOfficerRecipients;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Workflow\Activity;
@@ -17,11 +18,7 @@ class NewPPtoFinance extends Activity
         $this->loadDashboard($dashboardId);
         $users = $this->loadUsers();
 
-        $ids = DB::table('group_user')
-            ->where('group_id', 'ekonomi')
-            ->pluck('user_id');
-
-        $recipients = User::whereIn('id', $ids)->get();
+        $recipients = FinancialOfficerRecipients::forDashboard($this->dashboard);
 
         foreach ($recipients as $recipient) {
             $this->sendNotification($recipient, $users);

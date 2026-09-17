@@ -5,6 +5,7 @@ namespace App\Jobs\ReminderEmails;
 use App\Mail\Reminders\FOReminder;
 use App\Models\ProjectProposal;
 use App\Models\User;
+use App\Services\Finance\FinancialOfficerRecipients;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -29,8 +30,8 @@ class SendFOReminderEmail implements ShouldQueue
         $proposal = ProjectProposal::findOrFail($this->proposalId);
         $dashboard = $proposal->dashboard;
         $user = User::findOrFail($dashboard->user_id);
-        $fo = User::findOrFail($dashboard->fo_id);
-
-        Mail::to($fo->email)->send(new FOReminder($fo, $user, $dashboard));
+        foreach (FinancialOfficerRecipients::forDashboard($dashboard) as $fo) {
+            Mail::to($fo->email)->send(new FOReminder($fo, $user, $dashboard));
+        }
     }
 }

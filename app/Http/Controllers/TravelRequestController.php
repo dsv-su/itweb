@@ -124,7 +124,7 @@ class TravelRequestController extends Controller
         $this->validateRequest($request);
 
         // Find or create the financial officer
-        $fo = SettingsFo::find(1);
+        $fo = SettingsFo::where('active', true)->orderBy('id')->first();
 
         // Create or update TravelRequest
         $travelRequestData = $request->only([

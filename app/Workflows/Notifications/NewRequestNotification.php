@@ -7,6 +7,7 @@ use App\Mail\NotifyRequestHead;
 use App\Mail\NotifyRequestManager;
 use App\Models\Dashboard;
 use App\Models\User;
+use App\Services\Finance\FinancialOfficerRecipients;
 use Illuminate\Support\Facades\Mail;
 use Workflow\Activity;
 
@@ -22,7 +23,6 @@ class NewRequestNotification extends Activity
         $this->dashboard = Dashboard::find($id);
         $user = User::find((string)$this->dashboard->user_id);
         $manager = User::find((string)$this->dashboard->manager_id);
-        $fo = User::find((string)$this->dashboard->fo_id);
         $head = User::find((string)$this->dashboard->head_id);
 
         //Send email to recipent
@@ -34,7 +34,9 @@ class NewRequestNotification extends Activity
                 Mail::to($head->email)->send(new NotifyRequestHead($user, $manager, $head, $this->dashboard));
                 break;
             case('fo'):
-                Mail::to($fo->email)->send(new NotifyRequestFO($user, $manager, $head, $this->dashboard));
+                foreach (FinancialOfficerRecipients::forDashboard($this->dashboard) as $fo) {
+                    Mail::to($fo->email)->send(new NotifyRequestFO($user, $manager, $head, $this->dashboard));
+                }
                 break;
         }
     }

@@ -561,8 +561,8 @@ class ProposalController extends Controller
     {
         return Cache::remember('fo_ids', 600, function () {
             return [
-                'fo'    => SettingsFo::query()->whereKey(1)->value('user_id'),
-                'fo_eu' => SettingsFoEu::query()->whereKey(1)->value('user_id'),
+                'fo'    => SettingsFo::query()->where('active', true)->orderBy('id')->value('user_id'),
+                'fo_eu' => SettingsFoEu::query()->where('active', true)->orderBy('id')->value('user_id'),
             ];
         });
     }

@@ -7,6 +7,7 @@ use App\Mail\NotifyHeadResumeProjectProposal;
 use App\Mail\NotifyViceNewProjectProposal;
 use App\Models\Dashboard;
 use App\Models\User;
+use App\Services\Finance\FinancialOfficerRecipients;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Workflow\Activity;
@@ -94,9 +95,11 @@ class ResumeProjectProposalNotification extends Activity
                 break;
 
             case 'fo':
-                Mail::to($users['fo']->email)->send(
-                    new NotifyFONewProjectProposal($users['user'], $users['fo'], $users['vice'], $this->dashboard)
-                );
+                foreach (FinancialOfficerRecipients::forDashboard($this->dashboard) as $fo) {
+                    Mail::to($fo->email)->send(
+                        new NotifyFONewProjectProposal($users['user'], $fo, $users['vice'], $this->dashboard)
+                    );
+                }
                 break;
 
             default:

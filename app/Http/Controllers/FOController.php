@@ -12,6 +12,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Validation\Rule;
 use Statamic\View\View as StatamicView;
 
 class FOController extends Controller
@@ -113,60 +115,37 @@ class FOController extends Controller
 
     public function settings_fo(Request $request)
     {
-        $data = $request->validate([
-            'selected_fo' => ['required', 'string', 'exists:users,id'],
-        ]);
-
-        $user = User::findOrFail($data['selected_fo']);
-
-        // Replace truncation with an update-or-create “single active FO” pattern
-        /*DB::transaction(function () use ($user) {
-            SettingsFo::query()->update(['active' => false]);
-            SettingsFo::updateOrCreate(
-                ['user_id' => $user->id],
-                ['name' => $user->name, 'active' => true]
-            );
-        });*/
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('settings_fos')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-        $fo = SettingsFo::firstOrCreate(
-            ['user_id' => $request->selected_fo],
-            [
-                'name' => $user->name,
-                'active' => true
-            ]
-        );
-
-        return back();
+        return $this->saveOfficers($request, 'selected_fo', SettingsFo::class);
     }
 
     public function settings_fo_eu(Request $request)
     {
+        return $this->saveOfficers($request, 'selected_fo_eu', SettingsFoEu::class);
+    }
+
+    private function saveOfficers(Request $request, string $field, string $model)
+    {
         $data = $request->validate([
-            'selected_fo_eu' => ['required', 'string', 'exists:users,id'],
+            $field => ['required', 'array', 'min:1'],
+            "$field.*" => [
+                'required', 'string', 'distinct', 'exists:users,id',
+                Rule::exists('group_user', 'user_id')->where('group_id', 'ekonomi'),
+            ],
         ]);
 
-        $user = User::findOrFail($data['selected_fo_eu']);
+        DB::transaction(function () use ($data, $field, $model) {
+            $model::query()->whereNotIn('user_id', $data[$field])->delete();
 
-        /*DB::transaction(function () use ($user) {
-            SettingsFoEu::query()->update(['active' => false]);
-            SettingsFoEu::updateOrCreate(
-                ['user_id' => $user->id],
-                ['name' => $user->name, 'active' => true]
-            );
-        });*/
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('settings_fo_eus')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-        $fo = SettingsFoEu::firstOrCreate(
-            ['user_id' => $request->selected_fo_eu],
-            [
-                'name' => $user->name,
-                'active' => true
-            ]
-        );
+            foreach (User::whereIn('id', $data[$field])->get() as $user) {
+                $model::updateOrCreate(
+                    ['user_id' => $user->id],
+                    ['name' => $user->name, 'active' => true]
+                );
+            }
+        });
 
-        return back();
+        Cache::forget('fo_ids');
+
+        return back()->with('status', 'Financial officer notification settings updated.');
     }
 }
