@@ -44,6 +44,11 @@ class FOController extends Controller
         };
     }
 
+    public function showLocalized(string $lang, $id)
+    {
+        return $this->show($id);
+    }
+
     public function list()
     {
         return (new StatamicView)

@@ -14,6 +14,15 @@ Route::get($login, [SystemController::class, 'login'])->name('login');
 // Locale constraint
 $langConstraint = 'en|sv|swe';
 
+Route::get('/', function (\Illuminate\Http\Request $request) {
+    session(['locale' => 'sv', 'localisation' => 'sv']);
+    app()->setLocale('sv');
+
+    $query = $request->getQueryString();
+
+    return redirect('/swe' . ($query ? '?' . $query : ''));
+});
+
 Route::get('/search', SearchController::class)
     ->middleware('checklang')
     ->name('search');
@@ -88,11 +97,12 @@ Route::get('/{lang}/list', [\App\Http\Controllers\FOController::class, 'svlist']
     ->middleware('checklang');
 
 Route::get('/show/{id}', [\App\Http\Controllers\FOController::class, 'show'])
+    ->middleware('checklang')
     ->name('fo-request-show');
 
-// Localized show (FIX leading slash + constrain)
-Route::get('/{lang}/show/{id}', [\App\Http\Controllers\FOController::class, 'show'])
-    ->where('lang', $langConstraint);
+Route::get('/{lang}/show/{id}', [\App\Http\Controllers\FOController::class, 'showLocalized'])
+    ->where('lang', $langConstraint)
+    ->middleware('checklang');
 
 Route::get('/viewpdf/{id}', [\App\Http\Controllers\FOController::class, 'pdfview'])
     ->name('travel-request-pdfview');

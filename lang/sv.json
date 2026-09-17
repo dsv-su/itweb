@@ -198,6 +198,19 @@
     "Please Review and Comment": "Vänligen Granska och kommentera",
     "Please comment the request": "Vänligen lägg till kommenterer",
     "Request list": "Lista ärenden",
-    "Project Proposal Settings": "Project Proposal inställningar"
+    "Project Proposal Settings": "Project Proposal inställningar",
+    "Request type filter": "Filtrera efter ärendetyp",
+    "Projectproposal": "Projektförslag",
+    "Please refine your search by typing to filter ID, User, Country, Purpose, or ProjectID": "Förfina din sökning genom att skriva för att filtrera på ID, användare, land, syfte eller projekt-ID",
+    "Action": "Åtgärd",
+    "Processing": "Under behandling",
+    "Denied": "Avslagen",
+    "Returned": "Returnerad",
+    "Completed": "Slutförd",
+    "Final Approved": "Slutgodkänd",
+    "Unknown user": "Okänd användare",
+    "Go to page :page": "Gå till sida :page",
+    "Select Projectleader": "Välj projektledare",
+    "Travelrequest for :name": "Resebegäran för :name"
 
 }

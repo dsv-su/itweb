@@ -5,7 +5,7 @@
     $travelRequest = $isResume ? $tr : null;
     $dashboardRequest = $isResume ? $dashboard : null;
 
-    $defaultName = 'Travelrequest for ' . auth()->user()->name;
+    $defaultName = __('Travelrequest for :name', ['name' => auth()->user()->name]);
     $paperValue = (int) old('paper', $travelRequest?->paper ?? 0);
     $instructionsUrl = app()->getLocale() === 'sv'
         ? url('/swe/more-systems/travel-request-instructions')

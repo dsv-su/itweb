@@ -95,7 +95,7 @@ return [
     |
     */
 
-    'locale' => $system_config['global']['app_locale'],
+    'locale' => 'sv',
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
