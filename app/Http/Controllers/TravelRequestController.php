@@ -202,6 +202,8 @@ class TravelRequestController extends Controller
             'project_leader' => 'required',
             'unit_head' => 'required',
             'comments' => ['nullable', 'string', 'max:5000'],
+            'departure' => ['nullable', 'date_format:Y-m-d'],
+            'return' => ['nullable', 'date_format:Y-m-d'],
         ];
 
         $rules['country'] = ['required_without:countrytype'];

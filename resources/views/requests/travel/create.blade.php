@@ -30,8 +30,20 @@
                 {{ __('Duty Travel Request') }}
             </h2>
 
-            <form method="post" action="{{ route('travel-submit') }}">
+            {{-- Match field backgrounds to the form, including fields rendered by Livewire. --}}
+            <form id="travel-request-form" method="post" action="{{ route('travel-submit') }}"
+                  class="[&_.bg-gray-50.border]:bg-white dark:[&_.bg-gray-50.border]:bg-gray-900">
                 @csrf
+                @if($errors->any())
+                    <div role="alert" tabindex="-1" x-data x-init="$el.focus()" class="mb-5 rounded-lg border border-red-700 p-4 text-red-700 dark:text-red-400">
+                        <p class="font-semibold">{{ __('Please correct the following errors:') }}</p>
+                        <ul class="list-disc pl-5">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
                 @if($isResume)
                     <input type="hidden" name="id" value="{{ $travelRequest->id }}">
@@ -52,8 +64,8 @@
 
                 <div class="grid gap-4 mb-4 sm:grid-cols-2 sm:gap-6 sm:mb-5">
                     <div class="sm:col-span-2">
-                        <section class="rounded-xl border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800/70">
-                            <div class="rounded-t-xl border-b border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
+                        <section class="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                            <div class="rounded-t-xl border-b border-gray-200 bg-gray-50 px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
                                 <h3 class="text-base font-semibold text-gray-900 dark:text-white">
                                     {{ __('Request details') }}
                                 </h3>
@@ -74,6 +86,7 @@
                                     <input
                                         type="text"
                                         name="name"
+                                        @error('name') aria-invalid="true" aria-describedby="name-error" @enderror
                                         id="name"
                                         class="{{ $inputClass }}"
                                         value="{{ old('name', $travelRequest?->name ?? $defaultName) }}"
@@ -114,9 +127,10 @@
                                     ])
 
                                     <textarea
-                                        id="purpose"
+                                        id="purpose" required
                                         rows="4"
                                         name="purpose"
+                                        @error('purpose') aria-invalid="true" aria-describedby="purpose-error" @enderror
                                         class="@error('purpose') border-red-500 @enderror {{ $textareaClass }}"
                                         placeholder="{{ __('Describe the purpose of your mission') }}"
                                     >{{ old('purpose', $travelRequest?->purpose ?? '') }}</textarea>
@@ -131,8 +145,8 @@
                     </div>
 
                     <div class="relative z-30 sm:col-span-2">
-                        <section class="rounded-xl border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800/70">
-                            <div class="rounded-t-xl border-b border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
+                        <section class="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                            <div class="rounded-t-xl border-b border-gray-200 bg-gray-50 px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
                                 <h3 class="text-base font-semibold text-gray-900 dark:text-white">
                                     {{ __('Project') }} & {{ __('Country') }}
                                 </h3>
@@ -156,6 +170,7 @@
                                         id="comments"
                                         rows="3"
                                         name="comments"
+                                        @error('comments') aria-invalid="true" aria-describedby="comments-error" @enderror
                                         class="@error('comments') border-red-500 @enderror {{ $textareaClass }}"
                                         placeholder="{{ __('Add any comments about the project or destination country') }}"
                                     >{{ old('comments', $travelRequest?->comments ?? '') }}</textarea>
@@ -170,8 +185,8 @@
                     </div>
 
                     <div class="sm:col-span-2">
-                        <section class="rounded-xl border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800/70">
-                            <div class="rounded-t-xl border-b border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
+                        <section class="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                            <div class="rounded-t-xl border-b border-gray-200 bg-gray-50 px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
                                 <h3 class="text-base font-semibold text-gray-900 dark:text-white">
                                     {{ __('Projectleader/Supervisor') }} & {{ __('Unit Head') }}
                                 </h3>
@@ -192,8 +207,9 @@
                                     ])
 
                                     <select
-                                        id="unit_head"
+                                        id="unit_head" required
                                         name="unit_head"
+                                        @error('unit_head') aria-invalid="true" aria-describedby="unit_head-error" @enderror
                                         class="{{ $selectClass }}"
                                     >
                                         @foreach($unitheads as $unithead)
@@ -213,8 +229,8 @@
                     </div>
 
                     <div class="sm:col-span-2">
-                        <section class="overflow-hidden rounded-xl border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800/70">
-                            <div class="border-b border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
+                        <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                            <div class="border-b border-gray-200 bg-gray-50 px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
                                 <h3 class="text-base font-semibold text-gray-900 dark:text-white">
                                     {{ __('Travel dates') }}
                                 </h3>
@@ -226,6 +242,7 @@
                             <div
                                 date-rangepicker
                                 datepicker-format="yyyy-mm-dd"
+                                datepicker-autohide
                                 class="flex flex-col px-5 py-5 sm:flex-row sm:gap-4 dark:text-gray-200"
                             >
                                 @include('requests.travel.partials.form.date-input', [
@@ -249,8 +266,8 @@
                     </div>
 
                     <div class="sm:col-span-2">
-                        <section class="overflow-hidden rounded-xl border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800/70">
-                            <div class="border-b border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
+                        <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                            <div class="border-b border-gray-200 bg-gray-50 px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
                                 <div class="flex items-center justify-between gap-4">
                                     <div>
                                         <h3 class="text-base font-semibold text-gray-900 dark:text-white">
@@ -296,18 +313,23 @@
                 }
 
                 const dispatchTravelDate = () => {
+                    input.setCustomValidity('');
+                    if (input.value) {
+                        const date = new Date(`${input.value}T00:00:00Z`);
+                        if (!input.checkValidity() || Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== input.value) {
+                            input.setCustomValidity(@js(__('Enter a valid date in YYYY-MM-DD format.')));
+                            input.reportValidity();
+                            return;
+                        }
+                    }
                     Livewire.dispatch(eventName, {
                         date: input.value,
                     });
                 };
 
-                input.addEventListener('changeDate', (event) => {
-                    dispatchTravelDate();
-
-                    event.detail.datepicker.hide();
-                });
-
                 input.addEventListener('change', dispatchTravelDate);
+                input.addEventListener('changeDate', dispatchTravelDate);
+                input.addEventListener('input', () => input.setCustomValidity(''));
             });
         </script>
     @endpush

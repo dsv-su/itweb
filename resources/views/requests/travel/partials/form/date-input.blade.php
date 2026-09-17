@@ -26,11 +26,16 @@
             name="{{ $name }}"
             id="{{ $id }}"
             type="text"
+            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
+            maxlength="10"
+            aria-describedby="{{ $id }}-format @error($name) {{ $name }}-error @enderror"
+            @error($name) aria-invalid="true" @enderror
             value="{{ $value }}"
             class="{{ $inputClass }}"
-            placeholder="{{ $placeholder }}"
+            placeholder="YYYY-MM-DD"
         >
 
         @include('requests.travel.partials.form.field-error', ['field' => $name])
     </div>
+    <p id="{{ $id }}-format" class="mt-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Format') }}: YYYY-MM-DD</p>
 </div>

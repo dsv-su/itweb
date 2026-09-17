@@ -8,7 +8,7 @@
     {{ $label }}
 
     @if($required)
-        <span class="text-red-600"> *</span>
+        <span aria-hidden="true" class="text-red-600"> *</span><span class="sr-only">{{ __('(required)') }}</span>
     @endif
 
     @if($modal)

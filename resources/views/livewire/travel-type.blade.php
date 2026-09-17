@@ -31,15 +31,15 @@
     }"
 
         x-init="tabRepositionMarker($refs.tabButtons.firstElementChild);"  class="relative w-full max-w-sm">
-        <label for="paper" class="block mb-4 text-sm font-medium text-gray-900 dark:text-white">{{ __("Please enter a country from the list, or select 'Domestic' if your travel is within Sweden.") }}
-        </label>
+        <p id="travel-type-choice-label" class="block mb-4 text-sm font-medium text-gray-900 dark:text-white">{{ __("Please enter a country from the list, or select 'Domestic' if your travel is within Sweden.") }}
+        </p>
 
-        <div x-ref="tabButtons" class="relative inline-grid items-center justify-center w-full h-10 grid-cols-2 p-1 text-gray-600 dark:text-gray-400 bg-gray-100 rounded-lg select-none dark:bg-gray-700 dark:border-gray-600">
-            <button :id="tabId + '-1'" @click="tabButtonClicked($el);" type="button" role="tab" class="relative z-20 inline-flex items-center justify-center w-full h-8 px-3 text-sm font-medium transition-all rounded-md cursor-pointer whitespace-nowrap">{{__("International")}}</button>
-            <button :id="tabId + '-2'" @click="tabButtonClicked($el);" type="button" role="tab" class="relative z-20 inline-flex items-center justify-center w-full h-8 px-3 text-sm font-medium transition-all rounded-md cursor-pointer whitespace-nowrap">{{__("Domestic")}}</button>
+        <div role="group" aria-labelledby="travel-type-choice-label" x-ref="tabButtons" class="relative inline-grid items-center justify-center w-full h-10 grid-cols-2 p-1 text-gray-600 dark:text-gray-200 bg-gray-100 rounded-lg select-none dark:bg-gray-700 dark:border-gray-600">
+            <button :id="tabId + '-1'" :aria-pressed="(tabSelected == 1).toString()" :aria-controls="tabId + '-content-1'" @click="tabButtonClicked($el);" type="button" class="relative z-20 inline-flex items-center justify-center w-full h-8 px-3 text-sm font-medium transition-all rounded-md cursor-pointer whitespace-nowrap">{{__("International")}}</button>
+            <button :id="tabId + '-2'" :aria-pressed="(tabSelected == 2).toString()" :aria-controls="tabId + '-content-2'" @click="tabButtonClicked($el);" type="button" class="relative z-20 inline-flex items-center justify-center w-full h-8 px-3 text-sm font-medium transition-all rounded-md cursor-pointer whitespace-nowrap">{{__("Domestic")}}</button>
 
             <div x-ref="tabMarker" class="absolute left-0 z-10 w-1/2 h-full duration-300 ease-out" x-cloak>
-                <div class="w-full h-full bg-white rounded-md shadow-sm dark:border dark:border-gray-200"></div>
+                <div class="w-full h-full bg-white rounded-md shadow-sm dark:bg-gray-900 dark:border dark:border-gray-200"></div>
             </div>
 
         </div>
@@ -50,7 +50,7 @@
                  <livewire:select2.country-select2 :country="$country" />
 
                 @error('country')
-                <p class="mt-3 text-sm leading-6 text-red-600" x-init="$el.closest('form').scrollIntoView()">{{$message}}</p>
+                <p id="country-error" class="mt-3 text-sm leading-6 text-red-700 dark:text-red-400" x-init="$el.closest('form').scrollIntoView()">{{$message}}</p>
                 @enderror
                 <!-- End Tab Content 1 -->
 
