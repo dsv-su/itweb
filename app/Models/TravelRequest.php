@@ -43,6 +43,10 @@ class TravelRequest extends Model
         'project',
     ];
 
+    protected $casts = [
+        'review_details' => 'array',
+    ];
+
     /**
      * Get the manager comment associated with the travelrequest.
      */

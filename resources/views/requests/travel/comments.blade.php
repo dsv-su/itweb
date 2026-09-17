@@ -14,7 +14,7 @@
 
         $comments = [
             [
-                'label' => __('Project leader'),
+                'label' => __('Projectleader/Supervisor'),
                 'comment' => $tr->manager_comment_id ? ($tr->managercomment->comment ?? null) : null,
                 'user_id' => $tr->manager_comment_id ? ($tr->managercomment->user_id ?? null) : null,
                 'updated_at' => $tr->manager_comment_id ? ($tr->managercomment->updated_at ?? null) : null,

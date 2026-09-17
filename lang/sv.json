@@ -102,8 +102,8 @@
     "Please state if you have submitted a paper and if it has been accepted": "Ange om du har lämnat in en artikel och om den har godkänts",
     "Duty Travel Request Country": "Resebegäran till land",
     "Please select the country you'd like to visit as your travel destination.": "Välj det land du vill besöka som ditt resmål.",
-    "Duty Travel Request Projectleader or Manager": "Resebegäran Projektledaren",
-    "Please choose the project leader or manager for your project from the list. If your project does not have a designated leader or you are working independently, please select your own name.": "Vänligen välj projektledaren eller ansvarig för ditt projekt från listan. Om ditt projekt inte har en utsedd ledare eller om du arbetar självständigt, vänligen välj ditt eget namn.",
+    "Duty Travel Request Projectleader/Supervisor": "Resebegäran Projektledare/Handledare",
+    "Please choose the project leader or supervisor for your project from the list. If your project does not have a designated leader or you are working independently, please select your own name.": "Vänligen välj projektledaren eller handledaren för ditt projekt från listan. Om ditt projekt inte har en utsedd ledare eller om du arbetar självständigt, vänligen välj ditt eget namn.",
     "Duty Travel Request Unit Head": "Resebegäran Enhetschef",
     "Please select the unit head who is responsible for the project.": "Välj den enhetschef som är ansvarig för projektet.",
     "RequestId": "ID",
@@ -168,6 +168,10 @@
     "Estimated costs for the duty travel request": "Uppskattade kostnader för reseansökan",
     "Travel dates": "Resedatum",
     "Select the departure and return dates for this trip": "Välj avrese- och returdatum för denna resa",
+    "Projectleader/Supervisor Approval": "Godkännande av Projektledare/Handledare",
+    "Projectleader/Supervisor": "Projektledare/Handledare",
+    "Select Projectleader/Supervisor": "Välj Projektledare/Handledare",
+    "No projectleaders/supervisors found": "Inga Projektledare/Handledare hittades",
     "Projectleader": "Projekledare",
     "Select who should review and approve this duty travel request": "Välj vem som ska granska och godkänna denna resebegäran",
     "Request details": "Resebegäran syfte",
@@ -212,6 +216,10 @@
     "Go to page :page": "Gå till sida :page",
     "Select Projectleader": "Välj projektledare",
     "Travelrequest for :name": "Resebegäran för :name",
-    "The form has been updated.": "Formuläret har uppdaterats."
-
+    "The form has been updated.": "Formuläret har uppdaterats.",
+    "Approved": "Godkänd",
+    "Pending": "Väntar",
+    "Not assigned": "Inte tilldelad",
+    "Latest decision": "Senaste beslut",
+    "Date unavailable": "Datum saknas"
 }

@@ -7,7 +7,7 @@ Subject:  New {{$dashboard->type}} Submitted for Review
 <br>
 Dear Financial Officer,
 <br><br>
-A new <strong>{{Illuminate\Support\Str::upper($dashboard->type)}}</strong> has been submitted and has already been approved from both the project leader/manager and unit head.
+A new <strong>{{Illuminate\Support\Str::upper($dashboard->type)}}</strong> has been submitted and has already been approved from both the projectleader/supervisor and unit head.
 Your review and approval are now required to proceed.
 Please take a moment to review the request. Below is a brief overview:
 <br><br>
@@ -17,7 +17,7 @@ OVERVIEW:
 <br>
 <b>Requester:</b> {{$user->name}}
 <br>
-<b>Projectleader/Manager:</b> {{$manager->name}}
+<b>{{ __('Projectleader/Supervisor') }}:</b> {{$manager->name}}
 <br>
 <b>Unit Head:</b> {{$head->name}}
 <br>

@@ -1,6 +1,6 @@
 <div>
     <label for="projectleader" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-        {{ __("Projectleader") }}<span class="text-red-600"> *</span>
+        {{ __("Projectleader/Supervisor") }}<span class="text-red-600"> *</span>
         <button id="projectleader-button"
                 data-modal-target="projectleader-modal"
                 data-modal-toggle="projectleader-modal" class="inline" type="button">
@@ -11,7 +11,7 @@
     </label>
     <div class="w-full" x-data="{open:false, selectedProjectleader: null}" x-on:click.away="open=false">
         <button type="button" class="font-mono bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 p-2.5 rounded-lg shadow-inner w-full flex justify-between items-center text-sm focus:outline-none" x-on:click="open=!open">
-            <span class="float-left" x-text="selectedProjectleader ?? '{{ $projectleader->name ?? __("Select Projectleader") }}'"></span>
+            <span class="float-left" x-text="selectedProjectleader ?? '{{ $projectleader->name ?? __("Select Projectleader/Supervisor") }}'"></span>
             <svg class="h-4 transform float-right fill-current text-black dark:text-gray-200" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 129 129" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 129 129" :class="{'rotate-180': open}">
                 <g>
                     <path d="m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z"/>
@@ -35,7 +35,7 @@
                     </li>
                 @empty
                     <li x-on:click="open=false" id="no-Country">
-                        <p class="p-2 block text-red-800 hover:bg-red-200 cursor-pointer" value="0">{{__('No Projectleaders founds')}}</p>
+                        <p class="p-2 block text-red-800 hover:bg-red-200 cursor-pointer" value="0">{{__('No projectleaders/supervisors found')}}</p>
                     </li>
                 @endforelse
             </ul>

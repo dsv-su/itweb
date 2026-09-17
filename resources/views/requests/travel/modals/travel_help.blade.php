@@ -267,7 +267,7 @@
             <div class="flex justify-between mb-4 rounded-t sm:mb-5">
                 <div class="text-lg text-gray-900 md:text-xl dark:text-white">
                     <h3 class="font-semibold ">
-                        {{ __("Duty Travel Request Projectleader or Manager") }}
+                        {{ __("Duty Travel Request Projectleader/Supervisor") }}
                     </h3>
                 </div>
 
@@ -287,7 +287,7 @@
             <dl>
                 <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{ __("Instructions") }}</dt>
                 <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">
-                    {{ __("Please choose the project leader or manager for your project from the list. If your project does not have a designated leader or you are working independently, please select your own name.") }}
+                    {{ __("Please choose the project leader or supervisor for your project from the list. If your project does not have a designated leader or you are working independently, please select your own name.") }}
                 </dd>
                 <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{ __("More help?") }}</dt>
                 <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">

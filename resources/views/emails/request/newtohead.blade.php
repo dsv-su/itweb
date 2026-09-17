@@ -19,7 +19,7 @@ OVERVIEW:
 <br><br>
 <b>Created:</b> {{Carbon\Carbon::createFromTimestamp($dashboard->created)->toDateTimeString()}}
 <br><br>
-<b>Projectleader/Manager:</b> {{$manager->name}}
+<b>{{ __('Projectleader/Supervisor') }}:</b> {{$manager->name}}
 <br><br>
 <b>Unit Head:</b> {{$head->name}}
 <br><br>

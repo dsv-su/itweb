@@ -173,7 +173,7 @@
                         <section class="rounded-xl border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800/70">
                             <div class="rounded-t-xl border-b border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
                                 <h3 class="text-base font-semibold text-gray-900 dark:text-white">
-                                    {{ __('Projectleader') }} & {{ __('Unit Head') }}
+                                    {{ __('Projectleader/Supervisor') }} & {{ __('Unit Head') }}
                                 </h3>
                                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                                     {{ __('Select who should review and approve this duty travel request') }}
