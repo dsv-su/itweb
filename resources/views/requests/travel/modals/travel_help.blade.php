@@ -1,5 +1,5 @@
 <!-- Name modal -->
-<div id="name-modal"
+<div data-travel-help aria-labelledby="name-modal-title" id="name-modal"
      tabindex="-1"
      aria-hidden="true"
      class="hidden fixed inset-0 z-50 items-center justify-center overflow-y-auto overflow-x-hidden"
@@ -14,13 +14,13 @@
             <!-- Modal header -->
             <div class="flex justify-between mb-4 rounded-t sm:mb-5">
                 <div class="text-lg text-gray-900 md:text-xl dark:text-white">
-                    <h3 class="font-semibold ">
+                    <h3 id="name-modal-title" class="font-semibold ">
                         {{ __("Duty Travel Request Name") }}
                     </h3>
                 </div>
 
                 <button type="button"
-                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
+                        class="text-gray-600 dark:text-gray-300 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
                         data-modal-toggle="name-modal">
                     <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                          xmlns="http://www.w3.org/2000/svg">
@@ -62,7 +62,7 @@
 </div>
 
 <!-- Purpose modal -->
-<div id="purpose-modal"
+<div data-travel-help aria-labelledby="purpose-modal-title" id="purpose-modal"
      tabindex="-1"
      aria-hidden="true"
      class="hidden fixed inset-0 z-50 items-center justify-center overflow-y-auto overflow-x-hidden"
@@ -77,13 +77,13 @@
             <!-- Modal header -->
             <div class="flex justify-between mb-4 rounded-t sm:mb-5">
                 <div class="text-lg text-gray-900 md:text-xl dark:text-white">
-                    <h3 class="font-semibold ">
+                    <h3 id="purpose-modal-title" class="font-semibold ">
                         Duty Travel Request Purpose
                     </h3>
                 </div>
 
                 <button type="button"
-                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
+                        class="text-gray-600 dark:text-gray-300 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
                         data-modal-toggle="purpose-modal">
                     <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                          xmlns="http://www.w3.org/2000/svg">
@@ -125,7 +125,7 @@
 </div>
 
 <!-- Project modal -->
-<div id="project-modal"
+<div data-travel-help aria-labelledby="project-modal-title" id="project-modal"
      tabindex="-1"
      aria-hidden="true"
      class="hidden fixed inset-0 z-50 items-center justify-center overflow-y-auto overflow-x-hidden"
@@ -140,13 +140,13 @@
             <!-- Modal header -->
             <div class="flex justify-between mb-4 rounded-t sm:mb-5">
                 <div class="text-lg text-gray-900 md:text-xl dark:text-white">
-                    <h3 class="font-semibold ">
+                    <h3 id="project-modal-title" class="font-semibold ">
                         {{ __("Duty Travel Request Project") }}
                     </h3>
                 </div>
 
                 <button type="button"
-                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
+                        class="text-gray-600 dark:text-gray-300 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
                         data-modal-toggle="project-modal">
                     <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                          xmlns="http://www.w3.org/2000/svg">
@@ -188,7 +188,7 @@
 </div>
 
 <!-- Country modal -->
-<div id="country-modal"
+<div data-travel-help aria-labelledby="country-modal-title" id="country-modal"
      tabindex="-1"
      aria-hidden="true"
      class="hidden fixed inset-0 z-50 items-center justify-center overflow-y-auto overflow-x-hidden"
@@ -203,13 +203,13 @@
             <!-- Modal header -->
             <div class="flex justify-between mb-4 rounded-t sm:mb-5">
                 <div class="text-lg text-gray-900 md:text-xl dark:text-white">
-                    <h3 class="font-semibold ">
+                    <h3 id="country-modal-title" class="font-semibold ">
                         {{ __("Duty Travel Request Country") }}
                     </h3>
                 </div>
 
                 <button type="button"
-                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
+                        class="text-gray-600 dark:text-gray-300 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
                         data-modal-toggle="country-modal">
                     <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                          xmlns="http://www.w3.org/2000/svg">
@@ -251,7 +251,7 @@
 </div>
 
 <!-- Project leader modal -->
-<div id="projectleader-modal"
+<div data-travel-help aria-labelledby="projectleader-modal-title" id="projectleader-modal"
      tabindex="-1"
      aria-hidden="true"
      class="hidden fixed inset-0 z-50 items-center justify-center overflow-y-auto overflow-x-hidden"
@@ -266,13 +266,13 @@
             <!-- Modal header -->
             <div class="flex justify-between mb-4 rounded-t sm:mb-5">
                 <div class="text-lg text-gray-900 md:text-xl dark:text-white">
-                    <h3 class="font-semibold ">
-                        {{ __("Duty Travel Request Projectleader or Manager") }}
+                    <h3 id="projectleader-modal-title" class="font-semibold ">
+                        {{ __("Duty Travel Request Projectleader/Supervisor") }}
                     </h3>
                 </div>
 
                 <button type="button"
-                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
+                        class="text-gray-600 dark:text-gray-300 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
                         data-modal-toggle="projectleader-modal">
                     <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                          xmlns="http://www.w3.org/2000/svg">
@@ -287,7 +287,7 @@
             <dl>
                 <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{ __("Instructions") }}</dt>
                 <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">
-                    {{ __("Please choose the project leader or manager for your project from the list. If your project does not have a designated leader or you are working independently, please select your own name.") }}
+                    {{ __("Please choose the project leader or supervisor for your project from the list. If your project does not have a designated leader or you are working independently, please select your own name.") }}
                 </dd>
                 <dt class="mb-2 font-semibold leading-none text-gray-900 dark:text-white">{{ __("More help?") }}</dt>
                 <dd class="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">
@@ -314,7 +314,7 @@
 </div>
 
 <!-- Unithead modal -->
-<div id="unithead-modal"
+<div data-travel-help aria-labelledby="unithead-modal-title" id="unithead-modal"
      tabindex="-1"
      aria-hidden="true"
      class="hidden fixed inset-0 z-50 items-center justify-center overflow-y-auto overflow-x-hidden"
@@ -329,13 +329,13 @@
             <!-- Modal header -->
             <div class="flex justify-between mb-4 rounded-t sm:mb-5">
                 <div class="text-lg text-gray-900 md:text-xl dark:text-white">
-                    <h3 class="font-semibold ">
+                    <h3 id="unithead-modal-title" class="font-semibold ">
                         {{ __("Duty Travel Request Unit Head") }}
                     </h3>
                 </div>
 
                 <button type="button"
-                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
+                        class="text-gray-600 dark:text-gray-300 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
                         data-modal-toggle="unithead-modal">
                     <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                          xmlns="http://www.w3.org/2000/svg">
@@ -377,7 +377,7 @@
 </div>
 
 <!-- Paper accepted modal -->
-<div id="paper-modal"
+<div data-travel-help aria-labelledby="paper-modal-title" id="paper-modal"
      tabindex="-1"
      aria-hidden="true"
      class="hidden fixed inset-0 z-50 items-center justify-center overflow-y-auto overflow-x-hidden"
@@ -392,13 +392,13 @@
             <!-- Modal header -->
             <div class="flex justify-between mb-4 rounded-t sm:mb-5">
                 <div class="text-lg text-gray-900 md:text-xl dark:text-white">
-                    <h3 class="font-semibold ">
+                    <h3 id="paper-modal-title" class="font-semibold ">
                         {{ __("Duty Travel Request Paper accepted") }}
                     </h3>
                 </div>
 
                 <button type="button"
-                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
+                        class="text-gray-600 dark:text-gray-300 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
                         data-modal-toggle="paper-modal">
                     <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                          xmlns="http://www.w3.org/2000/svg">

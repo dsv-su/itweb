@@ -97,7 +97,7 @@ class ReviewController extends Controller
         $tr = TravelRequest::findOrFail($dashboard->request_id);
 
         $user = auth()->user();
-        $fo = SettingsFo::find(1);
+        $fo = SettingsFo::where('active', true)->orderBy('id')->first();
 
         $formtype = ($fo && $user->id === $fo->user_id) ? 'fo_review' : 'review';
 
@@ -127,6 +127,12 @@ class ReviewController extends Controller
 
         if ($isFo) {
             $this->applyFoUpdates($request, $dashboard);
+
+            if ($request->input('decision', 'update') === 'update') {
+                return redirect()->back()
+                    ->with('status', __('The form has been updated.'))
+                    ->withInput($request->only('comment'));
+            }
         }
 
         //$user = request()->user();

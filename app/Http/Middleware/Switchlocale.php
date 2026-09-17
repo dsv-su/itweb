@@ -31,7 +31,7 @@ class Switchlocale
         } elseif ($lang === 'sv' || $lang === 'en') {
             $locale = $lang;
         } else {
-            $locale = session('locale', config('app.fallback_locale', 'en'));
+            $locale = session('locale', config('app.locale', 'sv'));
         }
 
         App::setLocale($locale);

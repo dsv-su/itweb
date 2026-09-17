@@ -1,5 +1,5 @@
 <div class="flex flex-col flex-1 w-full">
-    <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+    <label for="request-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">{{ __('Search') }}</label>
     <div class="relative px-36 mb-6">
         <input type="search" id="request-search" wire:model.live="searchTerm"
                class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500
@@ -53,7 +53,7 @@
 
                     <th scope="row" class="px-4 py-3 text-xs text-gray-900 whitespace-nowrap dark:text-white">
                         <span class="bg-blue-100 text-xs mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-white border border-blue-400">
-                            {{ $dashboard->type === 'travelrequest' ? __('Travelrequest') : ucfirst(str_replace('_', ' ', (string) $dashboard->type)) }}
+                            {{ $dashboard->type === 'travelrequest' ? __('Travelrequest') : __(ucfirst(str_replace('_', ' ', (string) $dashboard->type))) }}
                         </span>
                     </th>
                     <td class="px-4 py-3 text-xs">{{$dashboard->name}}</td>

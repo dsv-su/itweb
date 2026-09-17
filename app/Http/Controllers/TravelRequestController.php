@@ -124,7 +124,7 @@ class TravelRequestController extends Controller
         $this->validateRequest($request);
 
         // Find or create the financial officer
-        $fo = SettingsFo::find(1);
+        $fo = SettingsFo::where('active', true)->orderBy('id')->first();
 
         // Create or update TravelRequest
         $travelRequestData = $request->only([
@@ -202,6 +202,8 @@ class TravelRequestController extends Controller
             'project_leader' => 'required',
             'unit_head' => 'required',
             'comments' => ['nullable', 'string', 'max:5000'],
+            'departure' => ['nullable', 'date_format:Y-m-d'],
+            'return' => ['nullable', 'date_format:Y-m-d'],
         ];
 
         $rules['country'] = ['required_without:countrytype'];

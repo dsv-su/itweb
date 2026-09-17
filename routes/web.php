@@ -14,6 +14,9 @@ Route::get($login, [SystemController::class, 'login'])->name('login');
 // Locale constraint
 $langConstraint = 'en|sv|swe';
 
+Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])
+    ->middleware(config('statamic.routes.middleware', ['web']));
+
 Route::get('/search', SearchController::class)
     ->middleware('checklang')
     ->name('search');
@@ -85,14 +88,16 @@ Route::get('/list', [\App\Http\Controllers\FOController::class, 'list'])
 // Localized list (constrained)
 Route::get('/{lang}/list', [\App\Http\Controllers\FOController::class, 'svlist'])
     ->where('lang', $langConstraint)
-    ->middleware('checklang');
+    ->middleware('checklang')
+    ->name('request-list.localized');
 
 Route::get('/show/{id}', [\App\Http\Controllers\FOController::class, 'show'])
+    ->middleware('checklang')
     ->name('fo-request-show');
 
-// Localized show (FIX leading slash + constrain)
-Route::get('/{lang}/show/{id}', [\App\Http\Controllers\FOController::class, 'show'])
-    ->where('lang', $langConstraint);
+Route::get('/{lang}/show/{id}', [\App\Http\Controllers\FOController::class, 'showLocalized'])
+    ->where('lang', $langConstraint)
+    ->middleware('checklang');
 
 Route::get('/viewpdf/{id}', [\App\Http\Controllers\FOController::class, 'pdfview'])
     ->name('travel-request-pdfview');

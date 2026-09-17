@@ -110,7 +110,7 @@
         <thead>
             <tr>
                 <th>{{__("ProjectID")}}</th>
-                <th>{{__("Project leader")}}</th>
+                <th>{{__("Projectleader/Supervisor")}}</th>
                 <th>{{__("Unit Head")}}</th>
                 <th>{{ $isRejected ? __('Rejected Date') : __('Approved date') }}</th>
             </tr>
@@ -166,7 +166,7 @@
     <table>
         <thead>
             <tr>
-                <th>{{__("Project leader")}}</th>
+                <th>{{__("Projectleader/Supervisor")}}</th>
                 <th>{{__("Unit Head")}}</th>
                 <th>{{__("Financial Officer")}}</th>
             </tr>

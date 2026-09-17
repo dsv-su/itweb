@@ -31,11 +31,12 @@ class CheckLocalization
         } elseif ($lang === 'sv' || $lang === 'en') {
             $locale = $lang;
         } else {
-            $locale = session('locale', config('app.fallback_locale', 'en'));
+            $locale = session('locale', config('app.locale', 'sv'));
         }
 
         // 1) Laravel locale (Blade translations, validation, etc.)
         App::setLocale($locale);
+        session(['locale' => $locale, 'localisation' => $locale]);
 
         // 2) Statamic site (Antlers content localization)
         $site = Site::get($locale)

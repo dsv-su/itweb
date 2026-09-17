@@ -82,6 +82,21 @@ class LocalizationController extends Controller
         $path = '/' . ltrim($path, '/');
         $isSwe = Str::startsWith($path, '/swe');
 
+        // Carry the homepage selection through the redirect, even if the
+        // following request has not received the updated session yet.
+        if (in_array(rtrim($path, '/'), ['', '/swe'], true)) {
+            parse_str($parsed['query'] ?? '', $parameters);
+            unset($parameters['lang']);
+
+            if ($locale === 'en') {
+                $parameters['lang'] = 'en';
+            }
+
+            $query = $parameters ? '?' . http_build_query($parameters) : '';
+
+            return redirect(($locale === 'en' ? '/' : '/swe') . $query);
+        }
+
         if ($locale === 'sv') {
             // Add /swe if not present
             if (!$isSwe) {

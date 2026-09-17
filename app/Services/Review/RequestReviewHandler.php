@@ -72,6 +72,16 @@ class RequestReviewHandler
         // Persist the new dashboard state (this is what your await() checks)
         $this->applyDashboardStateTransition($role, $this->decision);
 
+        $details = $tr->review_details ?? [];
+        $details[$role] = [
+            'user_id' => $this->reviewer->id,
+            'name' => $this->reviewer->name,
+            'decision' => $this->decision,
+            'decided_at' => now()->toIso8601String(),
+        ];
+        $tr->review_details = $details;
+        $tr->save();
+
         // Signal the workflow
         $this->applyTransition($role, $this->decision);
 

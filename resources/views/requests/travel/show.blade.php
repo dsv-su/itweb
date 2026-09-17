@@ -59,7 +59,7 @@
 
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
                     <a
-                        href="{{ url()->previous() }}"
+                        href="{{ route('request-list.localized', ['lang' => app()->getLocale() === 'sv' ? 'swe' : 'en']) }}"
                         class="inline-flex w-full items-center justify-center rounded-lg border border-blue-700 bg-white px-5 py-2.5 text-sm font-semibold text-blue-700 shadow-sm hover:bg-blue-800 hover:text-white dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800 sm:w-auto"
                     >
                         {{ __('Back') }}
@@ -86,7 +86,8 @@
             </div>
 
             @if($isFoReview)
-                <form method="POST" action="{{ route('fo_review', $dashboard) }}">
+                <form id="fo-review-form" method="POST" action="{{ route('fo_review', $dashboard) }}">
+                    <input type="hidden" name="decision" value="update">
                     @csrf
             @endif
 
@@ -209,7 +210,7 @@
                     <section class="overflow-hidden rounded-xl border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800/70">
                         <div class="border-b border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
                             <h3 class="text-base font-semibold text-gray-900 dark:text-white">
-                                {{ __('Projectleader') }} & {{ __('Unit Head') }}
+                                {{ __('Projectleader/Supervisor') }} & {{ __('Unit Head') }}
                             </h3>
                             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                                 {{ __('Reviewers for this duty travel request') }}
@@ -219,7 +220,7 @@
                         <div class="grid gap-4 px-4 py-5 sm:grid-cols-2 sm:gap-6 sm:px-5">
                             <div>
                                 <label class="{{ $labelClass }}">
-                                    {{ __('Project leader') }}
+                                    {{ __('Projectleader/Supervisor') }}
                                 </label>
                                 <div class="{{ $valueClass }}">
                                     {{ $projectLeaderName }}

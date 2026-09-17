@@ -47,53 +47,10 @@
 
                             </div>
                             <br>
-                            <div class="mt-4 bg-blue-50 border border-blue-500 text-sm text-gray-500 rounded-lg p-5 dark:bg-blue-600/[.15]">
-                                <div class="flex">
-                                    <svg class="flex-shrink-0 h-4 w-4 text-blue-600 mt-0.5 dark:text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <path d="M12 16v-4"></path>
-                                        <path d="M12 8h.01"></path>
-                                    </svg>
-                                    <div class="ms-3">
-                                        <h3 class="text-blue-600 font-semibold dark:font-medium dark:text-white">Please note!</h3>
-                                        <p class="mt-2 text-gray-800 dark:text-slate-400">Please note that only one user can be selected to receive notifications.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <br>
-                            <p class="mt-1 text-gray-600 dark:text-gray-400">Select the officer that should receive the notifications</p>
-                            <div class=" mt-5 border rounded-xl shadow-sm p-6 dark:bg-slate-800 dark:border-gray-700">
-                                <div class="w-1/2 border border-blue-500 text-sm text-blue-600 rounded-lg p-5 dark:bg-blue-600/[.15]">
-                                    {{\App\Models\SettingsFo::find(1)->name ?? 'Not set'}}
-                                </div>
-                                <form action="{{ route('fo') }}" method="POST">
-                                    @csrf
-
-                                    <div >
-                                        <div class="mt-3">
-                                            <label for="fo_select" class="block text-sm font-medium text-gray-700">Change:</label>
-                                            <select id="fo_select" name="selected_fo" class="mt-1 block w-1/2 py-2 px-3 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
-                                                @foreach($fos as $fo)
-                                                    <option value="{{ $fo->id }}" @if($fo->active) selected @endif>{{ $fo->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-
-
-                                        <div class="mt-3">
-                                            <button type="submit"
-                                                    class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white
-                                                uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:border-indigo-800 focus:ring ring-indigo-300
-                                                disabled:opacity-25 transition ease-in-out duration-150">
-                                                Update
-                                            </button>
-                                        </div>
-
-                                    </div>
-
-
-                                </form>
-                            </div>
+                            @if(session('status'))
+                                <p role="status" class="text-sm text-green-700">{{ session('status') }}</p>
+                            @endif
+                            @include('requests.vice.partials.fo')
 
                         </div>
                     </div>

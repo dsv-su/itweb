@@ -73,3 +73,55 @@ document.addEventListener('click', (e) => {
     localStorage.setItem('color-theme', nowDark ? 'dark' : 'light');
     syncThemeIcons();
 });
+
+// Flowbite handles opening/Escape; keep focus inside travel help dialogs and
+// return it to the invoking control when the dialog closes.
+function initTravelHelpFocus() {
+    document.querySelectorAll('[data-travel-help]').forEach((dialog) => {
+        if (dialog.dataset.focusInitialized) return;
+        dialog.dataset.focusInitialized = 'true';
+        let opener = null;
+        let wasOpen = false;
+        const focusable = () => [...dialog.querySelectorAll(
+            'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex="0"]'
+        )].filter((element) => element.getClientRects().length);
+        new MutationObserver(() => {
+            const isOpen = !dialog.classList.contains('hidden');
+            if (isOpen === wasOpen) return;
+            wasOpen = isOpen;
+            if (isOpen) {
+                opener = document.activeElement;
+                (focusable()[0] ?? dialog).focus();
+            } else if (opener?.isConnected) {
+                opener.focus();
+            }
+        }).observe(dialog, { attributes: true, attributeFilter: ['class'] });
+        dialog.addEventListener('keydown', (event) => {
+            if (event.key !== 'Tab') return;
+            const elements = focusable();
+            const first = elements[0];
+            const last = elements.at(-1);
+            if (!first) {
+                event.preventDefault();
+                dialog.focus();
+            } else if (event.shiftKey && (document.activeElement === first || document.activeElement === dialog)) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        });
+        document.addEventListener('focusin', (event) => {
+            if (wasOpen && !dialog.contains(event.target)) {
+                (focusable()[0] ?? dialog).focus();
+            }
+        });
+    });
+}
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTravelHelpFocus);
+} else {
+    initTravelHelpFocus();
+}
+document.addEventListener('livewire:navigated', initTravelHelpFocus);

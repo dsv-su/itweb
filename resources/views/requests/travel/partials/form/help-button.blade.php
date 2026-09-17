@@ -7,7 +7,8 @@
     id="{{ $buttonId }}"
     data-modal-target="{{ $modalId }}"
     data-modal-toggle="{{ $modalId }}"
-    class="inline"
+    class="inline-flex min-h-6 min-w-6 items-center justify-center"
+    aria-label="{{ __('Help: :field', ['field' => $label ?? $modal]) }}"
     type="button"
 >
     <svg
