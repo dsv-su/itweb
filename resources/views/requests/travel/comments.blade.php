@@ -2,41 +2,23 @@
     @include('requests.travel.progress')
 
     @php
-        $commentUsers = collect([
-            $tr->managercomment->user_id ?? null,
-            $tr->headcomment->user_id ?? null,
-            $tr->focomment->user_id ?? null,
-        ])->filter()->unique()->values();
+        $comments = collect([
+            ['items' => $tr->managerComments, 'label' => __('Projectleader/Supervisor'), 'tone' => 'blue'],
+            ['items' => $tr->headComments, 'label' => __('Unit Head'), 'tone' => 'amber'],
+            ['items' => $tr->foComments, 'label' => __('FO'), 'tone' => 'emerald'],
+        ])->flatMap(fn ($group) => $group['items']->map(fn ($comment) => [
+            'label' => $group['label'],
+            'tone' => $group['tone'],
+            'comment' => $comment->comment,
+            'user_id' => $comment->user_id,
+            'created_at' => $comment->created_at,
+        ]))->filter(fn ($comment) => filled($comment['comment']))
+            ->sortBy('created_at')->values();
 
+        $commentUsers = $comments->pluck('user_id')->filter()->unique()->values();
         $reviewers = $commentUsers->isNotEmpty()
             ? \App\Models\User::query()->whereIn('id', $commentUsers)->get()->keyBy('id')
             : collect();
-
-        $comments = [
-            [
-                'label' => __('Projectleader/Supervisor'),
-                'comment' => $tr->manager_comment_id ? ($tr->managercomment->comment ?? null) : null,
-                'user_id' => $tr->manager_comment_id ? ($tr->managercomment->user_id ?? null) : null,
-                'updated_at' => $tr->manager_comment_id ? ($tr->managercomment->updated_at ?? null) : null,
-                'tone' => 'blue',
-            ],
-            [
-                'label' => __('Unit Head'),
-                'comment' => $tr->head_comment_id ? ($tr->headcomment->comment ?? null) : null,
-                'user_id' => $tr->head_comment_id ? ($tr->headcomment->user_id ?? null) : null,
-                'updated_at' => $tr->head_comment_id ? ($tr->headcomment->updated_at ?? null) : null,
-                'tone' => 'amber',
-            ],
-            [
-                'label' => __('FO'),
-                'comment' => $tr->fo_comment_id ? ($tr->focomment->comment ?? null) : null,
-                'user_id' => $tr->fo_comment_id ? ($tr->focomment->user_id ?? null) : null,
-                'updated_at' => $tr->fo_comment_id ? ($tr->focomment->updated_at ?? null) : null,
-                'tone' => 'emerald',
-            ],
-        ];
-
-        $comments = array_values(array_filter($comments, fn ($comment) => filled($comment['comment'] ?? null)));
 
         $badgeClass = [
             'blue' => 'border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-400/30 dark:bg-blue-400/10 dark:text-blue-200',
@@ -67,7 +49,7 @@
                 @foreach($comments as $comment)
                     @php
                         $reviewer = $comment['user_id'] ? ($reviewers->get($comment['user_id'])?->name ?? __('Unknown user')) : __('Unknown user');
-                        $date = $comment['updated_at'] ? \Carbon\Carbon::parse($comment['updated_at'])->format('Y-m-d') : null;
+                        $date = $comment['created_at'] ? \Carbon\Carbon::parse($comment['created_at'])->timezone(config('app.timezone')) : null;
                         $tone = $comment['tone'];
                     @endphp
 
@@ -84,7 +66,7 @@
                                     {{ $reviewer }}
                                     @if($date)
                                         <span class="mx-1 text-gray-300 dark:text-gray-600">/</span>
-                                        <time datetime="{{ $date }}">{{ $date }}</time>
+                                        <time datetime="{{ $date->toIso8601String() }}">{{ $date->format('Y-m-d H:i') }}</time>
                                     @endif
                                 </div>
                             </div>

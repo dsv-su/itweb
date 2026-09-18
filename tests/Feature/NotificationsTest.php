@@ -169,6 +169,37 @@ class NotificationsTest extends TestCase
         }
     }
 
+    public function test_returned_travel_email_links_allow_the_owner_and_reject_unrelated_users(): void
+    {
+        $this->withoutMiddleware(\App\Http\Middleware\DSVStaffEntitlement::class);
+        $this->partialMock(\App\Http\Controllers\TravelRequestController::class, function ($mock) {
+            $mock->makePartial();
+            (new \ReflectionMethod(\App\Http\Controllers\TravelRequestController::class, '__construct'))->invoke($mock);
+            $mock->shouldReceive('show')->with('1')->andReturn(response('Request details'));
+            $mock->shouldReceive('showLocalized')->with('swe', '1')->andReturn(response('Request details'));
+        });
+
+        foreach (['manager_returned', 'head_returned', 'fo_returned'] as $state) {
+            DB::table('dashboards')->where('id', 1)->update(['state' => $state, 'request_id' => 'different-request-id']);
+            $dashboard = \App\Models\Dashboard::findOrFail(1);
+            $owner = User::findOrFail('owner');
+            $html = (new \App\Mail\NotifyUserChangedState($owner, $owner, $dashboard))->render();
+            $url = route('travel-request-show', $dashboard->id);
+            $this->assertSame(2, substr_count($html, 'href="'.$url.'"'));
+
+            foreach (['owner' => 200, 'unrelated' => 403] as $id => $status) {
+                $user = new User;
+                $user->id = $id;
+                $this->actingAs($user);
+                $this->get($url)->assertStatus($status);
+                $this->get('/swe/travel/show/1')->assertStatus($status);
+            }
+        }
+
+        auth()->logout();
+        $this->get(route('travel-request-show', 1))->assertRedirect(route('login'));
+    }
+
     public function test_proposal_reviews_require_assignment_and_uploaded_files(): void
     {
         foreach (['ready' => ['a.pdf', 'b.pdf'], 'incomplete' => ['a.pdf']] as $id => $files) {

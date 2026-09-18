@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class TravelRequest extends Model
@@ -46,6 +47,21 @@ class TravelRequest extends Model
     protected $casts = [
         'review_details' => 'array',
     ];
+
+    public function managerComments(): HasMany
+    {
+        return $this->hasMany(ManagerComment::class, 'reqid');
+    }
+
+    public function headComments(): HasMany
+    {
+        return $this->hasMany(HeadComment::class, 'reqid');
+    }
+
+    public function foComments(): HasMany
+    {
+        return $this->hasMany(FoComment::class, 'reqid');
+    }
 
     /**
      * Get the manager comment associated with the travelrequest.

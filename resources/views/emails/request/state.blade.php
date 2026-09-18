@@ -57,6 +57,10 @@ Vänligen läs kommentarerna via länkarna nedan:
     <b>Direktlänk för att återuppta. Uppdatera din ansökan, ladda upp eventuella filer som krävs och skicka in igen:</b>
     <br><br>
     <a href="{{ url('') }}/projectproposals/resume/{{$dashboard->request_id}}">ÅTERUPPTA: {{$dashboard->name}}</a>
+@elseif($dashboard->type == 'travelrequest')
+    Direktlänk:
+    <br>
+    <a href="{{ route('travel-request-show', $dashboard->id) }}">{{$dashboard->name}}</a>
 @else
     Direktlänk:
     <br>
@@ -132,6 +136,10 @@ Please take a moment to review the related comments using the links below:
     <b>Resume direct link. Update your proposal, upload any required files, and resubmit:</b>
     <br><br>
     <a href="{{ url('') }}/projectproposals/resume/{{$dashboard->request_id}}">RESUME: {{$dashboard->name}}</a>
+@elseif($dashboard->type == 'travelrequest')
+    Direct link:
+    <br>
+    <a href="{{ route('travel-request-show', $dashboard->id) }}">{{$dashboard->name}}</a>
 @else
     Direct link:
     <br>

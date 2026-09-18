@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\TravelRequest;
+use Carbon\Carbon;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Bootstrap\LoadConfiguration;
@@ -23,6 +24,65 @@ class TravelRequestProgressTest extends TestCase
         $app->make(Kernel::class)->bootstrap();
 
         return $app;
+    }
+
+    public function test_comments_stack_the_complete_history_for_the_current_request(): void
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+        });
+        DB::table('users')->insert(['id' => 1, 'name' => 'Review Author']);
+
+        foreach (['manager_comments', 'head_comments', 'fo_comments'] as $tableName) {
+            Schema::create($tableName, function (Blueprint $table) {
+                $table->id();
+                $table->uuid('reqid');
+                $table->integer('user_id');
+                $table->text('comment');
+                $table->timestamps();
+            });
+        }
+
+        $tr = new TravelRequest;
+        $tr->id = 'request-history';
+        $tr->state = 'submitted';
+        // The latest pointer must not hide comments from previous review rounds.
+        $tr->manager_comment_id = 2;
+        foreach ([
+            ['manager_comments', 'request-history', 'First manager comment', '2026-09-14 09:00:00'],
+            ['manager_comments', 'request-history', 'Second manager comment', '2026-09-17 09:00:00'],
+            ['head_comments', 'request-history', 'Head comment', '2026-09-15 09:00:00'],
+            ['fo_comments', 'request-history', 'Finance comment', '2026-09-16 09:00:00'],
+            ['manager_comments', 'another-request', 'Unrelated comment', '2026-09-18 09:00:00'],
+            ['fo_comments', 'request-history', '   ', '2026-09-19 09:00:00'],
+        ] as [$table, $requestId, $comment, $date]) {
+            DB::table($table)->insert([
+                'reqid' => $requestId, 'user_id' => 1, 'comment' => $comment,
+                'created_at' => $date, 'updated_at' => $date,
+            ]);
+        }
+
+        $html = view('requests.travel.comments', [
+            'tr' => $tr,
+            'dashboard' => (object) ['state' => 'submitted'],
+        ])->render();
+
+        $previousPosition = -1;
+        foreach (['First manager comment', 'Head comment', 'Finance comment', 'Second manager comment'] as $comment) {
+            $position = strpos($html, $comment);
+            $this->assertNotFalse($position);
+            $this->assertGreaterThan($previousPosition, $position);
+            $previousPosition = $position;
+        }
+        $this->assertSame(4, substr_count($html, '<blockquote'));
+        $this->assertStringContainsString('Review Author', $html);
+        $this->assertStringContainsString('2026-09-14', $html);
+        $this->assertStringNotContainsString('Unrelated comment', $html);
+
+        foreach (['users', 'manager_comments', 'head_comments', 'fo_comments'] as $table) {
+            Schema::drop($table);
+        }
     }
 
     public function test_progress_displays_reviewers_and_recorded_decisions(): void
@@ -72,7 +132,7 @@ class TravelRequestProgressTest extends TestCase
 
             $this->assertStringContainsString('Finance Example', $financeHtml);
             $this->assertStringContainsString(__($label), $financeHtml);
-            $expectedDate = \Carbon\Carbon::parse('2026-09-18T12:00:00+00:00')->timezone(config('app.timezone'));
+            $expectedDate = Carbon::parse('2026-09-18T12:00:00+00:00')->timezone(config('app.timezone'));
             $this->assertStringContainsString($expectedDate->format('Y-m-d H:i'), $financeHtml);
         }
     }
