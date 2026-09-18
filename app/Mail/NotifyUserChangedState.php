@@ -43,7 +43,7 @@ class NotifyUserChangedState extends Mailable
             case 'travelrequest':
                 return new Envelope(
                     from: new Address('noreply@dsv.su.se', 'Travel Request'),
-                    subject: Str::upper($this->dashboard->type) . ' Status update',
+                    subject: 'Resebegäran – statusuppdatering / Travel request – status update',
                 );
             default:
                 return new Envelope(

@@ -1,3 +1,63 @@
+@if($dashboard->type == 'travelrequest')
+<div lang="sv">
+<strong>Svenska</strong>
+<br>
+<br>
+Till: {{$user->name}}
+<br>
+Ämne: GODKÄND RESEBEGÄRAN
+<br>
+------------------------------------------------------------
+<br><br>
+Hej {{$user->name}},
+<br><br>
+Vi har glädjen att meddela att din
+@if($dashboard->type == 'projectproposal')
+    projektansökan
+@else
+    resebegäran
+@endif
+
+har godkänts
+@if($dashboard->type == 'projectproposal')
+    för inlämning. Du kan nu skicka in din ansökan.
+@else
+    .
+@endif
+<br><br>
+ÖVERSIKT:
+<br>
+--------------
+<br>
+<b>Ansökan:</b> {{$dashboard->name}}
+<br>
+<b>Sökande:</b> {{$user->name}}
+<br>
+<b>Skapad:</b> {{Carbon\Carbon::createFromTimestamp($dashboard->created)->format('Y-m-d')}}
+<br>
+<b>Ansökans ID:</b> {{$dashboard->request_id}}
+<br>
+<br>
+--------------
+<br>
+Rapportera manuellt att din ansökan har skickats in genom att klicka på knappen Skickad. När du får ett beslut om beviljade medel eller ett avslag uppdaterar du statusen genom att klicka på motsvarande knapp.
+
+<br><br>
+@if($dashboard->type == 'travelrequest')
+    Trevlig resa
+@endif
+<br><br>
+---
+<br>
+Detta är ett automatiskt e-postmeddelande. Vänligen svara inte på detta meddelande.
+</div>
+<hr>
+@endif
+<div lang="en">
+@if($dashboard->type == 'travelrequest')
+<strong>English</strong>
+<br>
+@endif
 <br>
 To: {{$user->name}}
 <br>
@@ -46,5 +106,4 @@ Please manually report your submitted application by clicking the Sent button. O
 ---
 <br>
 This is an automated email, please do not reply to this email.
-
-
+</div>

@@ -72,6 +72,13 @@ return [
             'Shib-sn' => 'User',
             'Shib-emplId' => 'user',
         ],
+        'chef' => [
+            'Shib-cn' => 'Chef User',
+            'Shib-mail' => 'chef@dsv.su.se',
+            'Shib-givenName' => 'Chef',
+            'Shib-sn' => 'Chef',
+            'Shib-emplId' => 'chef',
+        ],
     ],
 
     /*

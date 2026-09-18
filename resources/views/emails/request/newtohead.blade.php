@@ -1,3 +1,51 @@
+<div lang="sv">
+<strong>Svenska</strong>
+<br>
+<br>
+Till: {{$head->name}}
+<br>
+Ämne: Ny resebegäran inskickad för granskning
+<br>
+------------------------------------------------------------
+<br>
+Hej {{$head->name}},
+<br><br>
+En ny <strong>resebegäran</strong> har skickats in och är nu tillgänglig för din granskning.
+<br><br>
+ÖVERSIKT:
+<br>
+--------------
+<br><br>
+RESEBEGÄRAN
+<br><br>
+<b>Sökande:</b> {{$user->name}}
+<br><br>
+<b>Skapad:</b> {{Carbon\Carbon::createFromTimestamp($dashboard->created)->toDateTimeString()}}
+<br><br>
+<b>Projektledare/Handledare:</b> {{$manager->name}}
+<br><br>
+<b>Enhetschef:</b> {{$head->name}}
+<br><br>
+<b>Begärans ID:</b> {{$dashboard->request_id}}
+<br><br>
+ÅTGÄRD
+<br>
+--------------
+<br>
+Granska resebegäran via denna länk:
+<br><br>
+<a href="{{ route('travel-request-review', $dashboard->id) }}">{{$dashboard->name}}</a>
+<br><br>
+Tack för att du hanterar denna resebegäran snarast.
+<br><br>
+---
+<br>
+Detta är ett automatiskt e-postmeddelande. Vänligen svara inte på detta meddelande.
+</div>
+<hr>
+<div lang="en">
+<strong>English</strong>
+<br>
 <br>
 To: {{$head->name}}
 <br>
@@ -19,7 +67,7 @@ OVERVIEW:
 <br><br>
 <b>Created:</b> {{Carbon\Carbon::createFromTimestamp($dashboard->created)->toDateTimeString()}}
 <br><br>
-<b>{{ __('Projectleader/Supervisor') }}:</b> {{$manager->name}}
+<b>Projectleader/Supervisor:</b> {{$manager->name}}
 <br><br>
 <b>Unit Head:</b> {{$head->name}}
 <br><br>
@@ -31,10 +79,11 @@ ACTION
 <br>
 Review the request using this link:
 <br><br>
-<a href="{{ url('') }}">{{url('')}}</a>
+<a href="{{ route('travel-request-review', $dashboard->id) }}">{{$dashboard->name}}</a>
 <br><br>
 Thank you for your prompt attention to this request.
 <br><br>
 ---
 <br>
 This is an automated email, please do not reply to this email.
+</div>

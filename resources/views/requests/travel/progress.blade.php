@@ -23,11 +23,11 @@
     $progressSignals = ! empty($dashboard->workflow_id)
         ? \Workflow\Models\StoredWorkflowSignal::query()
             ->where('stored_workflow_id', $dashboard->workflow_id)
-            ->whereIn('method', ['manager_approve', 'manager_deny', 'manager_return', 'head_approve', 'head_deny', 'head_return'])
+            ->whereIn('method', ['manager_approve', 'manager_deny', 'manager_return', 'head_approve', 'head_deny', 'head_return', 'fo_approve', 'fo_deny', 'fo_return'])
             ->orderByDesc('id')
             ->get()
         : collect();
-    $progressReviewerIds = collect([$dashboard->manager_id ?? null, $dashboard->head_id ?? null])->filter()->unique();
+    $progressReviewerIds = collect([$dashboard->manager_id ?? null, $dashboard->head_id ?? null, $dashboard->fo_id ?? null])->filter()->unique();
     $progressReviewers = $progressReviewerIds->isNotEmpty()
         ? \App\Models\User::query()->whereIn('id', $progressReviewerIds)->get()->keyBy('id')
         : collect();
@@ -76,6 +76,11 @@
                     default => null,
                 };
             }
+            // A resubmitted request can retain the financial officer's previous decision.
+            if ($role === 'fo' && ! str_starts_with($progressState, 'fo_')) {
+                $review = null;
+                $decision = null;
+            }
             $reviewerId = $role ? ($dashboard->{$role.'_id'} ?? null) : null;
             $reviewerName = $review['name'] ?? $progressReviewers->get($reviewerId)?->name ?? __('Not assigned');
             $decisionDate = isset($review['decided_at']) ? \Carbon\Carbon::parse($review['decided_at'])->timezone(config('app.timezone')) : null;
@@ -99,7 +104,7 @@
                         {{__("Financial Officers Approval") }}
                     @endif
                 </span>
-                @if(in_array($i, [2, 3], true))
+                @if(in_array($i, [2, 3, 4], true))
                     <div class="mt-2 rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-900/40">
                         <p class="break-words text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $reviewerName }}</p>
                         @if($review)
@@ -111,7 +116,7 @@
                                     {{ $decisionLabels[$decision] }}
                                 </span>
                             @else
-                                <span class="text-xs text-gray-500 dark:text-gray-400">{{ __('Pending') }}</span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">{{ $role === 'fo' ? __('Waiting') : __('Pending') }}</span>
                             @endif
                         </div>
                         @if($decisionDate)

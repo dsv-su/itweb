@@ -35,7 +35,9 @@ class NotifyRequestApproved extends Mailable
     {
         return new Envelope(
             from: new Address('noreply@dsv.su.se', 'ProjectProposals'),
-            subject: 'Approved: '. Str::limit($this->dashboard->name, 28),
+            subject: $this->dashboard->type === 'travelrequest'
+                ? 'Godkänd resebegäran / Approved travel request: '. Str::limit($this->dashboard->name, 28)
+                : 'Approved: '. Str::limit($this->dashboard->name, 28),
         );
     }
 

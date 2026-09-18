@@ -4,8 +4,8 @@
         <button type="button" wire:click="refreshNotifications" wire:loading.attr="aria-busy" class="min-h-11 rounded-lg border border-gray-500 bg-white px-4 py-2 text-sm font-semibold text-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 dark:border-gray-400 dark:bg-gray-800 dark:text-white dark:focus-visible:outline-blue-300">{{ __('Refresh notifications') }}</button>
     </div>
     <p role="status" aria-atomic="true" class="sr-only">{{ $feedback }}</p>
-    <div class="grid grid-cols-1 gap-3 min-[360px]:grid-cols-2 lg:grid-cols-4" role="group" aria-label="{{ __('Notification categories') }}">
-        @foreach(['all' => __('All notifications'), 'review' => __('Awaiting your review'), 'returned' => __('Returned or rejected'), 'mine' => __('My requests')] as $key => $label)
+    <div class="grid grid-cols-1 gap-3 min-[360px]:grid-cols-2 {{ $isHead ? 'lg:grid-cols-5' : 'lg:grid-cols-4' }}" role="group" aria-label="{{ __('Notification categories') }}">
+        @foreach(array_merge(['all' => __('All notifications'), 'review' => __('Awaiting your review'), 'returned' => __('Returned or rejected'), 'mine' => __('My requests')], $isHead ? ['approved' => __('Approved by you')] : []) as $key => $label)
             <button type="button" wire:click="$set('category', '{{ $key }}')" aria-pressed="{{ $category === $key ? 'true' : 'false' }}"
                     class="rounded-xl border p-4 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 dark:focus-visible:ring-blue-300 {{ $category === $key ? 'border-blue-600 bg-blue-50 text-blue-900 dark:border-blue-400 dark:bg-blue-950 dark:text-blue-100' : 'border-gray-200 bg-white text-gray-600 hover:border-blue-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300' }}">
                 <span class="block text-sm font-medium">{{ $label }}</span>
@@ -33,7 +33,7 @@
             <select id="notification-state" wire:model.live="state" class="min-h-11 w-full rounded-lg border-gray-500 bg-gray-50 text-sm text-gray-950 placeholder:text-gray-600 focus:border-blue-700 focus:ring-2 focus:ring-blue-700 dark:border-gray-400 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-300 dark:focus:ring-blue-300">
                 <option value="">{{ __('All states') }}</option>
                 @foreach($states as $value)
-                    <option value="{{ $value }}">{{ __(ucwords(str_replace('_', ' ', $value))) }}</option>
+                    <option value="{{ $value }}">{{ $value === 'manager_approved' ? __('Projectleader/Supervisor Approved') : __(ucwords(str_replace('_', ' ', $value))) }}</option>
                 @endforeach
             </select>
         </div>
@@ -73,7 +73,7 @@
                         <h2 class="break-words text-lg font-semibold text-gray-950 dark:text-white"><a href="{{ $url }}" class="inline-block min-h-6 underline decoration-transparent hover:decoration-current focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 dark:focus-visible:outline-blue-300">{{ $notification->name }}</a></h2>
                         <p class="mt-1 break-words text-sm text-gray-600 dark:text-gray-400">{{ __('Requester') }}: {{ $notification->user?->name ?? __('Unknown user') }}</p>
                     </div>
-                    <span class="inline-flex self-start rounded-md border px-3 py-1.5 text-xs font-semibold {{ $stateClass }}">{{ __(ucwords(str_replace('_', ' ', $currentState))) }}</span>
+                    <span class="inline-flex self-start rounded-md border px-3 py-1.5 text-xs font-semibold {{ $stateClass }}">{{ $currentState === 'manager_approved' ? __('Projectleader/Supervisor Approved') : __(ucwords(str_replace('_', ' ', $currentState))) }}</span>
                 </div>
                 <dl class="mt-5 grid grid-cols-1 gap-4 border-t min-[360px]:grid-cols-2 border-gray-100 pt-4 text-sm dark:border-gray-700 lg:grid-cols-4">
                     <div><dt class="text-gray-600 dark:text-gray-400">{{ __('Created') }}</dt><dd class="mt-1 break-words font-medium">{{ $created?->format('Y-m-d') ?? '—' }}</dd></div>

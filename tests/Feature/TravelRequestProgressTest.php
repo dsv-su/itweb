@@ -57,6 +57,66 @@ class TravelRequestProgressTest extends TestCase
         Schema::drop('users');
     }
 
+    public function test_progress_displays_financial_officer_decisions(): void
+    {
+        foreach (['approve' => 'Approved', 'deny' => 'Denied', 'return' => 'Returned'] as $decision => $label) {
+            $tr = new TravelRequest;
+            $tr->review_details = [
+                'fo' => ['name' => 'Finance Example', 'decision' => $decision, 'decided_at' => '2026-09-18T12:00:00+00:00'],
+            ];
+            $html = view('requests.travel.progress', [
+                'tr' => $tr,
+                'dashboard' => (object) ['state' => 'fo_'.['approve' => 'approved', 'deny' => 'denied', 'return' => 'returned'][$decision]],
+            ])->render();
+            $financeHtml = substr($html, strpos($html, __('Financial Officers Approval')));
+
+            $this->assertStringContainsString('Finance Example', $financeHtml);
+            $this->assertStringContainsString(__($label), $financeHtml);
+            $expectedDate = \Carbon\Carbon::parse('2026-09-18T12:00:00+00:00')->timezone(config('app.timezone'));
+            $this->assertStringContainsString($expectedDate->format('Y-m-d H:i'), $financeHtml);
+        }
+    }
+
+    public function test_progress_displays_assigned_financial_officer_while_pending(): void
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+        });
+        DB::table('users')->insert(['id' => 3, 'name' => 'Assigned Finance']);
+
+        $html = view('requests.travel.progress', [
+            'tr' => new TravelRequest,
+            'dashboard' => (object) ['state' => 'head_approved', 'fo_id' => 3],
+        ])->render();
+        $financeHtml = substr($html, strpos($html, __('Financial Officers Approval')));
+
+        $this->assertStringContainsString('Assigned Finance', $financeHtml);
+        $this->assertStringContainsString(__('Waiting'), $financeHtml);
+        $this->assertStringNotContainsString('<time', $financeHtml);
+        Schema::drop('users');
+    }
+
+    public function test_financial_officer_waits_for_a_new_decision_after_resubmission(): void
+    {
+        foreach (['submitted', 'manager_approved', 'head_approved', 'head_returned'] as $state) {
+            $tr = new TravelRequest;
+            $tr->review_details = [
+                'fo' => ['name' => 'Finance Example', 'decision' => 'return', 'decided_at' => '2026-09-18T12:00:00+00:00'],
+            ];
+            $html = view('requests.travel.progress', [
+                'tr' => $tr,
+                'dashboard' => (object) ['state' => $state],
+            ])->render();
+            $financeHtml = substr($html, strpos($html, __('Financial Officers Approval')));
+
+            $this->assertStringContainsString(__('Waiting'), $financeHtml);
+            $this->assertStringNotContainsString(__('Returned'), $financeHtml);
+            $this->assertStringNotContainsString(__('Latest decision'), $financeHtml);
+            $this->assertStringNotContainsString('<time', $financeHtml);
+        }
+    }
+
     public function test_review_details_can_be_saved_without_a_comment(): void
     {
         Schema::create('travel_requests', function (Blueprint $table) {
@@ -107,15 +167,23 @@ class TravelRequestProgressTest extends TestCase
             ['stored_workflow_id' => 10, 'method' => 'manager_return', 'created_at' => '2026-09-14 09:00:00'],
             ['stored_workflow_id' => 10, 'method' => 'manager_approve', 'created_at' => '2026-09-15 10:15:00'],
             ['stored_workflow_id' => 10, 'method' => 'head_deny', 'created_at' => '2026-09-16 11:30:00'],
+            ['stored_workflow_id' => 10, 'method' => 'fo_return', 'created_at' => '2026-09-18 12:00:00'],
+            ['stored_workflow_id' => 10, 'method' => 'fo_approve', 'created_at' => '2026-09-19 13:00:00'],
+            ['stored_workflow_id' => 11, 'method' => 'fo_deny', 'created_at' => '2026-09-20 14:00:00'],
             ['stored_workflow_id' => 11, 'method' => 'head_approve', 'created_at' => '2026-09-17 12:00:00'],
         ]);
         $html = view('requests.travel.progress', [
             'tr' => new TravelRequest,
-            'dashboard' => (object) ['state' => 'head_denied', 'workflow_id' => 10],
+            'dashboard' => (object) ['state' => 'fo_approved', 'workflow_id' => 10],
         ])->render();
 
         $this->assertStringContainsString('2026-09-15 10:15', $html);
         $this->assertStringContainsString('2026-09-16 11:30', $html);
+        $financeHtml = substr($html, strpos($html, __('Financial Officers Approval')));
+        $this->assertStringContainsString('2026-09-19 13:00', $financeHtml);
+        $this->assertStringContainsString(__('Approved'), $financeHtml);
+        $this->assertStringNotContainsString('2026-09-18', $html);
+        $this->assertStringNotContainsString('2026-09-20', $html);
         $this->assertStringNotContainsString('2026-09-14', $html);
         $this->assertStringNotContainsString('2026-09-17', $html);
         $this->assertStringContainsString(__('Approved'), $html);

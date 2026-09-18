@@ -40,6 +40,7 @@ class NotificationsTest extends TestCase
                 $table->string($column)->nullable();
             }
             $table->integer('created')->nullable();
+            $table->json('unit_heads')->nullable();
             $table->timestamps();
         });
         foreach (['travel_requests', 'project_proposals'] as $name) {
@@ -84,6 +85,88 @@ class NotificationsTest extends TestCase
         $this->assertSame('2026-09-17 10:00:00', DB::table('dashboards')->where('id', 1)->value('updated_at'));
         $this->assertSame('unread', DB::table('dashboards')->where('id', 2)->value('status'));
         $this->assertSame('unread', DB::table('dashboards')->where('id', 3)->value('status'));
+    }
+
+    public function test_heads_can_filter_their_approved_requests_and_open_view_links(): void
+    {
+        foreach ([
+            [10, 'Approved trip', 'travelrequest', 'head_approved', 'owner', null, null],
+            [11, 'Completed trip', 'travelrequest', 'fo_approved', 'owner', null, null],
+            [12, 'Another heads trip', 'travelrequest', 'fo_approved', 'someone-else', null, null],
+            [13, 'Trip awaiting approval', 'travelrequest', 'manager_approved', 'owner', null, null],
+            [14, 'Approved proposal', 'projectproposal', 'final_approved', null, ['owner'], ['owner' => 1]],
+            [15, 'Partially approved proposal', 'projectproposal', 'complete', null, ['owner', 'other'], ['owner' => 1, 'other' => 0]],
+            [16, 'Unapproved proposal', 'projectproposal', 'complete', null, ['owner'], ['owner' => 0]],
+            [17, 'Another heads proposal', 'projectproposal', 'final_approved', null, ['other'], ['other' => 1]],
+            [18, 'Returned trip', 'travelrequest', 'fo_returned', 'owner', null, null],
+        ] as [$id, $name, $type, $state, $head, $heads, $approvals]) {
+            DB::table('dashboards')->insert([
+                'id' => $id, 'name' => $name, 'type' => $type, 'state' => $state,
+                'user_id' => 'other', 'head_id' => $head, 'request_id' => 'request-'.$id,
+                'unit_heads' => $heads ? json_encode($heads) : null,
+                'unit_head_approved' => $approvals ? json_encode($approvals) : null,
+            ]);
+        }
+
+        Livewire::test(Notifications::class)
+            ->assertSee(__('Approved by you'))
+            ->assertViewHas('counts', fn ($counts) => $counts['approved'] === 4)
+            ->set('category', 'approved')
+            ->assertSee('Approved trip')->assertSee('Completed trip')
+            ->assertSee('Approved proposal')->assertSee('Partially approved proposal')
+            ->assertDontSee('Another heads trip')->assertDontSee('Another heads proposal')
+            ->assertDontSee('Unapproved proposal')->assertDontSee('Trip awaiting approval')
+            ->assertDontSee('Returned trip')->assertDontSee('My returned trip')
+            ->assertSee(route('travel-request-show', 10), false)
+            ->assertSee(route('pp.review.view', 'request-14'), false)
+            ->assertDontSee(route('travel-request-review', 10), false)
+            ->set('type', 'projectproposal')->assertDontSee('Approved trip')
+            ->set('search', 'Partially')->assertSee('Partially approved proposal')->assertDontSee('Approved proposal');
+    }
+
+    public function test_non_heads_cannot_access_approved_requests_by_changing_the_category(): void
+    {
+        DB::table('dashboards')->insert([
+            'name' => 'Another heads approved trip', 'user_id' => 'other', 'head_id' => 'other',
+            'type' => 'travelrequest', 'state' => 'fo_approved',
+        ]);
+        Livewire::test(Notifications::class)->assertDontSee(__('Approved by you'))
+            ->set('category', 'approved')->assertSee(__('No notifications found'))
+            ->assertDontSee('Another heads approved trip');
+    }
+
+    public function test_view_routes_allow_assigned_heads_and_reject_unrelated_users(): void
+    {
+        DB::table('dashboards')->insert([
+            'id' => 42, 'request_id' => 'a6b41c87-a0ee-43a4-bc2c-ab3d77868ce4', 'user_id' => 'other',
+            'type' => 'projectproposal', 'state' => 'final_approved', 'unit_heads' => json_encode(['owner']),
+        ]);
+        DB::table('project_proposals')->insert(['id' => 'a6b41c87-a0ee-43a4-bc2c-ab3d77868ce4']);
+        DB::table('dashboards')->insert([
+            'id' => 43, 'user_id' => 'other', 'head_id' => 'owner',
+            'type' => 'travelrequest', 'state' => 'fo_approved',
+        ]);
+        $this->withoutMiddleware(\App\Http\Middleware\DSVStaffEntitlement::class);
+        foreach ([
+            \App\Http\Controllers\TravelRequestController::class => ['show', 'showLocalized'],
+            \App\Http\Controllers\ReviewController::class => ['pp_view'],
+        ] as $controller => $methods) {
+            $this->partialMock($controller, function ($mock) use ($controller, $methods) {
+                $mock->makePartial();
+                (new \ReflectionMethod($controller, '__construct'))->invoke($mock);
+                foreach ($methods as $method) {
+                    $mock->shouldReceive($method)->andReturn(response('Request details'));
+                }
+            });
+        }
+        foreach (['owner' => 200, 'unrelated' => 403] as $id => $status) {
+            $user = new User;
+            $user->id = $id;
+            $this->actingAs($user);
+            foreach (['/travel/show/43', '/swe/travel/show/43', '/projectproposals/review/view/a6b41c87-a0ee-43a4-bc2c-ab3d77868ce4'] as $url) {
+                $this->get($url)->assertStatus($status);
+            }
+        }
     }
 
     public function test_proposal_reviews_require_assignment_and_uploaded_files(): void

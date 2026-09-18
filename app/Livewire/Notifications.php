@@ -50,8 +50,18 @@ class Notifications extends Component
     {
         abort_unless(Auth::check(), 403);
         $reviewIds = $this->Dashboardtask(Auth::id())->pluck('id');
-        $visible = Dashboard::query()->where(function ($query) use ($reviewIds) {
-            $query->where('user_id', Auth::id())->orWhereIn('id', $reviewIds);
+        $headRequests = Dashboard::query()->where(function ($query) {
+            $query->where(fn ($q) => $q->where('type', 'travelrequest')->where('head_id', Auth::id()))
+                ->orWhere(fn ($q) => $q->where('type', 'projectproposal')->whereJsonContains('unit_heads', Auth::id()));
+        });
+        $approvedIds = (clone $headRequests)->where(function ($query) {
+            $query->where(fn ($q) => $q->where('type', 'travelrequest')->whereIn('state', ['head_approved', 'fo_approved']))
+                ->orWhere(fn ($q) => $q->where('type', 'projectproposal')
+                    ->whereJsonContains('unit_head_approved', [Auth::id() => 1])
+                    ->whereIn('state', ['complete', 'head_approved', 'fo_approved', 'final_approved', 'sent', 'granted']));
+        })->pluck('id');
+        $visible = Dashboard::query()->where(function ($query) use ($reviewIds, $approvedIds) {
+            $query->where('user_id', Auth::id())->orWhereIn('id', $reviewIds)->orWhereIn('id', $approvedIds);
         });
         $returnedStates = ['manager_returned', 'head_returned', 'fo_returned', 'vice_returned', 'final_returned',
             'manager_denied', 'head_denied', 'fo_denied', 'vice_denied', 'final_denied', 'denied'];
@@ -61,6 +71,7 @@ class Notifications extends Component
             'review' => $reviewIds->count(),
             'returned' => (clone $mine)->whereIn('state', $returnedStates)->count(),
             'mine' => (clone $mine)->count(),
+            'approved' => $approvedIds->count(),
         ];
         $states = (clone $visible)->reorder()->distinct()->pluck('state')->map(fn ($state) => (string) $state)->sort()->values();
         $query = (clone $visible)->with(['user', 'travel']);
@@ -68,6 +79,7 @@ class Notifications extends Component
             'review' => $query->whereIn('id', $reviewIds),
             'returned' => $query->where('user_id', Auth::id())->whereIn('state', $returnedStates),
             'mine' => $query->where('user_id', Auth::id()),
+            'approved' => $query->whereIn('id', $approvedIds),
             default => null,
         };
         $query->when($this->type !== '', fn ($q) => $q->where('type', $this->type))
@@ -84,6 +96,7 @@ class Notifications extends Component
             'counts' => $counts,
             'states' => $states,
             'reviewIds' => $reviewIds,
+            'isHead' => $headRequests->exists(),
         ]);
     }
 }

@@ -1,3 +1,53 @@
+<div lang="sv">
+<strong>Svenska</strong>
+<br>
+<br>
+Till: ekonomhandläggare
+<br>
+Ämne:  Ny resebegäran inskickad för granskning
+<br>
+------------------------------------------------------------
+<br>
+Hej ekonomhandläggare,
+<br><br>
+En ny <strong>resebegäran</strong> har skickats in och har redan godkänts av både projektledaren/handledaren och enhetschefen.
+Din granskning och ditt godkännande krävs nu för att gå vidare.
+Vänligen granska resebegäran. Nedan följer en kort översikt:
+<br><br>
+ÖVERSIKT:
+<br>
+--------------
+<br>
+<b>Sökande:</b> {{$user->name}}
+<br>
+<b>Projektledare/Handledare:</b> {{$manager->name}}
+<br>
+<b>Enhetschef:</b> {{$head->name}}
+<br>
+<b>Skapad:</b> {{Carbon\Carbon::createFromTimestamp($dashboard->created)->toDateTimeString()}}
+<br>
+<b>Begärans ID:</b> {{$dashboard->request_id}}
+<br><br>
+Du kan granska uppgifterna och vidta nödvändiga åtgärder genom att öppna resebegäran via länken nedan:
+<br><br>
+ÅTGÄRD
+<br>
+-----------------------------------------------
+<br>
+Direktlänk:
+<br>
+<a href="{{ url('') }}/travel/review/{{$dashboard->id}}">{{$dashboard->name}}</a>
+<br><br>
+Tack för att du hanterar denna resebegäran snarast.
+<br><br>
+---
+<br>
+Detta är ett automatiskt e-postmeddelande. Vänligen svara inte på detta meddelande.
+</div>
+<hr>
+<div lang="en">
+<strong>English</strong>
+<br>
 <br>
 To: Financial Officer
 <br>
@@ -17,7 +67,7 @@ OVERVIEW:
 <br>
 <b>Requester:</b> {{$user->name}}
 <br>
-<b>{{ __('Projectleader/Supervisor') }}:</b> {{$manager->name}}
+<b>Projectleader/Supervisor:</b> {{$manager->name}}
 <br>
 <b>Unit Head:</b> {{$head->name}}
 <br>
@@ -40,3 +90,4 @@ Thank you for your prompt attention to this request.
 ---
 <br>
 This is an automated email, please do not reply to this email.
+</div>
