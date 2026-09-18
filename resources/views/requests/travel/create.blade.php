@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 @php
-    $isResume = $type === 'resume';
+    $isCompletedEdit = $type === 'edit_completed';
+    $isResume = $type === 'resume' || $isCompletedEdit;
     $travelRequest = $isResume ? $tr : null;
     $dashboardRequest = $isResume ? $dashboard : null;
 
@@ -31,7 +32,7 @@
             </h2>
 
             {{-- Match field backgrounds to the form, including fields rendered by Livewire. --}}
-            <form id="travel-request-form" method="post" action="{{ route('travel-submit') }}"
+            <form id="travel-request-form" method="post" action="{{ $isCompletedEdit ? route('travel-request-update-completed', $travelRequest->id) : route('travel-submit') }}"
                   class="[&_.bg-gray-50.border]:bg-white dark:[&_.bg-gray-50.border]:bg-gray-900">
                 @csrf
                 @if($errors->any())

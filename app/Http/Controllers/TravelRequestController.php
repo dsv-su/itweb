@@ -28,7 +28,8 @@ class TravelRequestController extends Controller
     public function __construct()
     {
         $this->middleware(['web', 'auth', 'dsv']);
-        $this->middleware('show')->except(['create', 'resume', 'resumeLocalized', 'submit']);
+        $this->middleware('show')->except(['create', 'resume', 'resumeLocalized', 'submit', 'editCompleted', 'updateCompleted']);
+        $this->middleware('fo')->only(['editCompleted', 'updateCompleted']);
         $this->middleware(['checklang', 'locale']);
     }
 
@@ -96,6 +97,68 @@ class TravelRequestController extends Controller
         return $this->createView('requests.travel.create', 'mylayout', $viewData);
     }
 
+    public function editCompleted(TravelRequest $tr)
+    {
+        $dashboard = $this->completedDashboard($tr);
+        $viewData = $this->prepareTravelRequestData();
+
+        if ($dashboard->head_id && ! $viewData['unitheads']->contains('id', $dashboard->head_id)) {
+            if ($head = User::find($dashboard->head_id)) {
+                $viewData['unitheads']->push($head);
+            }
+        }
+
+        return $this->createView('requests.travel.create', 'mylayout', array_merge($viewData, [
+            'type' => 'edit_completed',
+            'tr' => $tr,
+            'dashboard' => $dashboard,
+        ]));
+    }
+
+    public function updateCompleted(Request $request, TravelRequest $tr)
+    {
+        $this->completedDashboard($tr);
+        $this->validateRequest($request);
+        $request->validate(['name' => ['required', 'string', 'max:255']]);
+
+        $data = $request->only([
+            'name', 'purpose', 'project', 'country', 'comments', 'paper', 'contribution',
+            'other_costs', 'days', 'flight', 'hotel', 'daily', 'conference', 'total',
+        ]);
+        if ($request->countrytype === 'domestic') {
+            $data['country'] = 'Sverige';
+        }
+        foreach (['departure', 'return'] as $field) {
+            $data[$field] = $request->filled($field)
+                ? Carbon::createFromFormat('Y-m-d', $request->input($field))->timestamp
+                : null;
+        }
+
+        DB::transaction(function () use ($tr, $data, $request) {
+            $dashboard = $this->completedDashboard($tr, true);
+            $tr->update($data);
+            $dashboard->update([
+                'name' => $data['name'],
+                'manager_id' => $request->project_leader,
+                'head_id' => $request->unit_head,
+            ]);
+        });
+
+        return redirect()->route('fo-request-show', $tr->id);
+    }
+
+    private function completedDashboard(TravelRequest $tr, bool $lock = false): Dashboard
+    {
+        $query = Dashboard::where('request_id', $tr->id)->where('type', 'travelrequest');
+        if ($lock) {
+            $query->lockForUpdate();
+        }
+        $dashboard = $query->firstOrFail();
+        abort_unless((string) $dashboard->state === 'fo_approved', 403);
+
+        return $dashboard;
+    }
+
     public function create()
     {
         $viewData = $this->prepareTravelRequestData();
@@ -120,6 +183,11 @@ class TravelRequestController extends Controller
 
     public function submit(Request $request)
     {
+        if ($request->filled('id')) {
+            abort_if(Dashboard::where('request_id', $request->id)
+                ->where('type', 'travelrequest')->where('state', 'fo_approved')->exists(), 403);
+        }
+
         // Ensure the request method is POST
         $this->validateRequest($request);
 

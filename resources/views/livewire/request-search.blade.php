@@ -1,4 +1,7 @@
 <div class="flex flex-col flex-1 w-full">
+    @php
+        $canEditCompleted = auth()->user()?->isFO() ?? false;
+    @endphp
     <label for="request-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">{{ __('Search') }}</label>
     <div class="relative px-36 mb-6">
         <input type="search" id="request-search" wire:model.live="searchTerm"
@@ -97,6 +100,12 @@
                            class="inline-flex items-center justify-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-offset-gray-800">
                             {{__("Show")}}
                         </a>
+                        @if($canEditCompleted && (string) $dashboard->state === 'fo_approved' && $dashboard->type === 'travelrequest')
+                            <a href="{{ route('travel-request-edit-completed', $dashboard->request_id) }}"
+                               class="ml-2 inline-flex items-center justify-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-offset-gray-800">
+                                {{ __('Edit') }}
+                            </a>
+                        @endif
                     </td>
                     <td class="px-4 py-3 whitespace-nowrap">
                         @if($dashboard->state == 'fo_approved' && $dashboard->type == 'travelrequest')

@@ -105,6 +105,11 @@ Route::get('/{lang}/show/{id}', [\App\Http\Controllers\FOController::class, 'sho
     ->where('lang', $langConstraint)
     ->middleware('checklang');
 
+Route::get('/travel/completed/{tr}/edit', [\App\Http\Controllers\TravelRequestController::class, 'editCompleted'])
+    ->name('travel-request-edit-completed');
+Route::post('/travel/completed/{tr}', [\App\Http\Controllers\TravelRequestController::class, 'updateCompleted'])
+    ->name('travel-request-update-completed');
+
 Route::get('/viewpdf/{id}', [\App\Http\Controllers\FOController::class, 'pdfview'])
     ->name('travel-request-pdfview');
 
