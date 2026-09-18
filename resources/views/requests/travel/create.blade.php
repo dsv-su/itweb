@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app', ['title' => __('Duty Travel Request')])
 
 @php
     $isCompletedEdit = $type === 'edit_completed';
@@ -21,20 +21,26 @@
     $textareaClass = 'font-mono block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:placeholder:text-gray-200 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500';
 @endphp
 
-@section('content')
+@section('page-navigation')
     @include('dsvheader')
     @include('navbar.navbar')
+@endsection
+
+@section('content')
 
     <section class="bg-white dark:bg-gray-900">
         <div class="max-w-2xl px-4 py-8 mx-auto lg:py-16">
-            <h2 class="mb-4 text-xl font-bold text-gray-900 dark:text-white">
+            <h1 class="mb-4 text-xl font-bold text-gray-900 dark:text-white">
                 {{ __('Duty Travel Request') }}
-            </h2>
+            </h1>
 
             {{-- Match field backgrounds to the form, including fields rendered by Livewire. --}}
             <form id="travel-request-form" method="post" action="{{ $isCompletedEdit ? route('travel-request-update-completed', $travelRequest->id) : route('travel-submit') }}"
                   class="[&_.bg-gray-50.border]:bg-white dark:[&_.bg-gray-50.border]:bg-gray-900">
                 @csrf
+                <p class="mb-5 text-sm text-gray-600 dark:text-gray-400">
+                    <span aria-hidden="true">*</span> {{ __('This is a required input') }}
+                </p>
                 @if($errors->any())
                     <div role="alert" tabindex="-1" x-data x-init="$el.focus()" class="mb-5 rounded-lg border border-red-700 p-4 text-red-700 dark:text-red-400">
                         <p class="font-semibold">{{ __('Please correct the following errors:') }}</p>
@@ -67,10 +73,10 @@
                     <div class="sm:col-span-2">
                         <section class="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
                             <div class="rounded-t-xl border-b border-gray-200 bg-gray-50 px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
-                                <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+                                <h2 class="text-base font-semibold text-gray-900 dark:text-white">
                                     {{ __('Request details') }}
-                                </h3>
-                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                </h2>
+                                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                                     {{ __('Name this request and describe the purpose of the mission') }}
                                 </p>
                             </div>
@@ -80,6 +86,7 @@
                                     @include('requests.travel.partials.form.field-label', [
                                         'for' => 'name',
                                         'label' => __('You may change this name'),
+                                        'required' => true,
                                         'modal' => 'name',
                                         'class' => 'font-sans',
                                     ])
@@ -111,12 +118,14 @@
                                     <select
                                         id="paper"
                                         name="paper"
+                                        @error('paper') aria-invalid="true" aria-describedby="paper-error" @enderror
                                         data-value="{{ $paperValue }}"
                                         class="{{ $selectClass }}"
                                     >
                                         <option value="0" @selected($paperValue === 0)>{{ __('No') }}</option>
                                         <option value="1" @selected($paperValue === 1)>{{ __('Yes') }}</option>
                                     </select>
+                                    @include('requests.travel.partials.form.field-error', ['field' => 'paper'])
                                 </div>
 
                                 <div class="sm:col-span-2">
@@ -148,15 +157,15 @@
                     <div class="relative z-30 sm:col-span-2">
                         <section class="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
                             <div class="rounded-t-xl border-b border-gray-200 bg-gray-50 px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
-                                <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+                                <h2 class="text-base font-semibold text-gray-900 dark:text-white">
                                     {{ __('Project') }} & {{ __('Country') }}
-                                </h3>
-                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                </h2>
+                                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                                     {{ __('Select the project and destination country for this duty travel request') }}
                                 </p>
                             </div>
 
-                            <div class="grid min-w-0 gap-4 px-4 py-5 sm:grid-cols-2 sm:gap-6 sm:px-5">
+                            <div class="travel-destination-grid grid min-w-0 gap-4 px-4 py-5 sm:grid-cols-2 sm:gap-6 sm:px-5">
                                 @include('requests.travel.partials.projecttab')
 
                                 <livewire:travel-type :resume="$isResume ? $travelRequest->country : null" />
@@ -188,10 +197,10 @@
                     <div class="sm:col-span-2">
                         <section class="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
                             <div class="rounded-t-xl border-b border-gray-200 bg-gray-50 px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
-                                <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+                                <h2 class="text-base font-semibold text-gray-900 dark:text-white">
                                     {{ __('Projectleader/Supervisor') }} & {{ __('Unit Head') }}
-                                </h3>
-                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                </h2>
+                                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                                     {{ __('Select who should review and approve this duty travel request') }}
                                 </p>
                             </div>
@@ -232,10 +241,10 @@
                     <div class="sm:col-span-2">
                         <section class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
                             <div class="border-b border-gray-200 bg-gray-50 px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
-                                <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+                                <h2 class="text-base font-semibold text-gray-900 dark:text-white">
                                     {{ __('Travel dates') }}
-                                </h3>
-                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                </h2>
+                                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                                     {{ __('Select the departure and return dates for this trip') }}
                                 </p>
                             </div>
@@ -271,15 +280,15 @@
                             <div class="border-b border-gray-200 bg-gray-50 px-5 py-4 dark:border-gray-700 dark:bg-gray-800">
                                 <div class="flex items-center justify-between gap-4">
                                     <div>
-                                        <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+                                        <h2 class="text-base font-semibold text-gray-900 dark:text-white">
                                             {{ __('Expenses') }}
-                                        </h3>
-                                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                        </h2>
+                                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                                             {{ __('Estimated costs for the duty travel request') }}
                                         </p>
                                     </div>
 
-                                    <span class="hidden rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-200 dark:bg-blue-900/30 dark:text-blue-200 dark:ring-blue-800 sm:inline-flex">
+                                    <span class="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-200 dark:bg-blue-900/30 dark:text-blue-200 dark:ring-blue-800">
                                         {{ __('SEK') }}
                                     </span>
                                 </div>

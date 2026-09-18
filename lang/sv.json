@@ -269,5 +269,18 @@
     "Notifications requiring attention": "Aviseringar som kräver uppmärksamhet",
     "Page :page of :pages": "Sida :page av :pages",
     "Read": "Läst",
-    "Toggle dark/light mode": "Växla mellan mörkt och ljust läge"
+    "Toggle dark/light mode": "Växla mellan mörkt och ljust läge",
+    "Switch FO": "Byt ekonom",
+    "Financial officer": "Ekonomi handläggare",
+    "Choose a financial officer": "Välj en ekonom",
+    "Financial officer updated.": "Ekonom har uppdaterats.",
+    "Financial officer unchanged.": "Ekonom är oförändrad.",
+    "The change will be recorded in the travel request FO history.": "Ändringen registreras i reseansökans ekonomhistorik.",
+    "Financial officer changed from :previous to :next.": "Ekonom har ändrats från :previous till :next.",
+    "Unassigned": "Ej tilldelad",
+    "Select the project for this trip. If you cannot select a project, choose 'No project' and explain why in Comments.": "Välj projekt för resan. Om du inte kan välja ett projekt, välj 'Inget projekt' och förklara varför under Kommentarer.",
+    "No project selected": "Inget projekt valt",
+    "All travel requests should be linked to a project. A request without a project may be returned for clarification.": "Alla reseansökningar bör vara kopplade till ett projekt. En ansökan utan projekt kan skickas tillbaka för komplettering.",
+    "If you do not know the project or cannot select one, explain the reason in Comments.": "Om du inte vet vilket projekt som gäller eller inte kan välja ett, förklara orsaken under Kommentarer.",
+    "Explain in Comments": "Förklara under Kommentarer"
 }

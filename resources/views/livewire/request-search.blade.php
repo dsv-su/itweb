@@ -1,16 +1,16 @@
-<div class="flex flex-col flex-1 w-full">
+<div class="flex min-w-0 flex-col flex-1 w-full">
     @php
         $canEditCompleted = auth()->user()?->isFO() ?? false;
     @endphp
     <label for="request-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">{{ __('Search') }}</label>
-    <div class="relative px-36 mb-6">
+    <div class="relative mb-6 w-full max-w-3xl mx-auto">
         <input type="search" id="request-search" wire:model.live="searchTerm"
                class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500
                     dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                placeholder="{{__("Please refine your search by typing to filter ID, User, Country, Purpose, or ProjectID")}}">
     </div>
     <div class="mb-6 flex justify-center">
-        <div class="inline-flex rounded-lg border border-gray-200 bg-white p-1 shadow-sm dark:border-gray-700 dark:bg-gray-800" role="group" aria-label="{{ __('Request type filter') }}">
+        <div class="grid w-full grid-cols-2 sm:inline-flex sm:w-auto rounded-lg border border-gray-200 bg-white p-1 shadow-sm dark:border-gray-700 dark:bg-gray-800" role="group" aria-label="{{ __('Request type filter') }}">
             <button
                 type="button"
                 wire:click="$set('requestType', 'travelrequest')"
@@ -35,40 +35,51 @@
         </div>
     @endif
 
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-white">
+    @if($foStatus)
+        <div role="status" class="mb-4 rounded-lg border border-green-200 bg-green-50 px-3 py-3 text-sm text-green-800 dark:border-green-800 dark:bg-green-900/30 dark:text-green-200">
+            {{ $foStatus }}
+        </div>
+    @endif
+
+    <div class="relative w-full min-w-0 xl:overflow-x-auto xl:rounded-lg xl:shadow-md">
+        <table role="table" class="block xl:table w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead role="rowgroup" class="hidden xl:table-header-group text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-white">
             <tr>
-                <th scope="col" class="px-4 py-3">{{__("Request type")}}</th>
-                <th scope="col" class="px-4 py-3">{{__("Name")}}</th>
-                <th scope="col" class="px-4 py-3">{{__("Country")}}</th>
-                <th scope="col" class="px-4 py-3">{{__("Total")}}</th>
-                <th scope="col" class="px-4 py-3">{{__("State")}}</th>
-                <th scope="col" class="px-4 py-3">{{__("User")}}</th>
-                <th scope="col" class="px-4 py-3">{{__("Created")}}</th>
-                <th scope="col" colspan="2" class="px-4 py-3">{{__("Action")}}</th>
+                <th scope="col" class="px-3 py-3">{{__("Request type")}}</th>
+                <th scope="col" class="px-3 py-3">{{__("Name")}}</th>
+                <th scope="col" class="px-3 py-3">{{__("Country")}}</th>
+                <th scope="col" class="px-3 py-3">{{__("Total")}}</th>
+                <th scope="col" class="px-3 py-3">{{__("State")}}</th>
+                <th scope="col" class="px-3 py-3">{{__("User")}}</th>
+                <th scope="col" class="px-3 py-3">{{ __('Financial officer') }}</th>
+                <th scope="col" class="px-3 py-3">{{__("Created")}}</th>
+                <th scope="col" class="w-48 px-3 py-3">{{__("Action")}}</th>
             </tr>
             </thead>
-            <tbody>
+            <tbody role="rowgroup" class="block space-y-4 xl:table-row-group xl:space-y-0">
             @foreach($dashboards as $dashboard)
 
-                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 dark:text-white">
+                <tr role="row" wire:key="request-{{ $dashboard->id }}" class="grid grid-cols-2 overflow-hidden rounded-xl border shadow-sm xl:table-row xl:rounded-none xl:border-0 xl:border-b xl:shadow-none bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 dark:text-white">
 
-                    <th scope="row" class="px-4 py-3 text-xs text-gray-900 whitespace-nowrap dark:text-white">
-                        <span class="bg-blue-100 text-xs mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-white border border-blue-400">
+                    <th role="rowheader" scope="row" class="col-span-2 block px-3 py-3 text-xs text-gray-900 xl:table-cell dark:text-white">
+                        <span class="bg-blue-100 inline-block text-xs px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-white border border-blue-400">
                             {{ $dashboard->type === 'travelrequest' ? __('Travelrequest') : __(ucfirst(str_replace('_', ' ', (string) $dashboard->type))) }}
                         </span>
                     </th>
-                    <td class="px-4 py-3 text-xs">{{$dashboard->name}}</td>
-                    <td class="px-4 py-3 text-xs">{{ $dashboard->travel?->country ?? '-' }}</td>
-                    <td class="px-4 py-3 text-xs">
+                    <td role="cell" class="col-span-2 block min-w-0 break-words xl:table-cell px-3 py-3 text-xs">
+                        <span class="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400 xl:hidden">{{ __('Name') }}</span>{{$dashboard->name}}</td>
+                    <td role="cell" class="block min-w-0 break-words xl:table-cell px-3 py-3 text-xs">
+                        <span class="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400 xl:hidden">{{ __('Country') }}</span>{{ $dashboard->travel?->country ?? '-' }}</td>
+                    <td role="cell" class="block min-w-0 break-words xl:table-cell px-3 py-3 text-xs">
+                        <span class="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400 xl:hidden">{{ __('Total') }}</span>
                         @if($dashboard->travel?->total !== null)
                             {{ number_format((float) $dashboard->travel->total, 0, '.', ' ') }} SEK
                         @else
                             -
                         @endif
                     </td>
-                    <td class="px-4 py-3 text-xs whitespace-nowrap">
+                    <td role="cell" class="block min-w-0 break-words xl:table-cell px-3 py-3 text-xs xl:whitespace-nowrap">
+                        <span class="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400 xl:hidden">{{ __('State') }}</span>
                         @php
                             $state = (string) $dashboard->state;
                             $stateLabel = match ($state) {
@@ -93,32 +104,44 @@
                             {{ $stateLabel }}
                         </span>
                     </td>
-                    <td class="px-4 py-3 text-xs">{{ $dashboard->user?->name ?? __('Unknown user') }}</td>
-                    <td class="px-4 py-3 text-xs">{{\Carbon\Carbon::createFromTimestamp($dashboard->created)->toDateString()}}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">
+                    <td role="cell" class="block min-w-0 break-words xl:table-cell px-3 py-3 text-xs">
+                        <span class="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400 xl:hidden">{{ __('User') }}</span>{{ $dashboard->user?->name ?? __('Unknown user') }}</td>
+                    <td role="cell" class="block min-w-0 break-words xl:table-cell px-3 py-3 text-xs">
+                        <span class="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400 xl:hidden">{{ __('FO') }}</span>{{ $dashboard->financialOfficer?->name ?? __('Unassigned') }}</td>
+                    <td role="cell" class="block min-w-0 break-words xl:table-cell px-3 py-3 text-xs xl:whitespace-nowrap">
+                        <span class="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400 xl:hidden">{{ __('Created') }}</span>{{\Carbon\Carbon::createFromTimestamp($dashboard->created)->toDateString()}}</td>
+                    <td role="cell" class="col-span-2 block min-w-0 break-words xl:table-cell px-3 py-3">
+                        <span class="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400 xl:hidden">{{ __('Action') }}</span>
+                        <div class="grid w-full grid-cols-2 gap-2 sm:grid-cols-4 xl:w-44 xl:grid-cols-2 [&>a]:min-h-11 [&>button]:min-h-11 xl:[&>a]:min-h-0 xl:[&>button]:min-h-0">
                         <a type="button" href="{{route('fo-request-show', $dashboard->request_id)}}"
                            class="inline-flex items-center justify-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-offset-gray-800">
                             {{__("Show")}}
                         </a>
                         @if($canEditCompleted && (string) $dashboard->state === 'fo_approved' && $dashboard->type === 'travelrequest')
                             <a href="{{ route('travel-request-edit-completed', $dashboard->request_id) }}"
-                               class="ml-2 inline-flex items-center justify-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-offset-gray-800">
+                               class="inline-flex items-center justify-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-offset-gray-800">
                                 {{ __('Edit') }}
                             </a>
                         @endif
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap">
+                        @if($canEditCompleted && $dashboard->type === 'travelrequest')
+                            <button type="button" wire:click="switchFo({{ $dashboard->id }})"
+                                    aria-expanded="{{ $switchingFoId === $dashboard->id ? 'true' : 'false' }}"
+                                    aria-controls="switch-fo-{{ $dashboard->id }}"
+                                    class="inline-flex items-center justify-center rounded-md border border-blue-300 px-3 py-1.5 text-xs font-medium text-blue-700 transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-blue-500 dark:text-blue-300 dark:hover:bg-gray-700">
+                                {{ __('Switch FO') }}
+                            </button>
+                        @endif
                         @if($dashboard->state == 'fo_approved' && $dashboard->type == 'travelrequest')
                             <a type="button" href="{{route('travel-request-pdf', $dashboard->request_id)}}"
-                               class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300
-                                            rounded-lg text-xs px-3 py-2 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white
+                               class="inline-flex items-center justify-center text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300
+                                            rounded-md text-xs px-3 py-1.5 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white
                                             dark:hover:bg-blue-500 dark:focus:ring-blue-800">
                                 {{__("Download")}}
                             </a>
                         @elseif(in_array($dashboard->state, ['manager_denied', 'head_denied', 'fo_denied']) && $dashboard->type == 'travelrequest')
                             <a type="button" href="{{route('travel-request-pdf', $dashboard->request_id)}}"
-                               class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300
-                                            rounded-lg text-xs px-3 py-2 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white
+                               class="inline-flex items-center justify-center text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300
+                                            rounded-md text-xs px-3 py-1.5 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white
                                             dark:hover:bg-blue-500 dark:focus:ring-blue-800">
                                 {{__("Download")}}
                             </a>
@@ -129,10 +152,30 @@
 
 
                         @endif
-
-
+                        </div>
                     </td>
                 </tr>
+                @if($canEditCompleted && $switchingFoId === $dashboard->id && $dashboard->type === 'travelrequest')
+                    <tr wire:key="switch-fo-{{ $dashboard->id }}" id="switch-fo-{{ $dashboard->id }}" role="row" class="block rounded-xl border border-blue-100 bg-blue-50/60 xl:table-row xl:rounded-none xl:border-0 xl:border-b dark:border-gray-700 dark:bg-gray-900">
+                        <td role="cell" colspan="9" class="block px-4 py-4 xl:table-cell">
+                            <form wire:submit="saveFo" class="flex flex-wrap items-end gap-3">
+                                <div class="w-full min-w-0 sm:w-72">
+                                    <label for="new-fo-{{ $dashboard->id }}" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">{{ __('Financial officer') }}</label>
+                                    <select id="new-fo-{{ $dashboard->id }}" wire:model="selectedFoId" class="block w-full rounded-lg border border-gray-300 bg-white p-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+                                        <option value="">{{ __('Choose a financial officer') }}</option>
+                                        @foreach($financialOfficers as $officer)
+                                            <option value="{{ $officer->id }}">{{ $officer->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('selectedFoId') <p role="alert" class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
+                                </div>
+                                <button type="submit" wire:loading.attr="disabled" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50">{{ __('Save') }}</button>
+                                <button type="button" wire:click="cancelFoSwitch" wire:loading.attr="disabled" class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800">{{ __('Cancel') }}</button>
+                                <p class="w-full text-xs text-gray-600 dark:text-gray-400">{{ __('The change will be recorded in the travel request FO history.') }}</p>
+                            </form>
+                        </td>
+                    </tr>
+                @endif
             @endforeach
 
             </tbody>

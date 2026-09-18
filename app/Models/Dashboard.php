@@ -43,9 +43,11 @@ class Dashboard extends Model
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the travelrequest that belongs to the dashboard.
-     */
+    public function financialOfficer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'fo_id');
+    }
+
     public function travel(): BelongsTo
     {
         return $this->belongsTo(TravelRequest::class, 'request_id');

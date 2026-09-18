@@ -16,16 +16,19 @@ class ProjectSelect2 extends Component
 {
     public Project $Project;
     public $search;
+    public bool $showProjectWarning = false;
 
     protected $listeners = [
         'set-Project' => 'set_Project',
         'clear'
     ];
 
-    public function mount($id = 0)
+    public function mount($id = 0, bool $showProjectWarning = false)
     {
+        $this->showProjectWarning = $showProjectWarning;
+
         if($id != 0) {
-            $this->Project = Project::where('project', $id)->first();
+            $this->Project = Project::where('project', $id)->first() ?? new Project;
         } else {
             $this->Project = new Project;
         }

@@ -1,4 +1,4 @@
-<div wire:ignore>
+<div wire:ignore class="travel-choice min-w-0">
     <div
         x-data="{
         tabSelected: @entangle('tabselected').live,
@@ -6,13 +6,7 @@
         hiddenInputValue: @entangle('inputvalue').live,
         tabButtonClicked(tabButton){
             this.tabSelected = tabButton.id.replace(this.tabId + '-', '');
-            this.tabRepositionMarker(tabButton);
             this.updateHiddenInput();
-        },
-        tabRepositionMarker(tabButton){
-            this.$refs.tabMarker.style.width=tabButton.offsetWidth + 'px';
-            this.$refs.tabMarker.style.height=tabButton.offsetHeight + 'px';
-            this.$refs.tabMarker.style.left=tabButton.offsetLeft + 'px';
         },
         tabContentActive(tabContent){
             return this.tabSelected == tabContent.id.replace(this.tabId + '-content-', '');
@@ -30,17 +24,14 @@
         }
     }"
 
-        x-init="tabRepositionMarker($refs.tabButtons.firstElementChild);"  class="relative w-full max-w-sm">
+        class="travel-choice-layout relative w-full min-w-0">
         <p id="travel-type-choice-label" class="block mb-4 text-sm font-medium text-gray-900 dark:text-white">{{ __("Please enter a country from the list, or select 'Domestic' if your travel is within Sweden.") }}
         </p>
 
-        <div role="group" aria-labelledby="travel-type-choice-label" x-ref="tabButtons" class="relative inline-grid items-center justify-center w-full h-10 grid-cols-2 p-1 text-gray-600 dark:text-gray-200 bg-gray-100 rounded-lg select-none dark:bg-gray-700 dark:border-gray-600">
-            <button :id="tabId + '-1'" :aria-pressed="(tabSelected == 1).toString()" :aria-controls="tabId + '-content-1'" @click="tabButtonClicked($el);" type="button" class="relative z-20 inline-flex items-center justify-center w-full h-8 px-3 text-sm font-medium transition-all rounded-md cursor-pointer whitespace-nowrap">{{__("International")}}</button>
-            <button :id="tabId + '-2'" :aria-pressed="(tabSelected == 2).toString()" :aria-controls="tabId + '-content-2'" @click="tabButtonClicked($el);" type="button" class="relative z-20 inline-flex items-center justify-center w-full h-8 px-3 text-sm font-medium transition-all rounded-md cursor-pointer whitespace-nowrap">{{__("Domestic")}}</button>
+        <div role="group" aria-labelledby="travel-type-choice-label" x-ref="tabButtons" class="relative inline-grid items-center justify-center w-full min-h-10 grid-cols-2 p-1 text-gray-600 dark:text-gray-200 bg-gray-100 rounded-lg select-none dark:bg-gray-700 dark:border-gray-600">
+            <button :id="tabId + '-1'" :class="{ 'bg-white shadow-sm dark:bg-gray-900 dark:ring-1 dark:ring-gray-200': tabSelected == 1 }" :aria-pressed="(tabSelected == 1).toString()" :aria-controls="tabId + '-content-1'" @click="tabButtonClicked($el);" type="button" class="relative z-20 inline-flex items-center justify-center w-full min-h-8 px-2 py-1 text-sm font-medium transition-all rounded-md cursor-pointer break-words">{{__("International")}}</button>
+            <button :id="tabId + '-2'" :class="{ 'bg-white shadow-sm dark:bg-gray-900 dark:ring-1 dark:ring-gray-200': tabSelected == 2 }" :aria-pressed="(tabSelected == 2).toString()" :aria-controls="tabId + '-content-2'" @click="tabButtonClicked($el);" type="button" class="relative z-20 inline-flex items-center justify-center w-full min-h-8 px-2 py-1 text-sm font-medium transition-all rounded-md cursor-pointer break-words">{{__("Domestic")}}</button>
 
-            <div x-ref="tabMarker" class="absolute left-0 z-10 w-1/2 h-full duration-300 ease-out" x-cloak>
-                <div class="w-full h-full bg-white rounded-md shadow-sm dark:bg-gray-900 dark:border dark:border-gray-200"></div>
-            </div>
 
         </div>
 

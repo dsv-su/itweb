@@ -217,3 +217,20 @@
 .dark #travel-request-form [id$="-options"] :focus-visible {
     outline-color: var(--color-blue-700);
 }
+
+/* Share instruction and toggle rows so translated text cannot stagger the selectors. */
+@media (min-width: 640px) {
+    .travel-destination-grid > .travel-choice,
+    .travel-destination-grid .travel-choice-layout {
+        display: grid;
+        grid-row: span 3;
+        grid-template-rows: subgrid;
+    }
+    .travel-destination-grid .travel-choice-layout > p,
+    .travel-destination-grid .travel-choice-layout > div {
+        margin-block: 0;
+    }
+    .travel-destination-grid .travel-choice-layout > [role="group"] {
+        align-self: start;
+    }
+}
