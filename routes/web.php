@@ -25,6 +25,12 @@ Route::get('/{lang}/search', SearchController::class)
     ->middleware('checklang')
     ->name('search.localized');
 
+Route::view('/notifications', 'notifications.index', ['title' => 'Notifications'])
+    ->middleware(['auth', 'checklang'])->name('notifications');
+Route::view('/{lang}/notifications', 'notifications.index', ['title' => 'Notifications'])
+    ->where('lang', $langConstraint)
+    ->middleware(['auth', 'checklang'])->name('notifications.localized');
+
 // Language switcher (explicit)
 Route::get('/lang/{lang}', [\App\Http\Controllers\LocalizationController::class, 'index'])
     ->where('lang', $langConstraint)

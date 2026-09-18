@@ -36,7 +36,11 @@
 </head>
 
 <body class="overflow-x-hidden dark:bg-gray-800">
-    <main>
+    @hasSection('page-navigation')
+        <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:p-4 focus:text-blue-800 focus:underline focus:outline focus:outline-2 focus:outline-blue-700">{{ __('Skip to main content') }}</a>
+        @yield('page-navigation')
+    @endif
+    <main id="main-content" tabindex="-1">
         @yield('content')
     </main>
     @include('footer.footer')

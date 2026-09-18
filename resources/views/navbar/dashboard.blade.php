@@ -9,56 +9,27 @@
     $actionButtonClasses = 'hidden md:flex min-w-11 min-h-11 items-center justify-center p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-blue-300 dark:focus-visible:ring-offset-gray-900';
     $dropdownClasses = 'hidden overflow-hidden z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow-lg dark:bg-gray-700 dark:divide-gray-600';
     $dropdownHeaderClasses = 'block py-2 px-4 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-200';
-    $dropdownGridClasses = 'grid grid-cols-3 gap-4 p-4';
+    $dropdownGridClasses = 'grid grid-cols-2 gap-2 p-4';
     $serviceLinkClasses = 'block min-h-11 p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-blue-300 dark:focus-visible:ring-offset-gray-900';
     $serviceIconClasses = 'mx-auto mb-2 w-5 h-5 text-blue-600 dark:text-white';
-    $serviceLabelClasses = 'text-sm font-medium text-blue-600 dark:text-white';
+    $serviceLabelClasses = 'break-words text-sm font-medium text-blue-700 dark:text-white';
     $tooltipClasses = 'absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700';
 @endphp
 
-<div class="flex flex-wrap items-center justify-between">
+<div class="hidden shrink-0 md:flex md:items-center">
     <div class="flex items-center">
-        @include('navbar.partials.search_link')
-        <livewire:indicator />
+        @include('navbar.partials.search_link', ['searchTooltipId' => 'search-tooltip-desktop'])
 
-        @include('navbar.partials.dark_toggle')
+        @include('navbar.partials.dark_toggle', ['themeTooltipId' => 'theme-tooltip-desktop'])
 
-        <button
-            data-tooltip-target="workflow-notification-tooltip"
-            type="button"
-            data-dropdown-toggle="notification-dropdown-desktop"
-            data-dropdown-placement="bottom-end"
-            class="{{ $actionButtonClasses }} mr-1"
-            aria-haspopup="true"
-            aria-expanded="false"
-            aria-controls="notification-dropdown-desktop"
-        >
-            <span class="sr-only">{{ __("View notifications") }}</span>
-            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 21">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
-                      d="M8 3.464V1.1m0 2.365a5.338 5.338 0 0 1 5.133 5.368v1.8c0 2.386 1.867 2.982 1.867 4.175C15 15.4 15 16 14.462 16H1.538C1 16 1 15.4 1 14.807c0-1.193 1.867-1.789 1.867-4.175v-1.8A5.338 5.338 0 0 1 8 3.464ZM4.54 16a3.48 3.48 0 0 0 6.92 0H4.54Z"/>
-            </svg>
-        </button>
-
-        <div id="notification-dropdown-desktop" class="{{ $dropdownClasses }} w-full md:max-w-md">
-            <livewire:notificationstoggler />
-            <div>
-                <livewire:requestnotifications />
-                <livewire:returnednotifications />
-            </div>
-            <livewire:userrequeststoggler />
-            <div>
-                <livewire:usernotifications />
-            </div>
-        </div>
+        @include('navbar.partials.notifications_link', ['notificationLinkClasses' => $actionButtonClasses, 'notificationTooltipId' => 'notifications-tooltip-desktop'])
 
         <button
-            data-tooltip-target="workflow-requests-tooltip"
+            data-dashboard-tooltip="workflow-requests-tooltip"
             type="button"
             data-dropdown-toggle="apps-dropdown-desktop"
             data-dropdown-placement="bottom-end"
             class="{{ $actionButtonClasses }}"
-            aria-haspopup="true"
             aria-expanded="false"
             aria-controls="apps-dropdown-desktop"
         >
@@ -75,7 +46,7 @@
 
             <div class="{{ $dropdownGridClasses }}">
                 <a href="{{ app()->getLocale() === 'sv' ? url('/swe/travel') : route('travel-request-create') }}" class="{{ $serviceLinkClasses }}">
-                    <svg class="{{ $serviceIconClasses }} group-hover:text-white dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
+                    <svg class="{{ $serviceIconClasses }} group-hover:text-blue-800 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 9V4a3 3 0 0 0-6 0v5m9.92 10H2.08a1 1 0 0 1-1-1.077L2 6h14l.917 11.923A1 1 0 0 1 15.92 19Z"/>
                     </svg>
                     <div class="{{ $serviceLabelClasses }}">{{ __("Travel Request") }}</div>
@@ -94,12 +65,11 @@
 
         @if($canViewRequestTools)
             <button
-                data-tooltip-target="lists-requests-tooltip"
+                data-dashboard-tooltip="lists-requests-tooltip"
                 type="button"
                 data-dropdown-toggle="fo-dropdown"
                 data-dropdown-placement="bottom-end"
                 class="{{ $actionButtonClasses }}"
-                aria-haspopup="true"
                 aria-expanded="false"
                 aria-controls="fo-dropdown"
             >
@@ -139,11 +109,6 @@
             </div>
         @endif
     </div>
-</div>
-
-<div id="workflow-notification-tooltip" role="tooltip" class="{{ $tooltipClasses }}" data-popper-placement="top">
-    {{ __("Notifications") }}
-    <div class="tooltip-arrow" data-popper-arrow></div>
 </div>
 
 <div id="workflow-requests-tooltip" role="tooltip" class="{{ $tooltipClasses }}" data-popper-placement="top">

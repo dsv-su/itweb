@@ -11,7 +11,7 @@
     $navLinkClasses = 'flex min-h-11 items-center py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:px-0 md:hover:text-blue-700 dark:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent md:dark:hover:text-blue-500 '.$focusClasses;
     $dropdownButtonClasses = 'flex min-h-11 items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white '.$focusClasses;
     $dropdownLinkClasses = 'block min-h-11 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white '.$focusClasses;
-    $mobileActionButtonClasses = 'min-w-11 min-h-11 p-2 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 '.$focusClasses;
+    $mobileActionButtonClasses = 'inline-flex shrink-0 items-center justify-center h-11 w-11 p-2 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 '.$focusClasses;
     $mobileDropdownClasses = 'hidden fixed left-0 right-0 top-14 z-50 w-screen max-w-none text-base list-none bg-white rounded-lg divide-y divide-gray-100 shadow-lg dark:bg-gray-700 dark:divide-gray-600';
     $serviceLinkClasses = 'block min-h-11 p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group '.$focusClasses;
     $serviceIconClasses = 'mx-auto mb-2 w-5 h-5 text-blue-600 dark:text-white';
@@ -19,14 +19,14 @@
 @endphp
 
 <nav id="site-navigation" aria-label="{{ __('Main navigation') }}" class="bg-white border-b border-susecondary dark:bg-gray-900 dark:border-gray-700">
-    <div class="relative flex flex-nowrap items-center justify-between w-full h-14 px-3 mx-auto overflow-visible bg-white md:px-6 lg:px-8 dark:border-gray-600 dark:bg-gray-900">
+    <div class="relative flex flex-nowrap items-center justify-between w-full min-h-14 px-2 mx-auto overflow-visible bg-white md:px-6 lg:px-8 dark:border-gray-600 dark:bg-gray-900">
         @if($localizedHome)
-            <a href="{{ $localizedHome->url() }}" aria-label="{{ __('DSV IT home') }}" class="flex items-center min-w-0 mr-4 {{ $focusClasses }}">
-                <div class="flex items-center h-full ml-2 opacity-90 dark:text-white">
+            <a href="{{ $localizedHome->url() }}" aria-label="{{ __('DSV IT home') }}" class="flex items-center min-w-0 shrink-0 mr-1 sm:mr-4 {{ $focusClasses }}">
+                <div class="flex items-center h-full sm:ml-2 opacity-90 dark:text-white">
                     <span class="px-1.5 py-1 text-xl leading-none border-2 border-black rounded-lg dark:border-white">
                         DSV
                     </span>
-                    <span class="ml-1 mb-1 text-xl font-sudepartment font whitespace-nowrap">
+                    <span class="hidden sm:inline ml-1 mb-1 text-xl font-sudepartment font whitespace-nowrap">
                         {{ __("it") }}
                     </span>
                 </div>
@@ -38,47 +38,20 @@
         @endif
 
         <div class="flex items-center gap-1 shrink-0 md:hidden">
-            <livewire:mobileindicator />
+            @include('navbar.partials.search_link', ['searchTooltipId' => 'search-tooltip-mobile'])
+            @include('navbar.partials.dark_toggle', ['themeTooltipId' => 'theme-tooltip-mobile'])
 
             <div class="relative">
-                <button
-                    data-tooltip-target="workflow-notification-tooltip"
-                    type="button"
-                    data-dropdown-toggle="notification-dropdown-mobile"
-                    data-dropdown-placement="bottom-end"
-                    class="{{ $mobileActionButtonClasses }} mr-1 text-gray-500 dark:text-gray-400"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                    aria-controls="notification-dropdown-mobile"
-                >
-                    <span class="sr-only">{{ __("View notifications") }}</span>
-                    <svg class="w-6 h-6 text-black dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 21">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
-                              d="M8 3.464V1.1m0 2.365a5.338 5.338 0 0 1 5.133 5.368v1.8c0 2.386 1.867 2.982 1.867 4.175C15 15.4 15 16 14.462 16H1.538C1 16 1 15.4 1 14.807c0-1.193 1.867-1.789 1.867-4.175v-1.8A5.338 5.338 0 0 1 8 3.464ZM4.54 16a3.48 3.48 0 0 0 6.92 0H4.54Z"/>
-                    </svg>
-                </button>
-
-                <div id="notification-dropdown-mobile" class="{{ $mobileDropdownClasses }}">
-                    <livewire:notificationstoggler />
-                    <div>
-                        <livewire:requestnotifications />
-                        <livewire:returnednotifications />
-                    </div>
-                    <livewire:userrequeststoggler />
-                    <div>
-                        <livewire:usernotifications />
-                    </div>
-                </div>
+                @include('navbar.partials.notifications_link', ['notificationLinkClasses' => $mobileActionButtonClasses, 'notificationTooltipId' => 'notifications-tooltip-mobile'])
             </div>
 
             <div class="relative">
                 <button
-                    data-tooltip-target="workflow-requests-tooltip"
+                    data-dashboard-tooltip="workflow-requests-tooltip-mobile"
                     type="button"
                     data-dropdown-toggle="apps-dropdown-mobile"
                     data-dropdown-placement="bottom-end"
                     class="{{ $mobileActionButtonClasses }} text-black dark:text-gray-200"
-                    aria-haspopup="true"
                     aria-expanded="false"
                     aria-controls="apps-dropdown-mobile"
                 >
@@ -93,9 +66,9 @@
                         {{ __("Available e-services") }}
                     </div>
 
-                    <div class="grid grid-cols-3 gap-4 p-4">
+                    <div class="grid grid-cols-2 gap-2 p-4">
                         <a href="{{ app()->getLocale() === 'sv' ? url('/swe/travel') : route('travel-request-create') }}" class="{{ $serviceLinkClasses }}">
-                            <svg class="{{ $serviceIconClasses }} group-hover:text-white dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
+                            <svg class="{{ $serviceIconClasses }} group-hover:text-blue-800 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 9V4a3 3 0 0 0-6 0v5m9.92 10H2.08a1 1 0 0 1-1-1.077L2 6h14l.917 11.923A1 1 0 0 1 15.92 19Z"/>
                             </svg>
                             <div class="{{ $serviceLabelClasses }}">{{ __("Travel Request") }}</div>
@@ -117,14 +90,18 @@
                 data-collapse-toggle="navbar-multi-level"
                 type="button"
                 id="menuBtn"
-                class="block hamburger md:hidden {{ $focusClasses }}"
+                class="relative flex shrink-0 items-center justify-center hamburger md:hidden {{ $focusClasses }}"
                 aria-controls="navbar-multi-level"
-                aria-expanded="false"
+                    aria-expanded="false"
             >
                 <span class="hamburger_sub_top"></span>
                 <span class="hamburger_sub_bottom"></span>
                 <span class="sr-only">{{ __("Open main menu") }}</span>
             </button>
+        </div>
+
+        <div id="workflow-requests-tooltip-mobile" role="tooltip" class="invisible absolute z-50 rounded-lg bg-gray-900 px-3 py-2 text-sm text-white opacity-0 dark:bg-gray-700">
+            {{ __('Services') }}
         </div>
 
         @antlers
@@ -141,8 +118,7 @@
                             id="dropdownNavbarLink-{{ id }}"
                             data-dropdown-toggle="dropdownNavbar-{{ id }}"
                             type="button"
-                            aria-haspopup="true"
-                            aria-expanded="false"
+                    aria-expanded="false"
                             aria-controls="dropdownNavbar-{{ id }}"
                             class="flex min-h-11 items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent {{ $focusClasses }}"
                         >

@@ -1,13 +1,6 @@
-<div wire:poll.visible>
-    @if(count($dashboard) > 0)
-        <span class="hidden md:block relative flex h-3 w-3 -mt-3 -mr-3">
-            <span class="flex absolute top-0 end-0 -mt-2 -me-2">
-            <span class="animate-ping absolute inline-flex size-full rounded-full bg-blue-400 opacity-75 dark:bg-blue-600"></span>
-                <span class="relative inline-flex text-xs bg-blue-500 text-white rounded-full py-0.5 px-1.5">
-                  {{count($dashboard)}}
-                </span>
-            </span>
-        </span>
+<span class="pointer-events-none absolute right-0 top-0">
+    @if(count($dashboard ?? []) > 0)
+        <span aria-hidden="true" class="flex min-h-5 min-w-5 items-center justify-center rounded-full bg-blue-700 px-1 text-xs font-semibold leading-5 text-white ring-2 ring-white dark:ring-gray-900">{{ count($dashboard) > 99 ? '99+' : count($dashboard) }}</span>
+        <span class="sr-only">{{ __('Notifications requiring attention') }}: {{ count($dashboard) }}</span>
     @endif
-
-</div>
+</span>

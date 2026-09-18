@@ -1,0 +1,176 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Livewire\Notifications;
+use App\Models\User;
+use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Bootstrap\LoadConfiguration;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Livewire\Livewire;
+use Tests\TestCase;
+
+class NotificationsTest extends TestCase
+{
+    public function createApplication()
+    {
+        $app = require __DIR__.'/../../bootstrap/app.php';
+        $app->afterBootstrapping(LoadConfiguration::class, function ($app) {
+            $app['config']->set('database.default', 'sqlite');
+            $app['config']->set('database.connections.sqlite.database', ':memory:');
+            $app['config']->set('statamic.eloquent-driver.connection', 'sqlite');
+        });
+        $app->make(Kernel::class)->bootstrap();
+
+        return $app;
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Schema::create('users', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->string('name');
+        });
+        Schema::create('dashboards', function (Blueprint $table) {
+            $table->id();
+            foreach (['name', 'user_id', 'manager_id', 'head_id', 'fo_id', 'vice_id', 'request_id', 'type', 'state', 'status', 'unit_head_approved'] as $column) {
+                $table->string($column)->nullable();
+            }
+            $table->integer('created')->nullable();
+            $table->timestamps();
+        });
+        foreach (['travel_requests', 'project_proposals'] as $name) {
+            Schema::create($name, function (Blueprint $table) {
+                $table->string('id')->primary();
+                $table->json('files')->nullable();
+            });
+        }
+        DB::table('users')->insert(['id' => 'owner', 'name' => 'Request Owner']);
+        $user = new User;
+        $user->id = 'owner';
+        $user->name = 'Request Owner';
+        $this->actingAs($user);
+        foreach ([
+            [1, 'My returned trip', 'owner', null, 'manager_returned'],
+            [2, 'Review this trip', 'other', 'owner', 'submitted'],
+            [3, 'Private trip', 'other', 'someone-else', 'submitted'],
+        ] as [$id, $name, $owner, $manager, $state]) {
+            DB::table('dashboards')->insert([
+                'id' => $id, 'name' => $name, 'user_id' => $owner, 'manager_id' => $manager,
+                'type' => 'travelrequest', 'state' => $state, 'status' => 'unread',
+                'created_at' => '2026-09-17 09:00:00', 'updated_at' => '2026-09-17 10:00:00',
+            ]);
+        }
+    }
+
+    public function test_notifications_are_scoped_and_filters_work(): void
+    {
+        Livewire::test(Notifications::class)
+            ->assertSee('My returned trip')->assertSee('Review this trip')->assertDontSee('Private trip')
+            ->set('category', 'review')->assertSee('Review this trip')->assertDontSee('My returned trip')
+            ->set('category', 'returned')->assertSee('My returned trip')->assertDontSee('Review this trip')
+            ->set('category', 'all')->set('search', 'Private trip')->assertSee(__('No notifications found'))
+            ->set('search', '')->set('state', 'submitted')->assertSee('Review this trip')->assertDontSee('My returned trip')
+            ->set('type', 'projectproposal')->assertSee(__('No notifications found'));
+    }
+
+    public function test_mark_read_only_changes_owned_requests_and_preserves_workflow_date(): void
+    {
+        Livewire::test(Notifications::class)->call('markRead', 2)->call('markRead', 3)->call('markRead', 1);
+        $this->assertSame('read', DB::table('dashboards')->where('id', 1)->value('status'));
+        $this->assertSame('2026-09-17 10:00:00', DB::table('dashboards')->where('id', 1)->value('updated_at'));
+        $this->assertSame('unread', DB::table('dashboards')->where('id', 2)->value('status'));
+        $this->assertSame('unread', DB::table('dashboards')->where('id', 3)->value('status'));
+    }
+
+    public function test_proposal_reviews_require_assignment_and_uploaded_files(): void
+    {
+        foreach (['ready' => ['a.pdf', 'b.pdf'], 'incomplete' => ['a.pdf']] as $id => $files) {
+            DB::table('project_proposals')->insert(['id' => $id, 'files' => json_encode($files)]);
+            DB::table('dashboards')->insert([
+                'name' => 'Proposal '.$id, 'user_id' => 'other', 'request_id' => $id,
+                'type' => 'projectproposal', 'state' => 'complete', 'status' => 'unread',
+                'unit_head_approved' => json_encode(['owner' => 0]),
+            ]);
+        }
+        Livewire::test(Notifications::class)->set('category', 'review')
+            ->assertSee('Proposal ready')->assertDontSee('Proposal incomplete')
+            ->assertSee(route('pp.review.show', 'ready'), false);
+    }
+
+    public function test_older_requests_are_paginated_and_filtering_resets_the_page(): void
+    {
+        for ($i = 0; $i < 20; $i++) {
+            DB::table('dashboards')->insert([
+                'name' => 'Older request '.$i, 'user_id' => 'owner',
+                'type' => 'travelrequest', 'state' => 'submitted', 'status' => 'read',
+                'updated_at' => '2026-01-01 09:00:00',
+            ]);
+        }
+        Livewire::test(Notifications::class)
+            ->assertSee('My returned trip')->assertDontSee('Older request 0<', false)
+            ->call('gotoPage', 2)->assertSee('Older request 0')->assertDontSee('My returned trip')
+            ->set('search', 'My returned trip')->assertSee('My returned trip');
+    }
+
+    public function test_read_action_remains_available_to_focus_and_announces_success(): void
+    {
+        $component = Livewire::test(Notifications::class)
+            ->call('markRead', 1)
+            ->assertSet('feedback', __('Marked :name as read.', ['name' => 'My returned trip']));
+        $document = new \DOMDocument;
+        @$document->loadHTML('<?xml encoding="utf-8" ?>'.$component->html());
+        $xpath = new \DOMXPath($document);
+        $buttons = $xpath->query('//button[contains(@*[name()="wire:click"], "markRead(1)")]');
+        $this->assertCount(1, $buttons);
+        $this->assertSame('true', $buttons->item(0)->getAttribute('aria-disabled'));
+        $this->assertFalse($buttons->item(0)->hasAttribute('disabled'));
+        $this->assertStringContainsString('My returned trip', $buttons->item(0)->textContent);
+        $this->assertGreaterThan(0, $xpath->query('//*[@role="status" and @aria-atomic="true"]')->length);
+        $component->call('markRead', 1)->assertOk();
+    }
+
+    public function test_refresh_is_explicit_and_announces_completion(): void
+    {
+        Livewire::test(Notifications::class)
+            ->assertDontSee('wire:poll', false)
+            ->call('refreshNotifications')
+            ->assertSet('feedback', __('Notifications refreshed.'));
+    }
+
+    public function test_notification_count_is_inside_the_link_and_has_an_accessible_name(): void
+    {
+        $html = view('navbar.partials.notifications_link', [
+            'notificationLinkClasses' => 'inline-flex h-11 w-11',
+        ])->render();
+        $document = new \DOMDocument;
+        @$document->loadHTML('<?xml encoding="utf-8" ?>'.$html);
+        $xpath = new \DOMXPath($document);
+        $link = $xpath->query('//a')->item(0);
+        $this->assertStringContainsString(__('Notifications'), $link->textContent);
+        $this->assertStringContainsString(__('Notifications requiring attention'), $link->textContent);
+        $this->assertSame(1, $xpath->query('//a//span[contains(@class, "absolute") and contains(@class, "right-0")]')->length);
+        $this->assertStringNotContainsString('animate-ping', $html);
+    }
+
+    public function test_notification_badge_caps_visual_count_but_preserves_accessible_count(): void
+    {
+        $html = view('livewire.indicator', ['dashboard' => collect(range(1, 120))])->render();
+        $this->assertStringContainsString('99+', $html);
+        $this->assertStringContainsString(': 120', $html);
+        $this->assertStringContainsString('aria-hidden="true"', $html);
+        $empty = view('livewire.indicator', ['dashboard' => collect()])->render();
+        $this->assertStringNotContainsString('bg-blue-700', $empty);
+    }
+
+    public function test_guests_cannot_open_notifications(): void
+    {
+        auth()->logout();
+        foreach (['/notifications', '/swe/notifications'] as $url) {
+            $this->get($url)->assertRedirect();
+        }
+    }
+}
