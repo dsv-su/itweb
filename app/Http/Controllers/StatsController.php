@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\StatsExport;
 use App\Models\ProjectProposal;
 use App\Services\Budget\ProposalUnitStats;
 use App\Services\Budget\ReCalcBudget;
@@ -9,6 +10,7 @@ use App\Services\Stats\BreakdownCharts;
 use App\Services\Stats\OverviewCharts;
 use App\Services\Stats\PrincipalInvestigatorCharts;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Statamic\View\View;
 
 class StatsController extends Controller
@@ -38,6 +40,7 @@ class StatsController extends Controller
     private function show(Request $request, bool $granted)
     {
         $validated = $request->validate([
+            'download' => ['nullable', 'in:xlsx'],
             'year' => ['nullable', 'integer', 'between:1000,9999'],
             'breakdown' => ['nullable', 'in:overview,unit,research_area'],
         ]);
@@ -59,7 +62,7 @@ class StatsController extends Controller
                 $template = 'stats.unavailable';
                 $data['breadcrumb'] = 'Stats are unavailable';
             } else {
-                $data['chart'] = app(OverviewCharts::class)->build($budget, $granted);
+                $data['chart'] = app(OverviewCharts::class)->build($budget, $granted, ($validated['download'] ?? null) === 'xlsx');
             }
         }
 
@@ -69,6 +72,17 @@ class StatsController extends Controller
         } elseif ($template !== 'stats.unavailable') {
             $data['investigatorChart'] = app(PrincipalInvestigatorCharts::class)->build($fromYear, $granted);
         }
+
+        if (($validated['download'] ?? null) === 'xlsx') {
+            abort_if($template === 'stats.unavailable' || ($breakdown !== 'overview' && empty($data['counts'])), 404, 'No chart data available for this selection.');
+
+            return Excel::download(
+                new StatsExport($data, $granted, $breakdown, $fromYear),
+                'proposal-stats-'.($granted ? 'granted' : 'committed').'-'.$fromYear.'-'.$breakdown.'.xlsx'
+            );
+        }
+
+        $data['hasChartData'] = $template !== 'stats.unavailable' && ($breakdown === 'overview' || ! empty($data['counts']));
 
         return (new View)->template($template)->layout('mylayout')->with($data);
     }

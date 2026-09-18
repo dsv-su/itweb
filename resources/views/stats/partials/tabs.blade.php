@@ -1,6 +1,6 @@
 <section class="bg-white dark:bg-gray-900">
     <div class="max-w-6xl px-4 py-4 mx-auto">
-        <div class="border-b border-gray-200 dark:border-neutral-700">
+        <div class="flex flex-col gap-3 border-b border-gray-200 dark:border-neutral-700 md:flex-row md:items-end md:justify-between">
             <nav class="flex gap-x-2">
                 <a href="{{ route('pp.stats.committed', ['year' => $fromYear, 'breakdown' => request('breakdown', 'overview')]) }}"
                    class="{{ request()->routeIs('pp.stats.committed') ? 'text-blue-600 border-b-transparent' : 'text-gray-500 hover:text-gray-700 dark:text-neutral-400 dark:hover:text-neutral-300' }}
@@ -16,6 +16,7 @@
                     Granted [{{$fromYear}}]
                 </a>
             </nav>
+            @include('stats.partials.controls')
         </div>
         @include('stats.partials.subtabs')
     </div>

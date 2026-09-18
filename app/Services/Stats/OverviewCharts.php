@@ -9,11 +9,11 @@ class OverviewCharts
 {
     public function __construct(private StatsChartFactory $charts) {}
 
-    public function build(DsvBudget $budget, bool $granted): array
+    public function build(DsvBudget $budget, bool $granted, bool $fullLabels = false): array
     {
         // Every dataset aligned with the same research subject labels
         $areas = $budget->research_area ?? [];
-        $labels = array_map(fn ($label) => $this->shortLabel((string) $label), array_keys($areas));
+        $labels = array_map(fn ($label) => $fullLabels ? (string) $label : $this->shortLabel((string) $label), array_keys($areas));
         $definitions = $granted ? $this->grantedDefinitions() : $this->committedDefinitions();
         $charts = [];
 
@@ -27,7 +27,7 @@ class OverviewCharts
         $agencies = $budget->funding_org ?? [];
         $charts['agency'] = $this->charts->bar(
             'barChartAgency',
-            array_map(fn ($label) => $this->shortLabel((string) $label), array_keys($agencies)),
+            array_map(fn ($label) => $fullLabels ? (string) $label : $this->shortLabel((string) $label), array_keys($agencies)),
             $granted ? 'Funding organization' : 'Funding Agency',
             array_values($agencies),
             'rgba(128, 0, 128, 1)'

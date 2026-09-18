@@ -8,7 +8,7 @@
 
     <section class="bg-white dark:bg-gray-900">
         <div class="max-w-6xl px-4 py-4 mx-auto lg:py-8">
-            @include('stats.partials.controls', ['title' => 'Committed Proposals'])
+            @include('stats.partials.heading', ['title' => 'Committed Proposals'])
 
             <div class="mt-8 space-y-8">
                     <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">

@@ -12,7 +12,7 @@
 
     <section class="bg-white dark:bg-gray-900">
         <div class="max-w-6xl px-4 py-8 mx-auto lg:py-16">
-            @include('stats.partials.controls', ['title' => 'Proposal stats are unavailable'])
+            @include('stats.partials.heading', ['title' => 'Proposal stats are unavailable'])
 
         </div>
     </section>

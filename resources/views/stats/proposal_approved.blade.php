@@ -8,7 +8,7 @@
 
     <section class="bg-white dark:bg-gray-900">
         <div class="max-w-6xl px-4 py-8 mx-auto lg:py-16">
-            @include('stats.partials.controls', ['title' => 'Granted Proposals'])
+            @include('stats.partials.heading', ['title' => 'Granted Proposals'])
 
             <div class="mt-8 space-y-8">
                 @foreach (['sek', 'eur', 'usd'] as $currency)
