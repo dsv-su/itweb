@@ -50,6 +50,7 @@
                             @if(session('status'))
                                 <p role="status" class="text-sm text-green-700">{{ session('status') }}</p>
                             @endif
+                            <a href="{{ route('fo.projects') }}" class="inline-block my-4 text-blue-600 underline">Hantera projekt och importera Excel</a>
                             @include('requests.vice.partials.fo')
 
                         </div>

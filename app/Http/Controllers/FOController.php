@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\ProjectsRefreshImport;
 use App\Models\Dashboard;
+use App\Models\Project;
 use App\Models\ProjectProposal;
 use App\Models\SettingsFo;
 use App\Models\SettingsFoEu;
@@ -11,9 +13,11 @@ use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
 use Statamic\View\View as StatamicView;
 
 class FOController extends Controller
@@ -32,8 +36,8 @@ class FOController extends Controller
             'travelrequest' => (new StatamicView)
                 ->template('requests.travel.show')
                 ->with([
-                    'tr'        => TravelRequest::findOrFail($id),
-                    'formtype'  => 'show',
+                    'tr' => TravelRequest::findOrFail($id),
+                    'formtype' => 'show',
                     'dashboard' => $dashboard,
                 ]),
 
@@ -55,7 +59,7 @@ class FOController extends Controller
     {
         return (new StatamicView)
             ->template('requests.fo.list');
-            //->layout('mylayout');
+        // ->layout('mylayout');
     }
 
     public function svlist()
@@ -94,6 +98,94 @@ class FOController extends Controller
         ];
     }
 
+    public function projects(Request $request)
+    {
+        App::setLocale('sv');
+
+        $search = trim((string) $request->query('search', ''));
+
+        return (new StatamicView)->template('requests.fo.projects')->with([
+            'projects' => Project::query()
+                ->when($search !== '', fn ($query) => $query->where(function ($query) use ($search) {
+                    $query->where('project', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%")
+                        ->orWhere('projectleader', 'like', "%{$search}%");
+                }))
+                ->orderBy('project')->paginate(25)->withQueryString(),
+            'editing' => $request->filled('edit') ? Project::findOrFail($request->query('edit')) : null,
+            'search' => $search,
+        ]);
+    }
+
+    public function storeProject(Request $request)
+    {
+        App::setLocale('sv');
+
+        Project::create($this->validateProject($request));
+
+        return redirect()->route('fo.projects')->with('status', 'Projektet har lagts till.');
+    }
+
+    public function updateProject(Request $request, Project $project)
+    {
+        App::setLocale('sv');
+
+        $project->update($this->validateProject($request, $project));
+
+        return redirect()->route('fo.projects')->with('status', 'Projektet har uppdaterats.');
+    }
+
+    private function validateProject(Request $request, ?Project $project = null): array
+    {
+        $numberRules = ['required', 'string', 'max:255'];
+        // Existing imports may contain duplicate numbers; only validate uniqueness when assigning a number.
+        if ($project === null || (string) $request->input('project') !== (string) $project->project) {
+            $numberRules[] = Rule::unique('projects', 'project')->ignore($project);
+        }
+
+        $data = $request->validate([
+            'project' => $numberRules,
+            'description' => ['required', 'string', 'max:255'],
+            'projectleader' => ['required', 'string', 'max:255'],
+            //'status' => ['nullable', 'string', 'max:255'],
+        ], [], [
+            'project' => 'projektnummer',
+            'description' => 'projektbenämning',
+            'projectleader' => 'projektledare',
+            'status' => 'status',
+        ]);
+
+        // The database column is non-nullable, but older projects can have an empty status.
+        if (array_key_exists('status', $data) || $project === null) {
+            $data['status'] = $data['status'] ?? '';
+        }
+
+        return $data;
+    }
+
+    public function importProjects(Request $request)
+    {
+        App::setLocale('sv');
+
+        $request->validate(['file' => ['required', 'file', 'mimes:xlsx,xls', 'max:10240']], [], ['file' => 'Excel-fil']);
+        $import = new ProjectsRefreshImport;
+
+        try {
+            Excel::import($import, $request->file('file'));
+            if ($import->count === 0) {
+                throw ValidationException::withMessages(['file' => 'Det första kalkylbladet måste innehålla projektrader.']);
+            }
+        } catch (ValidationException $exception) {
+            throw $exception;
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return back()->withErrors(['file' => 'Kalkylbladet kunde inte importeras. Kontrollera filen och försök igen.']);
+        }
+
+        return redirect()->route('fo.projects')->with('status', "{$import->count} projekt har importerats.");
+    }
+
     public function settings()
     {
         $roleIds = DB::table('group_user')
@@ -105,7 +197,7 @@ class FOController extends Controller
 
         return (new StatamicView)
             ->template('requests.fo.settings')
-            //->layout('mylayout')
+            // ->layout('mylayout')
             ->with(['fos' => $financialofficer]);
     }
 

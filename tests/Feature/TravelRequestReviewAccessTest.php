@@ -37,6 +37,17 @@ class TravelRequestReviewAccessTest extends TestCase
             }
         });
 
+        Schema::create('settings_fos', function (Blueprint $table) {
+            $table->id();
+            $table->string('user_id');
+            $table->boolean('active');
+        });
+
+        DB::table('settings_fos')->insert([
+            ['user_id' => 'active-fo', 'active' => true],
+            ['user_id' => 'inactive-fo', 'active' => false],
+        ]);
+
         DB::table('dashboards')->insert([
             'id' => 42,
             'request_id' => 'travel-request-id',
@@ -58,15 +69,26 @@ class TravelRequestReviewAccessTest extends TestCase
         foreach (['submitted' => 'manager', 'manager_approved' => 'head', 'head_approved' => 'fo'] as $state => $reviewer) {
             DB::table('dashboards')->where('id', 42)->update(['state' => $state]);
 
-            foreach (['manager', 'head', 'fo', 'unrelated'] as $userId) {
+            foreach (['manager', 'head', 'fo', 'active-fo', 'inactive-fo', 'unrelated'] as $userId) {
                 $user = new User;
                 $user->id = $userId;
                 $this->actingAs($user);
 
                 foreach (['/travel/review/42', '/swe/travel/review/42'] as $url) {
-                    $this->get($url)->assertStatus($userId === $reviewer ? 200 : 403);
+                    $allowed = $userId === $reviewer || ($state === 'head_approved' && $userId === 'active-fo');
+                    $this->get($url)->assertStatus($allowed ? 200 : 403);
                 }
             }
+        }
+
+        DB::table('dashboards')->where('id', 42)->update(['type' => 'projectproposal']);
+
+        foreach (['fo', 'active-fo', 'inactive-fo'] as $userId) {
+            $user = new User;
+            $user->id = $userId;
+            $this->actingAs($user);
+
+            $this->get('/travel/review/42')->assertStatus($userId === 'fo' ? 200 : 403);
         }
     }
 }

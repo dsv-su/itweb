@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Dashboard;
+use App\Models\SettingsFo;
 use Closure;
 use Illuminate\Http\Request;
 use Statamic\Auth\User;
@@ -81,6 +82,11 @@ class EnsureUserForReview
             : ($allowed === null ? [] : [$allowed]);
 
         if (in_array($user->id, $allowedIds, true)) {
+            return $next($request);
+        }
+
+        if ($dashboard->type === 'travelrequest' && $state === 'head_approved'
+            && SettingsFo::where('user_id', $user->id)->where('active', true)->exists()) {
             return $next($request);
         }
 
