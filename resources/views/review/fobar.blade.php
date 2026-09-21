@@ -45,7 +45,7 @@
 
             <button type="submit" form="fo-review-form" name="decision" value="approve"
                     class="w-full sm:w-auto inline-flex items-center justify-center px-5 py-2 text-blue-700 font-semibold border border-blue-500 rounded hover:bg-blue-500 hover:text-white dark:hover:bg-gray-800 dark:border-gray-600 group">
-                <span class="text-sm dark:text-gray-400 group-hover:text-white">{{ __("Submit") }}</span>
+                <span class="text-sm dark:text-gray-400 group-hover:text-white">{{ __("Attest/Godkänd") }}</span>
             </button>
         </div>
 </div>

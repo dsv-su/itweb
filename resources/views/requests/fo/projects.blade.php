@@ -69,7 +69,16 @@
                                 <td class="p-3 border-b">{{ $project->description }}</td>
                                 <td class="p-3 border-b">{{ $project->projectleader }}</td>
                                 <td class="p-3 border-b">{{ $project->status }}</td>
-                                <td class="p-3 border-b"><a href="{{ route('fo.projects', ['edit' => $project->id]) }}" class="text-blue-600 underline" aria-label="Redigera projekt {{ $project->project }}">Redigera</a></td>
+                                <td class="p-3 border-b">
+                                    <a href="{{ route('fo.projects', ['edit' => $project->id]) }}" class="text-blue-600 underline" aria-label="Redigera projekt {{ $project->project }}">Redigera</a>
+                                    <form method="POST" action="{{ route('fo.projects.destroy', $project) }}" class="mt-2"
+                                          data-confirm="Vill du ta bort projekt {{ $project->project }}? Det går inte att ångra."
+                                          onsubmit="return confirm(this.dataset.confirm)">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 underline" aria-label="Ta bort projekt {{ $project->project }}">Ta bort</button>
+                                    </form>
+                                </td>
                             </tr>
                         @empty
                             <tr><td colspan="5" class="p-3">Inga projekt hittades.</td></tr>

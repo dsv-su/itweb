@@ -135,6 +135,15 @@ class FOController extends Controller
         return redirect()->route('fo.projects')->with('status', 'Projektet har uppdaterats.');
     }
 
+    public function destroyProject(Project $project)
+    {
+        App::setLocale('sv');
+
+        $project->delete();
+
+        return redirect()->route('fo.projects')->with('status', 'Projektet har tagits bort.');
+    }
+
     private function validateProject(Request $request, ?Project $project = null): array
     {
         $numberRules = ['required', 'string', 'max:255'];

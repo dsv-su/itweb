@@ -122,6 +122,7 @@ Route::get('/settings', [\App\Http\Controllers\FOController::class, 'settings'])
 Route::get('/fo/projects', [\App\Http\Controllers\FOController::class, 'projects'])->name('fo.projects');
 Route::post('/fo/projects', [\App\Http\Controllers\FOController::class, 'storeProject'])->name('fo.projects.store');
 Route::put('/fo/projects/{project}', [\App\Http\Controllers\FOController::class, 'updateProject'])->name('fo.projects.update');
+Route::delete('/fo/projects/{project}', [\App\Http\Controllers\FOController::class, 'destroyProject'])->name('fo.projects.destroy');
 Route::post('/fo/projects/import', [\App\Http\Controllers\FOController::class, 'importProjects'])->name('fo.projects.import');
 
 Route::post('/fo', [\App\Http\Controllers\FOController::class, 'settings_fo'])

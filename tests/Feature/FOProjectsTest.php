@@ -113,6 +113,22 @@ class FOProjectsTest extends TestCase
         $this->assertDatabaseHas('projects', ['project' => 'new', 'status' => '']);
     }
 
+    public function test_officer_can_delete_only_the_selected_project(): void
+    {
+        $this->officer();
+        $project = Project::create($this->data());
+        $duplicate = Project::create($this->data());
+
+        $this->delete(route('fo.projects.destroy', $project))
+            ->assertRedirect(route('fo.projects'))
+            ->assertSessionHas('status', 'Projektet har tagits bort.');
+
+        $this->assertDatabaseMissing('projects', ['id' => $project->id]);
+        $this->assertDatabaseHas('projects', ['id' => $duplicate->id]);
+        $this->delete(route('fo.projects.destroy', $project))->assertNotFound();
+        $this->assertDatabaseCount('projects', 1);
+    }
+
     public function test_project_view_compiles(): void
     {
         $compiled = app('blade.compiler')->compileString(file_get_contents(resource_path('views/requests/fo/projects.blade.php')));
@@ -130,7 +146,7 @@ class FOProjectsTest extends TestCase
             if ($loggedIn) {
                 $this->officer(false);
             }
-            foreach ([['GET', route('fo.projects')], ['POST', route('fo.projects.store')], ['PUT', route('fo.projects.update', $project)], ['POST', route('fo.projects.import')]] as [$method, $url]) {
+            foreach ([['GET', route('fo.projects')], ['POST', route('fo.projects.store')], ['PUT', route('fo.projects.update', $project)], ['DELETE', route('fo.projects.destroy', $project)], ['POST', route('fo.projects.import')]] as [$method, $url]) {
                 $this->json($method, $url)->assertStatus($loggedIn ? 403 : 401);
             }
         }
