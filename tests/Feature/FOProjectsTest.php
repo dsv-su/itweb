@@ -121,12 +121,25 @@ class FOProjectsTest extends TestCase
 
         $this->delete(route('fo.projects.destroy', $project))
             ->assertRedirect(route('fo.projects'))
-            ->assertSessionHas('status', 'Projektet har tagits bort.');
+            ->assertSessionHas('status', 'Projekt 00123 (Research) har tagits bort.');
 
         $this->assertDatabaseMissing('projects', ['id' => $project->id]);
         $this->assertDatabaseHas('projects', ['id' => $duplicate->id]);
         $this->delete(route('fo.projects.destroy', $project))->assertNotFound();
         $this->assertDatabaseCount('projects', 1);
+    }
+
+    public function test_deleting_a_project_preserves_pagination_and_search(): void
+    {
+        $this->officer();
+        $project = Project::create($this->data());
+        $listParameters = ['page' => 3, 'search' => 'Research'];
+
+        $this->delete(route('fo.projects.destroy', ['project' => $project] + $listParameters))
+            ->assertRedirect(route('fo.projects', $listParameters))
+            ->assertSessionHas('status', 'Projekt 00123 (Research) har tagits bort.');
+
+        $this->assertDatabaseMissing('projects', ['id' => $project->id]);
     }
 
     public function test_project_view_compiles(): void

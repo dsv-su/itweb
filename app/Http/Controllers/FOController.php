@@ -135,13 +135,19 @@ class FOController extends Controller
         return redirect()->route('fo.projects')->with('status', 'Projektet har uppdaterats.');
     }
 
-    public function destroyProject(Project $project)
+    public function destroyProject(Request $request, Project $project)
     {
         App::setLocale('sv');
 
+        $listParameters = $request->validate([
+            'page' => ['sometimes', 'integer', 'min:1'],
+            'search' => ['nullable', 'string'],
+        ]);
+
         $project->delete();
 
-        return redirect()->route('fo.projects')->with('status', 'Projektet har tagits bort.');
+        return redirect()->route('fo.projects', $listParameters)
+            ->with('status', "Projekt {$project->project} ({$project->description}) har tagits bort.");
     }
 
     private function validateProject(Request $request, ?Project $project = null): array

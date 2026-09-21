@@ -11,6 +11,7 @@
 @source "../../app";
 @source "../../content";
 @source "../../resources";
+@source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views";
 @source "../../vendor/haringsrob/livewire-datepicker/resources";
 
 /* Let Tailwind scan Flowbite for classnames */
@@ -233,4 +234,16 @@
     .travel-destination-grid .travel-choice-layout > [role="group"] {
         align-self: start;
     }
+}
+
+/* Project administration: visible keyboard focus in both themes. */
+#fo-projects :focus-visible {
+    outline: 2px solid var(--color-blue-700);
+    outline-offset: 2px;
+}
+.dark #fo-projects :focus-visible {
+    outline-color: var(--color-blue-300);
+}
+#fo-projects .grid > * {
+    min-width: 0;
 }
