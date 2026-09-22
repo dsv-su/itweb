@@ -2,14 +2,16 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Support\Facades\Queue;
-use App\Http\Middleware\DSVStaffEntitlement;
+use App\Livewire\RequestSearch;
 use App\Models\User;
 use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Bootstrap\LoadConfiguration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
 
 class TravelRequestFoSwitchTest extends TestCase
@@ -40,7 +42,11 @@ class TravelRequestFoSwitchTest extends TestCase
                 $table->string($column);
             });
         }
-        Schema::create('travel_requests', fn (Blueprint $table) => $table->string('id')->primary());
+        Schema::create('travel_requests', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->boolean('reminder')->default(true);
+            $table->timestamps();
+        });
         Schema::create('dashboards', function (Blueprint $table) {
             $table->id();
             foreach (['request_id', 'type', 'fo_id', 'state'] as $field) {
@@ -69,7 +75,7 @@ class TravelRequestFoSwitchTest extends TestCase
 
     public function test_switch_updates_assignment_and_records_actor_without_changing_state(): void
     {
-        $component = new \App\Livewire\RequestSearch;
+        $component = new RequestSearch;
         $component->switchFo(1);
         $component->selectedFoId = 'new';
         $component->saveFo();
@@ -85,13 +91,13 @@ class TravelRequestFoSwitchTest extends TestCase
 
     public function test_selection_must_belong_to_ekonomi(): void
     {
-        $component = new \App\Livewire\RequestSearch;
+        $component = new RequestSearch;
         $component->switchFo(1);
         $component->selectedFoId = 'outsider';
         try {
             $component->saveFo();
             $this->fail('Invalid officer was accepted.');
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             $this->assertArrayHasKey('selectedFoId', $e->errors());
         }
         $this->assertDatabaseHas('dashboards', ['id' => 1, 'fo_id' => 'old']);
@@ -101,16 +107,51 @@ class TravelRequestFoSwitchTest extends TestCase
     public function test_non_fo_cannot_save_even_with_a_forged_selection(): void
     {
         $this->actingAs(User::find('outsider'));
-        $component = new \App\Livewire\RequestSearch;
+        $component = new RequestSearch;
         $component->switchingFoId = 1;
         $component->selectedFoId = 'new';
         try {
             $component->saveFo();
             $this->fail('Unauthorized switch was accepted.');
-        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+        } catch (HttpException $e) {
             $this->assertSame(403, $e->getStatusCode());
         }
         $this->assertDatabaseHas('dashboards', ['id' => 1, 'fo_id' => 'old']);
         $this->assertDatabaseCount('fo_comments', 0);
+    }
+
+    public function test_finance_can_disable_and_reenable_reminders(): void
+    {
+        $component = new RequestSearch;
+        $component->setReminders(1, false);
+        $this->assertDatabaseHas('travel_requests', ['id' => 'trip', 'reminder' => false]);
+        $component->setReminders(1, false);
+        $this->assertDatabaseHas('travel_requests', ['id' => 'trip', 'reminder' => false]);
+        $component->setReminders(1, true);
+        $this->assertDatabaseHas('travel_requests', ['id' => 'trip', 'reminder' => true]);
+        $this->assertDatabaseHas('dashboards', ['id' => 1, 'state' => 'fo_approved']);
+    }
+
+    public function test_non_finance_cannot_disable_reminders(): void
+    {
+        $this->actingAs(User::find('outsider'));
+        try {
+            (new RequestSearch)->setReminders(1, false);
+            $this->fail('Unauthorized reminder change was accepted.');
+        } catch (HttpException $e) {
+            $this->assertSame(403, $e->getStatusCode());
+        }
+        $this->assertDatabaseHas('travel_requests', ['id' => 'trip', 'reminder' => true]);
+    }
+
+    public function test_reminder_action_rejects_non_travel_dashboards(): void
+    {
+        DB::table('dashboards')->where('id', 1)->update(['type' => 'projectproposal']);
+        try {
+            (new RequestSearch)->setReminders(1, false);
+            $this->fail('Non-travel request was accepted.');
+        } catch (ModelNotFoundException $e) {
+            $this->assertDatabaseHas('travel_requests', ['id' => 'trip', 'reminder' => true]);
+        }
     }
 }

@@ -291,5 +291,11 @@
     "FO": "Ekonomihandläggare",
     "Edit": "Redigera",
     "Save": "Spara",
-    "Cancel": "Avbryt"
+    "Cancel": "Avbryt",
+    "Reminders: on": "Påminnelser: på",
+    "Reminders: off": "Påminnelser: av",
+    "Disable reminders": "Inaktivera påminnelser",
+    "Enable reminders": "Aktivera påminnelser",
+    "Reminders enabled for :request.": "Påminnelser aktiverade för :request.",
+    "Reminders disabled for :request.": "Påminnelser inaktiverade för :request."
 }

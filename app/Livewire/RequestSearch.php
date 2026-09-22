@@ -27,6 +27,20 @@ class RequestSearch extends Component
 
     public string $foStatus = '';
 
+    public string $reminderStatus = '';
+
+    public function setReminders(int $dashboardId, bool $enabled): void
+    {
+        abort_unless(auth()->user()?->isFO(), 403);
+        $dashboard = Dashboard::where('type', 'travelrequest')->findOrFail($dashboardId);
+        $request = TravelRequest::findOrFail($dashboard->request_id);
+        $request->forceFill(['reminder' => $enabled])->save();
+
+        $this->reminderStatus = $enabled
+            ? __('Reminders enabled for :request.', ['request' => $dashboard->name])
+            : __('Reminders disabled for :request.', ['request' => $dashboard->name]);
+    }
+
     public function switchFo(int $dashboardId): void
     {
         abort_unless(auth()->user()?->isFO(), 403);

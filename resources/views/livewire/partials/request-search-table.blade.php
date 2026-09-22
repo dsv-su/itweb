@@ -18,7 +18,7 @@
 
                 <tr role="row" wire:key="request-{{ $dashboard->id }}" class="grid grid-cols-2 overflow-hidden rounded-xl border shadow-sm xl:table-row xl:rounded-none xl:border-0 xl:border-b xl:shadow-none bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 dark:text-white">
 
-                    <th role="rowheader" scope="row" class="col-span-2 block px-3 py-3 text-xs text-gray-900 xl:table-cell dark:text-white">
+                    <th role="rowheader" scope="row" class="col-span-2 block px-3 py-3 text-xs text-gray-900 xl:table-cell xl:align-top dark:text-white">
                         <span class="bg-blue-100 inline-block text-xs px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-white border border-blue-400">
                             {{ $dashboard->type === 'travelrequest' ? __('Travelrequest') : __(ucfirst(str_replace('_', ' ', (string) $dashboard->type))) }}
                         </span>
@@ -86,6 +86,14 @@
                                     aria-controls="switch-fo-{{ $dashboard->id }}"
                                     class="inline-flex items-center justify-center rounded-md border border-blue-300 px-3 py-1.5 text-xs font-medium text-blue-700 transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-blue-500 dark:text-blue-300 dark:hover:bg-gray-700">
                                 {{ __('Switch FO') }}
+                            </button>
+                        @endif
+                        @if($canEditCompleted && $dashboard->type === 'travelrequest' && $dashboard->travel)
+                            <button type="button"
+                                    wire:click="setReminders({{ $dashboard->id }}, {{ $dashboard->travel->reminder ? 'false' : 'true' }})"
+                                    wire:loading.attr="disabled"
+                                    class="inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-xs font-medium transition focus:outline-none focus:ring-2 disabled:opacity-50 {{ $dashboard->travel->reminder ? 'border-gray-300 text-gray-700 hover:bg-gray-100 focus:ring-gray-400 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700' : 'border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 focus:ring-amber-500 dark:border-amber-500 dark:bg-amber-900/30 dark:text-amber-200 dark:hover:bg-amber-900/50' }}">
+                                {{ $dashboard->travel->reminder ? __('Disable reminders') : __('Enable reminders') }}
                             </button>
                         @endif
                         @if($dashboard->state == 'fo_approved' && $dashboard->type == 'travelrequest')
