@@ -46,6 +46,8 @@ class TravelRequest extends Model
 
     protected $casts = [
         'review_details' => 'array',
+        'reminder' => 'boolean',
+        'last_reminder_sent_at' => 'datetime',
     ];
 
     public function managerComments(): HasMany
@@ -92,6 +94,6 @@ class TravelRequest extends Model
      */
     public function dashboard(): HasOne
     {
-        return $this->hasOne(Dashboard::class);
+        return $this->hasOne(Dashboard::class, 'request_id')->where('type', 'travelrequest');
     }
 }
