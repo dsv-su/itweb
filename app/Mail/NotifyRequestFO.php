@@ -36,7 +36,7 @@ class NotifyRequestFO extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('noreply@dsv.su.se', 'ProjectProposals'),
+            from: new Address('noreply@dsv.su.se', $this->dashboard->type === 'travelrequest' ? 'ITWebb' : 'ProjectProposals'),
             subject: $this->dashboard->type === 'travelrequest'
                 ? 'Ny resebegäran / New travel request: '. Str::limit($this->dashboard->name, 28)
                 : 'New Request: '. Str::limit($this->dashboard->name, 28),

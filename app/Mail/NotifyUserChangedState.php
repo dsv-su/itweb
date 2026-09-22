@@ -42,7 +42,7 @@ class NotifyUserChangedState extends Mailable
                 );
             case 'travelrequest':
                 return new Envelope(
-                    from: new Address('noreply@dsv.su.se', 'Travel Request'),
+                    from: new Address('noreply@dsv.su.se', 'ITWebb'),
                     subject: 'Resebegäran – statusuppdatering / Travel request – status update',
                 );
             default:

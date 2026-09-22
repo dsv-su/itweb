@@ -34,7 +34,7 @@ class NotifyRequestApproved extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('noreply@dsv.su.se', 'ProjectProposals'),
+            from: new Address('noreply@dsv.su.se', $this->dashboard->type === 'travelrequest' ? 'ITWebb' : 'ProjectProposals'),
             subject: $this->dashboard->type === 'travelrequest'
                 ? 'Godkänd resebegäran / Approved travel request: '. Str::limit($this->dashboard->name, 28)
                 : 'Approved: '. Str::limit($this->dashboard->name, 28),

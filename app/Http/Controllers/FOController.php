@@ -100,8 +100,6 @@ class FOController extends Controller
 
     public function projects(Request $request)
     {
-        App::setLocale('sv');
-
         $search = trim((string) $request->query('search', ''));
 
         return (new StatamicView)->template('requests.fo.projects')->with([
@@ -119,8 +117,6 @@ class FOController extends Controller
 
     public function storeProject(Request $request)
     {
-        App::setLocale('sv');
-
         Project::create($this->validateProject($request));
 
         return redirect()->route('fo.projects')->with('status', 'Projektet har lagts till.');
@@ -128,8 +124,6 @@ class FOController extends Controller
 
     public function updateProject(Request $request, Project $project)
     {
-        App::setLocale('sv');
-
         $project->update($this->validateProject($request, $project));
 
         return redirect()->route('fo.projects')->with('status', 'Projektet har uppdaterats.');
@@ -137,8 +131,6 @@ class FOController extends Controller
 
     public function destroyProject(Request $request, Project $project)
     {
-        App::setLocale('sv');
-
         $listParameters = $request->validate([
             'page' => ['sometimes', 'integer', 'min:1'],
             'search' => ['nullable', 'string'],
@@ -180,8 +172,6 @@ class FOController extends Controller
 
     public function importProjects(Request $request)
     {
-        App::setLocale('sv');
-
         $request->validate(['file' => ['required', 'file', 'mimes:xlsx,xls', 'max:10240']], [], ['file' => 'Excel-fil']);
         $import = new ProjectsRefreshImport;
 
@@ -249,6 +239,6 @@ class FOController extends Controller
 
         Cache::forget('fo_ids');
 
-        return back()->with('status', 'Financial officer notification settings updated.');
+        return back()->with('status', 'Inställningarna för ekonomernas aviseringar har uppdaterats.');
     }
 }

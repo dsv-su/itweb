@@ -117,6 +117,7 @@ Route::get('/travel/pdf/{id}', [\App\Http\Controllers\FOController::class, 'down
     ->name('travel-request-pdf');
 
 Route::get('/settings', [\App\Http\Controllers\FOController::class, 'settings'])
+    ->middleware('checklang')
     ->name('settings');
 
 Route::get('/fo/projects', [\App\Http\Controllers\FOController::class, 'projects'])->name('fo.projects');

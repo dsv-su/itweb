@@ -1,59 +1,15 @@
 <?php
 
-/*namespace App\Http\Controllers;
-
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Str;
-
-class LocalizationController extends Controller
-{
-    public function index($locale)
-    {
-        $site = 'swe';
-        $intended = url()->previous();
-        $intended = parse_url($intended);
-        $contains = Str::contains($intended['path'], 'swe');
-
-        if($locale == 'sv') {
-            App::setlocale('sv');
-            session()->put('locale', 'sv');
-            session(['localisation' => App::getLocale()]);
-            switch ($intended['path']) {
-                case('/'):
-                    return redirect(url('') . $intended['path'] . $site);
-
-                default:
-                    return redirect(url('') . '/'. $site . $intended['path']);
-            }
-        }
-        elseif($locale == 'en') {
-            App::setlocale('en');
-            session()->put('locale', 'sv');
-            session(['localisation' => App::getLocale()]);
-            switch ($intended['path']) {
-                case('/swe'):
-                    return redirect(url('') );
-                case($contains == false):
-                    return redirect(url('') . $intended['path']);
-                default:
-                    $intended['path'] = substr($intended['path'], 4);
-                    return redirect(url('') . $intended['path']);
-            }
-
-        }
-        return back();
-    }
-}*/
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Str;
 use Statamic\Facades\Site;
 
 class LocalizationController extends Controller
 {
     public function index($locale)
     {
+        $locale = $locale === 'swe' ? 'sv' : $locale;
         $supported = ['sv', 'en'];
 
         if (!in_array($locale, $supported)) {
@@ -80,11 +36,12 @@ class LocalizationController extends Controller
 
         // Normalize path
         $path = '/' . ltrim($path, '/');
-        $isSwe = Str::startsWith($path, '/swe');
+        $originalPath = $path;
+        $path = preg_replace('#^/(?:swe|sv|en)(?=/|$)#', '', $path) ?: '/';
 
         // Carry the homepage selection through the redirect, even if the
         // following request has not received the updated session yet.
-        if (in_array(rtrim($path, '/'), ['', '/swe'], true)) {
+        if (rtrim($path, '/') === '') {
             parse_str($parsed['query'] ?? '', $parameters);
             unset($parameters['lang']);
 
@@ -97,23 +54,25 @@ class LocalizationController extends Controller
             return redirect(($locale === 'en' ? '/' : '/swe') . $query);
         }
 
-        if ($locale === 'sv') {
-            // Add /swe if not present
-            if (!$isSwe) {
-                return redirect('/swe' . $path . $query);
+        // Application pages without a localized route (settings, projects, etc.)
+        // keep their URL and use the session preference instead.
+        $target = $locale === 'sv' ? '/swe' . $path : $path;
+        $routes = app('router')->getRoutes();
+        $originalRoute = $routes->match(\Illuminate\Http\Request::create(url($originalPath)));
+        if ($originalRoute->getControllerClass() !== \Statamic\Http\Controllers\FrontendController::class) {
+            foreach (array_unique([$target, $path, '/' . ($locale === 'sv' ? 'swe' : 'en') . $path]) as $candidate) {
+                try {
+                    $candidateRoute = $routes->match(\Illuminate\Http\Request::create(url($candidate)));
+                    if ($candidateRoute->getControllerClass() === $originalRoute->getControllerClass()) {
+                        $target = $candidate;
+                        break;
+                    }
+                } catch (\Symfony\Component\HttpKernel\Exception\HttpExceptionInterface $exception) {
+                    // Try the next URL when this language has no matching route.
+                }
             }
-            return redirect($path . $query); // already Swedish
         }
 
-        if ($locale === 'en') {
-            // Remove /swe if present
-            if ($isSwe) {
-                $path = substr($path, 4); // remove "/swe"
-                return redirect(($path ?: '/') . $query);
-            }
-            return redirect($path . $query); // already English
-        }
-
-        return back();
+        return redirect($target . $query);
     }
 }

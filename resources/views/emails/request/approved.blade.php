@@ -40,9 +40,6 @@ har godkänts
 <br>
 --------------
 <br>
-Rapportera manuellt att din ansökan har skickats in genom att klicka på knappen Skickad. När du får ett beslut om beviljade medel eller ett avslag uppdaterar du statusen genom att klicka på motsvarande knapp.
-
-<br><br>
 @if($dashboard->type == 'travelrequest')
     Trevlig resa
 @endif
@@ -96,9 +93,11 @@ OVERVIEW:
 <br>
 --------------
 <br>
+@if($dashboard->type != 'travelrequest')
 Please manually report your submitted application by clicking the Sent button. Once you receive a grant decision or a rejection, update your progress by clicking the corresponding buttons.
 
 <br><br>
+@endif
 @if($dashboard->type == 'travelrequest')
     Bon Voyage
 @endif

@@ -6,43 +6,44 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Statamic\Facades\Site;
+use Statamic\Http\Controllers\FrontendController;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckLocalization
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next): Response
     {
-        $lang = $request->route('lang');
-
-        if (is_string($lang)) {
-            $lang = strtolower($lang);
-        } else {
-            $lang = null;
+        // The control panel manages its own user language.
+        $cp = trim(config('statamic.cp.route', 'cp'), '/');
+        if ($request->is($cp, $cp.'/*')) {
+            return $next($request);
         }
 
-        // Normalize/whitelist
-        if ($lang === 'swe') {
-            $locale = 'sv';
-        } elseif ($lang === 'sv' || $lang === 'en') {
-            $locale = $lang;
-        } else {
-            $locale = session('locale', config('app.locale', 'sv'));
+        $normalize = static fn ($value) => match ($value) {
+            'sv', 'swe' => 'sv',
+            'en' => 'en',
+            default => null,
+        };
+
+        $locale = $normalize($request->route('lang'))
+            ?? $normalize($request->segment(1));
+
+        // The English homepage uses this query parameter after an explicit switch.
+        if ($request->is('/')) {
+            $locale = $normalize($request->query('lang')) ?? $locale;
         }
 
-        // 1) Laravel locale (Blade translations, validation, etc.)
+        // CMS content uses the language of its URL; application routes use the
+        // saved preference. A fresh visit to an application route is Swedish.
+        if (!$locale && $request->route()?->getControllerClass() === FrontendController::class) {
+            $locale = $normalize(Site::findByUrl($request->url())?->lang());
+        }
+
+        $locale ??= $normalize($request->session()->get('locale')) ?? 'sv';
         App::setLocale($locale);
-        session(['locale' => $locale, 'localisation' => $locale]);
+        $request->session()->put(['locale' => $locale, 'localisation' => $locale]);
 
-        // 2) Statamic site (Antlers content localization)
-        $site = Site::get($locale)
-            ?: Site::all()->first(fn ($site) => $site->shortLocale() === $locale || $site->lang() === $locale)
-            ?: Site::default();
-
+        $site = Site::all()->first(fn ($site) => $site->lang() === $locale || $site->shortLocale() === $locale);
         if ($site) {
             Site::setCurrent($site->handle());
         }
