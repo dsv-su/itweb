@@ -16,6 +16,11 @@ class RequestSearch extends Component
 {
     use WithPagination;
 
+    public function boot(): void
+    {
+        abort_unless(auth()->user()?->isFO(), 403);
+    }
+
     public $searchTerm;
 
     public string $requestType = 'travelrequest';

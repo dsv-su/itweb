@@ -49,6 +49,12 @@ Route::get('/travel', [\App\Http\Controllers\TravelRequestController::class, 'cr
 Route::get('/{lang}/travel', [\App\Http\Controllers\TravelRequestController::class, 'create'])
     ->where('lang', $langConstraint);
 
+Route::get('/travel/statistics', \App\Http\Controllers\TravelStatisticsController::class)
+    ->middleware(['auth', 'dsv', 'checklang'])->name('travel-statistics');
+Route::get('/{lang}/travel/statistics', \App\Http\Controllers\TravelStatisticsController::class)
+    ->where('lang', $langConstraint)
+    ->middleware(['auth', 'dsv', 'checklang'])->name('travel-statistics.localized');
+
 // Show + submit
 Route::get('/travel/show/{travelRequest}', [\App\Http\Controllers\TravelRequestController::class, 'show'])
     ->name('travel-request-show');

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Livewire\RequestSearch;
+use App\Models\User;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Bootstrap\LoadConfiguration;
@@ -34,6 +35,13 @@ class RequestSearchTest extends TestCase
             $table->string('name');
             $table->string('email');
         });
+        Schema::create('role_user', function (Blueprint $table) {
+            $table->string('user_id');
+            $table->string('role_id');
+        });
+        DB::table('users')->insert(['id' => 'officer', 'name' => 'Finance Officer', 'email' => 'fo@example.test']);
+        DB::table('role_user')->insert(['user_id' => 'officer', 'role_id' => 'financial_officer']);
+        $this->actingAs(User::findOrFail('officer'));
         Schema::create('travel_requests', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->string('project');
@@ -106,5 +114,29 @@ class RequestSearchTest extends TestCase
             ->assertSeeInOrder(['Inväntar granskning av ekonomihandläggare', 'Newer pending', 'Pending trip', 'Older pending', 'Övriga ärenden'])
             ->assertViewHas('dashboards', fn ($rows) => $rows->pluck('request_id')->take(3)->all() === ['trip-1', 'trip-12', 'trip-11'])
             ->assertSee('Ekonom');
+    }
+
+    public function test_guests_cannot_load_the_component(): void
+    {
+        auth()->logout();
+        Livewire::test(RequestSearch::class)->assertForbidden();
+    }
+
+    public function test_non_finance_users_cannot_load_the_component_or_list_routes(): void
+    {
+        DB::table('role_user')->delete();
+        $this->actingAs(User::findOrFail('officer'));
+        Livewire::test(RequestSearch::class)->assertForbidden();
+        foreach (['/list', '/sv/list', '/en/list'] as $url) {
+            $this->get($url)->assertForbidden();
+        }
+    }
+
+    public function test_finance_permission_is_checked_again_on_livewire_updates(): void
+    {
+        $component = Livewire::test(RequestSearch::class);
+        DB::table('role_user')->delete();
+        $this->actingAs(User::findOrFail('officer'));
+        $component->set('searchTerm', 'Pending')->assertForbidden();
     }
 }

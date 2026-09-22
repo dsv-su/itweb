@@ -3,7 +3,7 @@
     $projectProposalsEnabled = (bool) \App\Models\SettingsOh::query()->value('form_enable');
     $canViewRequestTools = \Illuminate\Support\Facades\DB::table('group_user')
         ->where('user_id', $userId)
-        ->whereIn('group_id', ['ekonomi', 'enhetschef'])
+        ->whereIn('group_id', ['ekonomi'])
         ->exists();
 
     $actionButtonClasses = 'hidden md:flex min-w-11 min-h-11 items-center justify-center p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-blue-300 dark:focus-visible:ring-offset-gray-900';
@@ -51,6 +51,8 @@
                     </svg>
                     <div class="{{ $serviceLabelClasses }}">{{ __("Travel Request") }}</div>
                 </a>
+
+                @include('navbar.partials.travel_statistics_link')
 
                 @if($projectProposalsEnabled)
                     <a href="{{ route('pp.show', 'my') }}" class="{{ $serviceLinkClasses }}">

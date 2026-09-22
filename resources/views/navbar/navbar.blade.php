@@ -74,6 +74,8 @@
                             <div class="{{ $serviceLabelClasses }}">{{ __("Travel Request") }}</div>
                         </a>
 
+                        @include('navbar.partials.travel_statistics_link')
+
                         @if($projectProposalsEnabled)
                             <a href="{{ route('pp.show', 'my') }}" class="{{ $serviceLinkClasses }}">
                                 <svg class="{{ $serviceIconClasses }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
