@@ -51,7 +51,7 @@
                                 {{ $page }}
                             </span>
                         @else
-                            <button type="button" wire:key="request-search-page-{{ $page }}" wire:click="gotoPage({{ $page }}, '{{ $paginator->getPageName() }}')" x-on:click="{{ $scrollIntoViewJsSnippet }}" wire:loading.attr="disabled" class="{{ $buttonClass }}" aria-label="{{ __('Go to page :page', ['page' => $page]) }}">
+                            <button type="button" wire:key="request-search-{{ $paginator->getPageName() }}-page-{{ $page }}" wire:click="gotoPage({{ $page }}, '{{ $paginator->getPageName() }}')" x-on:click="{{ $scrollIntoViewJsSnippet }}" wire:loading.attr="disabled" class="{{ $buttonClass }}" aria-label="{{ __('Go to page :page', ['page' => $page]) }}">
                                 {{ $page }}
                             </button>
                         @endif

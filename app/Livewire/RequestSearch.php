@@ -9,19 +9,22 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
-use Livewire\WithPagination;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class RequestSearch extends Component
 {
     use WithPagination;
 
     public $searchTerm;
+
     public string $requestType = 'travelrequest';
 
     #[Locked]
     public ?int $switchingFoId = null;
+
     public string $selectedFoId = '';
+
     public string $foStatus = '';
 
     public function switchFo(int $dashboardId): void
@@ -80,41 +83,55 @@ class RequestSearch extends Component
     public function updatedSearchTerm(): void
     {
         $this->resetPage();
+        $this->resetPage('foReviewPage');
     }
 
     public function updatedRequestType(): void
     {
         $this->resetPage();
+        $this->resetPage('foReviewPage');
     }
 
     public function render()
     {
-        $searchTerm = '%' . $this->searchTerm . '%';
+        $searchTerm = '%'.$this->searchTerm.'%';
         $requestType = in_array($this->requestType, ['travelrequest', 'projectproposal'], true)
             ? $this->requestType
             : 'travelrequest';
+
+        $query = Dashboard::with(['user', 'travel', 'financialOfficer'])
+            ->where('type', $requestType)
+            ->where(function ($query) use ($searchTerm) {
+                $query->where('name', 'like', $searchTerm)
+                    ->orWhereHas('user', function ($query) use ($searchTerm) {
+                        $query->where('name', 'LIKE', $searchTerm ?? '')
+                            ->orWhere('email', 'LIKE', $searchTerm ?? '');
+                    })
+                    ->orWhereHas('travel', function ($query) use ($searchTerm) {
+                        $query->where('project', 'LIKE', $searchTerm ?? '')
+                            ->orWhere('country', 'LIKE', $searchTerm ?? '')
+                            ->orWhere('purpose', 'LIKE', $searchTerm ?? '')
+                            ->orWhere('id', 'LIKE', $searchTerm ?? '');
+                    });
+            });
+
+        $awaitingFoReview = $requestType === 'travelrequest'
+            ? (clone $query)->where('state', 'head_approved')->orderByDesc('created')->orderByDesc('id')->paginate(10, ['*'], 'foReviewPage')
+            : null;
+
+        if ($requestType === 'travelrequest') {
+            $query->where(function ($query) {
+                $query->where('state', '!=', 'head_approved')->orWhereNull('state');
+            });
+        }
 
         return view('livewire.request-search', [
             'financialOfficers' => $this->switchingFoId !== null && auth()->user()?->isFO()
                 ? User::whereIn('id', DB::table('group_user')->where('group_id', 'ekonomi')->select('user_id'))
                     ->orderBy('name')->get()
                 : collect(),
-            'dashboards' => Dashboard::with(['user', 'travel', 'financialOfficer'])
-                ->where('type', $requestType)
-                ->where(function ($query) use ($searchTerm) {
-                    $query->where('name', 'like', $searchTerm)
-                        ->orWhereHas('user', function ($query) use ($searchTerm) {
-                            $query->where('name', 'LIKE', $searchTerm ?? '')
-                                ->orWhere('email', 'LIKE', $searchTerm ?? '');
-                        })
-                        ->orWhereHas('travel', function ($query) use ($searchTerm) {
-                            $query->where('project', 'LIKE', $searchTerm ?? '')
-                                ->orWhere('country', 'LIKE', $searchTerm ?? '')
-                                ->orWhere('purpose', 'LIKE', $searchTerm ?? '')
-                                ->orWhere('id', 'LIKE', $searchTerm ?? '');
-                        });
-                })
-                ->paginate(10),
+            'awaitingFoReview' => $awaitingFoReview,
+            'dashboards' => $query->orderByDesc('created')->orderByDesc('id')->paginate(10),
         ]);
     }
 }
