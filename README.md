@@ -85,3 +85,21 @@ Build the development assets by running
 For production build the production assets
 
     npm run build
+
+## Monthly project proposal statistics
+
+In **Vice Head settings → Notifications → Monthly statistics**, select SUKAT users and click **Update**. An empty recipient list disables delivery. Run database migrations when deploying this feature.
+
+The Laravel scheduler sends individual HTML and plain-text summaries at **21:00 Europe/Stockholm on the first of each month**. As with the other scheduled commands, the server must run `php artisan schedule:run` every minute (or run `schedule:work`). No queue worker is needed for this command.
+
+Reports follow the existing proposal statistics convention: sent/granted proposals with submission deadlines in the previous calendar month, using statuses and budgets at report generation time. They include counts, research subjects, funding organizations, planned PhD years, and DSV budgets/co-financing separated by currency.
+
+To check the reporting month and recipient count without sending mail:
+
+```sh
+php artisan proposals:send-monthly-statistics --dry-run
+```
+
+To retry failed deliveries for the previous month, run `php artisan proposals:send-monthly-statistics`. Successful deliveries are recorded per month/email and skipped on reruns. Failures are logged and do not prevent other recipients from receiving the report. As with SMTP delivery generally, a process failure after sending but before recording success can cause a duplicate on retry.
+
+To preview a specific reporting month, use `php artisan proposals:send-monthly-statistics --month=2026-08 --dry-run`. Omit `--dry-run` to send that month's report to the configured recipients; previously successful deliveries for that month remain skipped. Without `--month`, the scheduled command continues to use the previous calendar month.

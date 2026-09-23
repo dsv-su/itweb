@@ -19,3 +19,8 @@ Schedule::command('send-travel-request-reminders')
 
 Schedule::command('update-allowance')
     ->dailyAt('21:00');
+
+Schedule::command('proposals:send-monthly-statistics')
+    ->monthlyOn(1, '21:00')
+    ->timezone('Europe/Stockholm')
+    ->withoutOverlapping();
