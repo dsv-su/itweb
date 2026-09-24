@@ -17,15 +17,19 @@ class ProjectSelect2 extends Component
     public Project $Project;
     public $search;
     public bool $showProjectWarning = false;
+    public bool $showUpdateButton = false;
+    public string $updateFormId = 'fo-review-form';
 
     protected $listeners = [
         'set-Project' => 'set_Project',
         'clear'
     ];
 
-    public function mount($id = 0, bool $showProjectWarning = false)
+    public function mount($id = 0, bool $showProjectWarning = false, bool $showUpdateButton = false, string $updateFormId = 'fo-review-form')
     {
         $this->showProjectWarning = $showProjectWarning;
+        $this->showUpdateButton = $showUpdateButton;
+        $this->updateFormId = $updateFormId;
 
         if($id != 0) {
             $this->Project = Project::where('project', $id)->first() ?? new Project;

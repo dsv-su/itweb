@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Dashboard;
 use App\Models\DsvBudget;
+use App\Models\FoComment;
+use App\Models\HeadComment;
 use App\Models\ProjectProposal;
 use App\Models\ResearchArea;
 use App\Models\SettingsFo;
@@ -97,9 +99,9 @@ class ReviewController extends Controller
         $tr = TravelRequest::findOrFail($dashboard->request_id);
 
         $user = auth()->user();
-        $fo = SettingsFo::where('active', true)->orderBy('id')->first();
+        $isFo = SettingsFo::where('user_id', $user->id)->where('active', true)->exists();
 
-        $formtype = ($fo && $user->id === $fo->user_id) ? 'fo_review' : 'review';
+        $formtype = $isFo ? 'fo_review' : 'review';
 
         return (new StatamicView)
             ->template('requests.travel.show')
@@ -108,6 +110,7 @@ class ReviewController extends Controller
                 'tr' => $tr,
                 'formtype' => $formtype,
                 'dashboard' => $dashboard,
+                'canUpdateProject' => $this->isHeadReview($dashboard),
             ]);
     }
 
@@ -125,8 +128,13 @@ class ReviewController extends Controller
     {
         $dashboard = Dashboard::findOrFail($dashboardId);
 
-        if ($isFo) {
-            $this->applyFoUpdates($request, $dashboard);
+        $isHeadUpdate = ! $isFo && $request->input('decision') === 'update';
+        if ($isHeadUpdate) {
+            abort_unless($this->isHeadReview($dashboard), 403);
+        }
+
+        if ($isFo || $isHeadUpdate) {
+            $this->applyProjectUpdates($request, $dashboard);
 
             if ($request->input('decision', 'update') === 'update') {
                 return redirect()->back()
@@ -149,12 +157,37 @@ class ReviewController extends Controller
         return redirect('/')->with('status', 'Request updated');
     }
 
-    private function applyFoUpdates(Request $request, Dashboard $dashboard): void
+    private function isHeadReview(Dashboard $dashboard): bool
+    {
+        return $dashboard->type === 'travelrequest'
+            && (string) $dashboard->state === 'manager_approved'
+            && $dashboard->head_id === auth()->id();
+    }
+
+    private function applyProjectUpdates(Request $request, Dashboard $dashboard): void
     {
         if ($dashboard->type === 'travelrequest') {
-            $tr = TravelRequest::findOrFail($dashboard->request_id);
-            $tr->project = $request->input('project');
-            $tr->save();
+            DB::transaction(function () use ($request, $dashboard) {
+                $tr = TravelRequest::lockForUpdate()->findOrFail($dashboard->request_id);
+                $previousProject = $tr->project;
+                $tr->project = $request->input('project');
+
+                if (! $tr->isDirty('project')) {
+                    return;
+                }
+
+                $commentClass = $this->isHeadReview($dashboard) ? HeadComment::class : FoComment::class;
+                $commentClass::create([
+                    'reqid' => $tr->id,
+                    'user_id' => auth()->id(),
+                    'comment' => __('Project changed from :previous to :current.', [
+                        'previous' => filled($previousProject) ? $previousProject : __('None'),
+                        'current' => filled($tr->project) ? $tr->project : __('None'),
+                    ]),
+                ]);
+
+                $tr->save();
+            });
         }
     }
 

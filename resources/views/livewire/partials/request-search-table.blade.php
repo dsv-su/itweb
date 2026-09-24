@@ -74,6 +74,12 @@
                            class="inline-flex items-center justify-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-offset-gray-800">
                             {{__("Show")}}
                         </a>
+                        @if($dashboard->type === 'travelrequest' && (string) $dashboard->state === 'head_approved')
+                            <a href="{{ route('travel-request-review', $dashboard->id) }}"
+                               class="inline-flex items-center justify-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-offset-gray-800">
+                                {{ __('Review') }}
+                            </a>
+                        @endif
                         @if($canEditCompleted && (string) $dashboard->state === 'fo_approved' && $dashboard->type === 'travelrequest')
                             <a href="{{ route('travel-request-edit-completed', $dashboard->request_id) }}"
                                class="inline-flex items-center justify-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-offset-gray-800">

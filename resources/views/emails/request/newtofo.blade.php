@@ -2,13 +2,13 @@
 <strong>Svenska</strong>
 <br>
 <br>
-Till: ekonomhandläggare
+Till: ekonomihandläggare
 <br>
 Ämne:  Ny resebegäran inskickad för granskning
 <br>
 ------------------------------------------------------------
 <br>
-Hej ekonomhandläggare,
+Hej ekonomihandläggare,
 <br><br>
 En ny <strong>resebegäran</strong> har skickats in och har redan godkänts av både projektledaren/handledaren och enhetschefen.
 Din granskning och ditt godkännande krävs nu för att gå vidare.

@@ -47,6 +47,7 @@ class RequestSearchTest extends TestCase
             $table->string('project');
             $table->string('country');
             $table->string('purpose');
+            $table->integer('departure')->nullable();
         });
         Schema::create('dashboards', function (Blueprint $table) {
             $table->id();
@@ -114,6 +115,23 @@ class RequestSearchTest extends TestCase
             ->assertSeeInOrder(['Inväntar granskning av ekonomihandläggare', 'Newer pending', 'Pending trip', 'Older pending', 'Övriga ärenden'])
             ->assertViewHas('dashboards', fn ($rows) => $rows->pluck('request_id')->take(3)->all() === ['trip-1', 'trip-12', 'trip-11'])
             ->assertSee('Ekonom');
+    }
+
+    public function test_other_travel_requests_are_sorted_and_grouped_by_departure_month(): void
+    {
+        foreach (['trip-1' => '2026-01-15', 'trip-2' => '2025-12-31', 'trip-3' => '2026-02-01'] as $id => $departure) {
+            DB::table('travel_requests')->insert([
+                'id' => $id, 'project' => '', 'country' => '', 'purpose' => '',
+                'departure' => \Carbon\Carbon::parse($departure, 'UTC')->timestamp,
+            ]);
+        }
+
+        Livewire::test(RequestSearch::class)
+            ->assertViewHas('dashboards', fn ($rows) => $rows->pluck('request_id')->take(4)->all() === ['trip-3', 'trip-1', 'trip-2', 'trip-12'])
+            ->assertSeeInOrder(['2026 februari', 'Completed 3', '2026 januari', 'Completed 1', '2025 december', 'Completed 2', 'Avresedatum saknas'])
+            ->call('gotoPage', 2)
+            ->assertDontSee('2026 februari')
+            ->assertSee('Avresedatum saknas');
     }
 
     public function test_guests_cannot_load_the_component(): void

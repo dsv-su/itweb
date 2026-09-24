@@ -6,6 +6,8 @@
 
     @php
         $isFoReview = ($formtype ?? null) === 'fo_review';
+        $canEditProject = $isFoReview || ($canUpdateProject ?? false);
+        $projectUpdateFormId = $isFoReview ? 'fo-review-form' : 'project-update-form';
         $isReturned = ($formtype ?? null) === 'returned';
         $isReview = ($formtype ?? null) === 'review';
 
@@ -85,8 +87,8 @@
                 @include('requests.travel.comments')
             </div>
 
-            @if($isFoReview)
-                <form id="fo-review-form" method="POST" action="{{ route('fo_review', $dashboard) }}">
+            @if($canEditProject)
+                <form id="{{ $projectUpdateFormId }}" method="POST" action="{{ route($isFoReview ? 'fo_review' : 'review', $dashboard) }}">
                     <input type="hidden" name="decision" value="update">
                     @csrf
             @endif
@@ -160,9 +162,9 @@
                         </div>
 
                         <div class="grid min-w-0 gap-4 px-4 py-5 sm:grid-cols-2 sm:gap-6 sm:px-5">
-                            @if($isFoReview)
+                            @if($canEditProject)
                                 <div class="sm:col-span-2">
-                                    <livewire:select2.project-select2 :id="$tr->project" />
+                                    <livewire:select2.project-select2 :id="$tr->project" :show-update-button="true" :update-form-id="$projectUpdateFormId" />
                                 </div>
                             @else
                                 <div class="sm:col-span-2">
@@ -350,7 +352,7 @@
                 </div>
             </div>
 
-            @if($isFoReview)
+            @if($canEditProject)
                 </form>
             @endif
         </div>

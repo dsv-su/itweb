@@ -70,6 +70,19 @@
                 {{ $dashboards->onEachSide(1)->links('livewire.partials.request-search-pagination') }}
             </div>
         @endif
-        @include('livewire.partials.request-search-table')
+        @if($requestType === 'travelrequest')
+            @foreach($dashboards->getCollection()->groupBy(fn ($dashboard) => filled($dashboard->travel?->departure)
+                ? \Carbon\Carbon::createFromTimestamp($dashboard->travel->departure)->format('Y-m')
+                : '') as $month => $requests)
+                <div class="mb-6">
+                    <h3 class="mb-3 text-base font-semibold text-gray-900 dark:text-white">
+                        {{ $month !== '' ? \Carbon\Carbon::createFromFormat('!Y-m', $month)->translatedFormat('Y F') : __('No departure date') }}
+                    </h3>
+                    @include('livewire.partials.request-search-table', ['dashboards' => $requests])
+                </div>
+            @endforeach
+        @else
+            @include('livewire.partials.request-search-table')
+        @endif
     </section>
 </div>

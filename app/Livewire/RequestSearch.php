@@ -141,7 +141,9 @@ class RequestSearch extends Component
         if ($requestType === 'travelrequest') {
             $query->where(function ($query) {
                 $query->where('state', '!=', 'head_approved')->orWhereNull('state');
-            });
+            })->orderByDesc(
+                TravelRequest::select('departure')->whereColumn('travel_requests.id', 'dashboards.request_id')->limit(1)
+            );
         }
 
         return view('livewire.request-search', [
