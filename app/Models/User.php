@@ -88,6 +88,12 @@ class User extends Authenticatable
         return (bool) $this->super;
     }
 
+    public function canAssignPrincipalInvestigator(): bool
+    {
+        return $this->isSuperAdmin()
+            || count(array_intersect(['vice_head', 'site_administrator'], $this->getRoles())) > 0;
+    }
+
     private function getRoles(): array
     {
         return DB::table('role_user')

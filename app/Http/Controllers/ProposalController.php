@@ -31,6 +31,7 @@ use App\Services\Review\ProposalFileReviewService;
 use App\Services\Review\WorkflowHandler;
 use App\Services\Proposal\ProjectProposalPrepare;
 use App\Services\Proposal\ProjectProposalFormService;
+use App\Services\Proposal\PrincipalInvestigator;
 use App\Services\Send\FilesForRegistrator;
 use App\Workflows\DSVProjectPWorkflow;
 use App\Workflows\Partials\RequestStates;
@@ -100,14 +101,20 @@ class ProposalController extends Controller
      */
     public function submit(Request $request)
     {
+        $request->validate([
+            'id' => ['required', 'string'],
+            'principal_investigator_uid' => ['nullable', 'string', 'max:255'],
+        ]);
         $this->validateRequest($request);
-
+        $type = strtolower(trim((string) $request->type));
         $userId = $request->user()->id;
+        if (in_array($type, ['preapproval', 'saved', 'save', 'complete', 'edit', 'resume'], true)) {
+            $userId = app(PrincipalInvestigator::class)
+                ->resolve($request, ProjectProposal::findOrFail($request->id))->id;
+        }
         $submittedAt = now();
         $createdTs = $submittedAt->copy()->startOfDay()->timestamp;
         //dd($request->type);
-        $type = strtolower(trim((string) $request->type));
-
         return match ($type) {
             'preapproval', 'saved' => $this->handlePreapproval($request, $userId, $submittedAt, $createdTs),
             'save'                => $this->handleSave($request, $userId, $submittedAt, $createdTs),
@@ -197,6 +204,7 @@ class ProposalController extends Controller
 
         $updatedPp = $this->mergePp($pp->pp ?? [], [
             ...$request->only([
+                'principal_investigator', 'principal_investigator_email',
                 'unit_head', 'program', 'decision_exp', 'funding_organization',
                 'start_date', 'submission_deadline',
                 'budget_project', 'budget_dsv', 'budget_phd', 'currency',
@@ -210,7 +218,7 @@ class ProposalController extends Controller
             'co_investigator_role' => $request->co_investigator_role,
         ]);
 
-        $pp->update(['pp' => $updatedPp]);
+        $pp->update(['pp' => $updatedPp, 'user_id' => $userId]);
 
         // Append-only comment input normalization
         $newComment = $request->input('comment') ?? $request->input('edit_comments');
@@ -222,6 +230,7 @@ class ProposalController extends Controller
             ->where('request_id', $pp->id)
             ->firstOrFail();
 
+        $dashboard->user_id = $userId;
         $this->setUnitHeadsOnDashboard($dashboard, (array) $request->unit_head);
 
         if ($this->checkFiles($pp)) {
@@ -306,6 +315,7 @@ class ProposalController extends Controller
             [
                 'name'   => $request->title,
                 'status' => 'resumed',
+                'user_id' => $userId,
             ]
         );
 

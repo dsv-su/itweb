@@ -1,5 +1,5 @@
 <div class="flex flex-col w-full">
-    <label for="submission" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+    <label for="submission_deadline" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
         {{ __("Submission deadline") }}<span class="text-red-600"> *</span>
         <button id="submission-button"
                 data-modal-target="submission-modal"
@@ -17,17 +17,17 @@
                         <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
                     </svg>
                 </div>
-                @error('submission')
+                @error('submission_deadline')
                 <p class="mt-3 text-sm leading-6 text-red-600">{{__("This is a required input")}}</p>
                 @enderror
                 <input id="submission_deadline"
                        name="submission_deadline"
-                       datepicker
+                       data-proposal-datepicker
                        datepicker-autohide
                        {{--}}datepicker-format="dd/mm/yyyy"{{--}}
                        datepicker-format="yyyy-mm-dd"
                        @if(in_array($type, ['preapproval', 'saved', 'edit', 'complete', 'resume']))
-                       value="{{ $proposal['pp']['submission_deadline'] ?? ''}}"
+                       value="{{ old('submission_deadline', $proposal['pp']['submission_deadline'] ?? '') }}"
                        @endif
                        {{--}}id="startInput"{{--}}
                        type="text"
@@ -112,4 +112,3 @@
         validateDates();
     });
 </script>
-

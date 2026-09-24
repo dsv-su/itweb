@@ -20,12 +20,12 @@
 
                 <input id="start_date"
                        name="start_date"
-                       datepicker
+                       data-proposal-datepicker
                        datepicker-autohide
                        {{--}}datepicker-format="dd/mm/yyyy"{{--}}
                        datepicker-format="yyyy-mm-dd"
                        @if(in_array($type, ['preapproval', 'saved', 'edit', 'complete', 'resume']))
-                       value="{{ $proposal['pp']['start_date'] ?? ''}}"
+                       value="{{ old('start_date', $proposal['pp']['start_date'] ?? '') }}"
                        @endif
                        {{--}}id="endInput"{{--}}
                        type="text"

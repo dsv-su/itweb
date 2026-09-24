@@ -1,3 +1,23 @@
+@if(in_array($type, ['preapproval', 'saved', 'edit', 'resume', 'complete']) && auth()->user()->canAssignPrincipalInvestigator())
+    <details class="w-full sm:col-span-2 rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800"
+             @if($errors->has('principal_investigator_uid')) open @endif>
+        <summary class="cursor-pointer rounded-lg px-4 py-3 text-sm font-medium text-blue-700 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:text-blue-400 dark:hover:bg-gray-700">
+            {{ __('Select another principal investigator (only possible for SystemAdmins and vice)') }}
+        </summary>
+        <div class="border-t border-gray-200 p-4 dark:border-gray-700">
+            <livewire:pp.principal-investigator-search />
+        </div>
+    </details>
+    <input type="hidden" name="principal_investigator_uid" id="principal_investigator_uid" value="{{ old('principal_investigator_uid') }}">
+    @error('principal_investigator_uid') <p class="text-sm text-red-600">{{ $message }}</p> @enderror
+    <script>
+        window.addEventListener('principal-investigator-selected', (event) => {
+            document.getElementById('principal_investigator_uid').value = event.detail.uid;
+            document.getElementById('principal_investigator').value = event.detail.name;
+            document.getElementById('principal_investigator_email').value = event.detail.email;
+        });
+    </script>
+@endif
 <div class="w-full">
     <label for="principal_investigator" class="font-sans block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ __("Principal Investigator at DSV") }}<span class="text-red-600"> *</span>
         <button

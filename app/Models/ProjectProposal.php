@@ -64,7 +64,7 @@ class ProjectProposal extends Model
         $user = Auth::user();
 
         //Allow SuperAdmin
-        if ($user && $user->isSuperAdmin()) {
+        if ($user && $user->canAssignPrincipalInvestigator()) {
             return true;
         }
 
@@ -86,7 +86,8 @@ class ProjectProposal extends Model
         $dashboard = Dashboard::where('request_id', $this->id)->first();
         $allowed_roles = [$dashboard?->user_id];
 
-        return (in_array($user->id, $allowed_roles) && in_array($dashboard->state, ['pending','saved']));
+        return ($dashboard && ($user->canAssignPrincipalInvestigator() || in_array($user->id, $allowed_roles))
+            && in_array((string) $dashboard->state, ['pending','saved']));
     }
 
     public function allowComplete(): bool
@@ -98,7 +99,7 @@ class ProjectProposal extends Model
             return false;
         }
 
-        return $user->id === $dashboard->user_id;
+        return $user->canAssignPrincipalInvestigator() || $user->id === $dashboard->user_id;
     }
 
     public function allowResume(): bool
@@ -121,8 +122,7 @@ class ProjectProposal extends Model
             return false;
         }
 
-        // only the owner may resume
-        return $user->id === $dashboard->user_id;
+        return $user->canAssignPrincipalInvestigator() || $user->id === $dashboard->user_id;
     }
 
 

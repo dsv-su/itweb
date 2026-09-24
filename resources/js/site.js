@@ -4,15 +4,16 @@ import Chart from 'chart.js/auto';
 import 'chartjs-adapter-moment';
 
 function initDatepickers() {
-    document.querySelectorAll('#datepickerId').forEach((el) => {
-        if (el.dataset.datepickerInitialized === 'true') return;
+    // Proposal fields are initialized here instead of Flowbite's automatic
+    // scan, which runs again on load/navigation and can destroy their listeners.
+    document.querySelectorAll('#datepickerId, [data-proposal-datepicker]').forEach((el) => {
+        if (el.datepicker) return;
 
         new Datepicker(el, {
             autohide: true,
             format: 'yyyy-mm-dd',
         });
 
-        el.dataset.datepickerInitialized = 'true';
     });
 }
 

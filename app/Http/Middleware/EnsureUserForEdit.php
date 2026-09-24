@@ -22,7 +22,7 @@ class EnsureUserForEdit
         }
 
         //Allow SuperAdmin
-        if ($user && $user->isSuperAdmin()) {
+        if ($user->canAssignPrincipalInvestigator()) {
             return $next($request);
         }
 

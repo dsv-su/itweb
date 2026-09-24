@@ -22,11 +22,11 @@
                 @enderror
                 <input id="decision_exp"
                        name="decision_exp"
-                       datepicker
+                       data-proposal-datepicker
                        datepicker-autohide
                        datepicker-format="yyyy-mm-dd"
                        @if(in_array($type, ['preapproval', 'saved', 'edit', 'complete', 'resume']))
-                       value="{{ $proposal['pp']['decision_exp'] ?? '' }}"
+                       value="{{ old('decision_exp', $proposal['pp']['decision_exp'] ?? '') }}"
                        @endif
                        type="text"
                        class=" bg-gray-50  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5
