@@ -1,5 +1,5 @@
 <div class="flex flex-col sm:flex-row gap-3">
-    <a href="{{ url()->previous() }}"
+    <a href="{{ old('from', request('from')) === 'notifications' ? route('notifications.localized', ['lang' => app()->getLocale() === 'sv' ? 'swe' : 'en']) : url()->previous() }}"
        class="py-2.5 px-3 w-full sm:w-40 sm:flex-none inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-red-600 bg-white text-red-600 shadow-sm
               hover:bg-red-600 hover:text-white focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none
               dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300

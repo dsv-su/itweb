@@ -38,6 +38,9 @@
             <form id="travel-request-form" method="post" action="{{ $isCompletedEdit ? route('travel-request-update-completed', $travelRequest->id) : route('travel-submit') }}"
                   class="[&_.bg-gray-50.border]:bg-white dark:[&_.bg-gray-50.border]:bg-gray-900">
                 @csrf
+                @if(old('from', request('from')) === 'notifications')
+                    <input type="hidden" name="from" value="notifications">
+                @endif
                 <p class="mb-5 text-sm text-gray-600 dark:text-gray-400">
                     <span aria-hidden="true">*</span> {{ __('This is a required input') }}
                 </p>

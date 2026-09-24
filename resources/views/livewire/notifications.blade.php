@@ -58,7 +58,7 @@
                     default => 'bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-950 dark:text-blue-200 dark:border-blue-800',
                 };
                 $url = $isTravel
-                    ? route($isReview ? 'travel-request-review' : 'travel-request-show', $notification->id)
+                    ? route($isReview ? 'travel-request-review' : 'travel-request-show', [$notification->id, 'from' => 'notifications'])
                     : route($isReview ? 'pp.review.show' : 'pp.review.view', $notification->request_id);
                 $created = $notification->created ? \Carbon\Carbon::createFromTimestamp($notification->created, config('app.timezone')) : $notification->created_at;
             @endphp
