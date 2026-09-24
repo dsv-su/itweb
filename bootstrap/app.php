@@ -11,6 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Redirect even stale form submissions before CSRF, authentication and model binding.
+        $middleware->prependToPriorityList(
+            \Illuminate\Cookie\Middleware\EncryptCookies::class,
+            \App\Http\Middleware\EnsureTravelEnabled::class,
+        );
         $middleware->web(append: [\App\Http\Middleware\CheckLocalization::class]);
         $middleware->alias([
             'auth' => \App\Http\Middleware\Authenticate::class,

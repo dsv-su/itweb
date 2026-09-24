@@ -41,52 +41,59 @@ Route::get('/lang/{lang}', [\App\Http\Controllers\LocalizationController::class,
 | Travel Request
 |--------------------------------------------------------------------------
 */
-// Put the non-localized explicit route first
-Route::get('/travel', [\App\Http\Controllers\TravelRequestController::class, 'create'])
-    ->name('travel-request-create');
+Route::view('/travel-disabled', 'requests.travel.disabled')->name('travel-disabled');
+Route::view('/{lang}/travel-disabled', 'requests.travel.disabled')
+    ->where('lang', $langConstraint)->name('travel-disabled.localized');
 
-// Localized version (MUST constrain lang)
-Route::get('/{lang}/travel', [\App\Http\Controllers\TravelRequestController::class, 'create'])
-    ->where('lang', $langConstraint);
+Route::middleware(\App\Http\Middleware\EnsureTravelEnabled::class)->group(function () use ($langConstraint) {
+    // Put the non-localized explicit route first
+    Route::get('/travel', [\App\Http\Controllers\TravelRequestController::class, 'create'])
+        ->name('travel-request-create');
 
-Route::get('/travel/statistics', \App\Http\Controllers\TravelStatisticsController::class)
-    ->middleware(['auth', 'dsv', 'checklang'])->name('travel-statistics');
-Route::get('/{lang}/travel/statistics', \App\Http\Controllers\TravelStatisticsController::class)
-    ->where('lang', $langConstraint)
-    ->middleware(['auth', 'dsv', 'checklang'])->name('travel-statistics.localized');
+    // Localized version (MUST constrain lang)
+    Route::get('/{lang}/travel', [\App\Http\Controllers\TravelRequestController::class, 'create'])
+        ->where('lang', $langConstraint);
 
-// Show + submit
-Route::get('/travel/show/{travelRequest}', [\App\Http\Controllers\TravelRequestController::class, 'show'])
-    ->name('travel-request-show');
+    Route::get('/travel/statistics', \App\Http\Controllers\TravelStatisticsController::class)
+        ->middleware(['auth', 'dsv', 'checklang'])->name('travel-statistics');
+    Route::get('/{lang}/travel/statistics', \App\Http\Controllers\TravelStatisticsController::class)
+        ->where('lang', $langConstraint)
+        ->middleware(['auth', 'dsv', 'checklang'])->name('travel-statistics.localized');
 
-Route::get('/{lang}/travel/show/{travelRequest}', [\App\Http\Controllers\TravelRequestController::class, 'showLocalized'])
-    ->where('lang', $langConstraint);
+    // Show + submit
+    Route::get('/travel/show/{travelRequest}', [\App\Http\Controllers\TravelRequestController::class, 'show'])
+        ->name('travel-request-show');
 
-Route::post('/travel', [\App\Http\Controllers\TravelRequestController::class, 'submit'])
-    ->name('travel-submit');
+    Route::get('/{lang}/travel/show/{travelRequest}', [\App\Http\Controllers\TravelRequestController::class, 'showLocalized'])
+        ->where('lang', $langConstraint);
 
-Route::match(['get', 'post'], '/travelresume/{tr}', [\App\Http\Controllers\TravelRequestController::class, 'resume'])
-    ->name('travel-request-resume');
+    Route::post('/travel', [\App\Http\Controllers\TravelRequestController::class, 'submit'])
+        ->name('travel-submit');
 
-Route::match(['get', 'post'], '/{lang}/travelresume/{tr}', [\App\Http\Controllers\TravelRequestController::class, 'resumeLocalized'])
-    ->where('lang', $langConstraint);
+    Route::match(['get', 'post'], '/travelresume/{tr}', [\App\Http\Controllers\TravelRequestController::class, 'resume'])
+        ->name('travel-request-resume');
 
-/*
-|--------------------------------------------------------------------------
-| Review
-|--------------------------------------------------------------------------
-*/
-Route::get('/travel/review/{travelRequest}', [\App\Http\Controllers\ReviewController::class, 'show'])
-    ->name('travel-request-review');
+    Route::match(['get', 'post'], '/{lang}/travelresume/{tr}', [\App\Http\Controllers\TravelRequestController::class, 'resumeLocalized'])
+        ->where('lang', $langConstraint);
 
-Route::get('/{lang}/travel/review/{travelRequest}', [\App\Http\Controllers\ReviewController::class, 'showLocalized'])
-    ->where('lang', $langConstraint);
+    /*
+    |--------------------------------------------------------------------------
+    | Review
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/travel/review/{travelRequest}', [\App\Http\Controllers\ReviewController::class, 'show'])
+        ->name('travel-request-review');
 
-Route::post('/review/{travelRequest}', [\App\Http\Controllers\ReviewController::class, 'review'])
-    ->name('review');
+    Route::get('/{lang}/travel/review/{travelRequest}', [\App\Http\Controllers\ReviewController::class, 'showLocalized'])
+        ->where('lang', $langConstraint);
 
-Route::post('/fo_review/{travelRequest}', [\App\Http\Controllers\ReviewController::class, 'fo_review'])
-    ->name('fo_review');
+    Route::post('/review/{travelRequest}', [\App\Http\Controllers\ReviewController::class, 'review'])
+        ->name('review');
+
+    Route::post('/fo_review/{travelRequest}', [\App\Http\Controllers\ReviewController::class, 'fo_review'])
+        ->name('fo_review');
+
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -112,14 +119,18 @@ Route::get('/{lang}/show/{id}', [\App\Http\Controllers\FOController::class, 'sho
     ->middleware('checklang');
 
 Route::get('/travel/completed/{tr}/edit', [\App\Http\Controllers\TravelRequestController::class, 'editCompleted'])
+    ->middleware(\App\Http\Middleware\EnsureTravelEnabled::class)
     ->name('travel-request-edit-completed');
 Route::post('/travel/completed/{tr}', [\App\Http\Controllers\TravelRequestController::class, 'updateCompleted'])
+    ->middleware(\App\Http\Middleware\EnsureTravelEnabled::class)
     ->name('travel-request-update-completed');
 
 Route::get('/viewpdf/{id}', [\App\Http\Controllers\FOController::class, 'pdfview'])
+    ->middleware(\App\Http\Middleware\EnsureTravelEnabled::class)
     ->name('travel-request-pdfview');
 
 Route::get('/travel/pdf/{id}', [\App\Http\Controllers\FOController::class, 'download'])
+    ->middleware(\App\Http\Middleware\EnsureTravelEnabled::class)
     ->name('travel-request-pdf');
 
 Route::get('/settings', [\App\Http\Controllers\FOController::class, 'settings'])
