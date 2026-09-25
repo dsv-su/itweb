@@ -18,6 +18,7 @@ class ProjectProposalHome extends Component
     public $myproposals;
     public $awaiting;
     public $sent;
+    public int $granted = 0;
     public int $myCount;
     public int $allCount;
 
@@ -28,6 +29,7 @@ class ProjectProposalHome extends Component
         $this->my($user);
         $this->awaiting($user);
         $this->sentproposals();
+        $this->grantedproposals();
         $this->myCount = $this->myproposals->count();
         $this->allCount = $this->proposals->count();
     }
@@ -36,6 +38,7 @@ class ProjectProposalHome extends Component
     {
         $user = Auth::user();
         $this->awaiting($user);
+        $this->grantedproposals();
     }
 
     public function my($user)
@@ -64,6 +67,11 @@ class ProjectProposalHome extends Component
 
         //Fetch and count sent proposals
         $this->sent = Dashboard::whereIn('state', $sent_states)->count();
+    }
+
+    public function grantedproposals()
+    {
+        $this->granted = Dashboard::where('state', 'granted')->count();
     }
 
     public function render()

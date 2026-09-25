@@ -24,7 +24,7 @@
 
                 {{-- Toast (informational) --}}
                 <div
-                    class="mb-4 max-w-xs bg-white border border-gray-200 rounded-xl shadow-lg dark:bg-neutral-800 dark:border-neutral-700"
+                    class="mb-4 max-w-xs bg-white border border-susecondary rounded-xl shadow-lg dark:bg-neutral-800 dark:border-susecondary"
                     role="status"
                     aria-live="polite"
                     aria-atomic="true"
@@ -59,11 +59,11 @@
                 <section
                     id="proposal-list"
                     aria-labelledby="proposal-results-title"
-                    class="mb-4 bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden"
+                    class="mb-4 relative overflow-hidden rounded-2xl border border-susecondary bg-white dark:border-susecondary dark:bg-gray-800"
                 >
                     <h2 id="proposal-results-title" class="sr-only">Proposal results</h2>
 
-                    <div class="flex flex-col md:flex-row items-center justify-between gap-3 p-2">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-3">
                         @include('livewire.pp.partials.pp-list')
                     </div>
                 </section>
@@ -73,9 +73,9 @@
     @else
         {{-- Accessible empty state  --}}
         <div class="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5">
-            <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
+            <div class="mx-auto max-w-7xl">
                 <div
-                    class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-neutral-700 rounded-lg p-4"
+                    class="bg-white dark:bg-gray-800 border border-susecondary dark:border-susecondary rounded-lg p-4"
                     role="status"
                     aria-live="polite"
                     aria-atomic="true"

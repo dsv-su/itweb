@@ -30,11 +30,11 @@
             <section
                 id="proposal-list"
                 aria-labelledby="proposal-results-title"
-                class="mb-4 bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden"
+                class="mb-4 relative overflow-hidden rounded-2xl border border-susecondary bg-white dark:border-susecondary dark:bg-gray-800"
             >
                 <h2 id="proposal-results-title" class="sr-only">Proposal results</h2>
 
-                <div class="flex flex-col md:flex-row items-center justify-between gap-3 p-2">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-3">
                     @include('livewire.pp.partials.pp-list')
                 </div>
             </section>

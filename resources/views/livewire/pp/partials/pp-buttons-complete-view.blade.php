@@ -1,21 +1,7 @@
 @if($proposal->allowComplete() && $proposal->dashboard->status != 'resumed')
     <a
         href="{{ route('pp.complete', $proposal->id) }}#proposal-attachments"
-        class="sm:mr-6 inline-flex items-center justify-center
-           w-full sm:w-auto
-           px-2 py-1 sm:px-1.5 sm:py-1.5
-           rounded-md font-semibold text-[0.65rem] sm:text-[0.5rem]
-           uppercase tracking-widest
-           border border-yellow-500 text-yellow-700 bg-yellow-50
-           hover:bg-yellow-500 hover:text-black
-           active:bg-yellow-600
-           focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:ring-offset-2 focus:ring-offset-white
-           disabled:opacity-25 transition ease-in-out duration-150
-           whitespace-nowrap
-           dark:border-yellow-400 dark:text-yellow-300 dark:bg-yellow-950/40
-           dark:hover:bg-yellow-400 dark:hover:text-black
-           dark:active:bg-yellow-500
-           dark:focus:ring-yellow-500 dark:focus:ring-offset-2 dark:focus:ring-offset-slate-900">
+        class="inline-flex min-h-8 items-center justify-center gap-2 rounded-lg border border-blue-800 bg-blue-800 px-2.5 py-1 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-blue-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:border-blue-400 dark:bg-blue-400 dark:text-gray-950 dark:hover:bg-blue-300 dark:focus-visible:ring-offset-gray-800">
         Complete
     </a>
 @endif

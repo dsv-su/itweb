@@ -5,7 +5,7 @@
             this.activeAccordion = (this.activeAccordion === id) ? '' : id
         }
     }"
-    class="relative w-full mx-auto overflow-hidden text-sm font-normal bg-white border border-susecondary divide-y divide-susecondary rounded-md dark:bg-gray-800 dark:text-white"
+    class="relative w-full mx-auto overflow-hidden text-sm font-normal bg-white divide-y divide-susecondary dark:divide-susecondary dark:bg-gray-800 dark:text-white"
 >
     <p class="sr-only" id="accordion-instructions">
         Accordion list. Use Enter or Space to expand a proposal. Press Escape to collapse.
@@ -20,44 +20,29 @@
                     $panelId = 'acc-panel-' . $proposal->id;
                 @endphp
 
-                <div
-                    role="button"
-                    tabindex="0"
-                    id="{{ $btnId }}"
-                    class="flex items-center justify-between w-full p-2 text-left select-none
-                           focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600
-                           dark:focus-visible:ring-blue-300 dark:focus-visible:ring-offset-gray-800"
-                    @click="setActiveAccordion(id)"
-                    @keydown.enter.self.prevent="setActiveAccordion(id)"
-                    @keydown.space.self.prevent="setActiveAccordion(id)"
-                    @keydown.escape.prevent="activeAccordion = ''"
-                    :aria-expanded="activeAccordion === id"
-                    aria-controls="{{ $panelId }}"
-                    aria-describedby="accordion-instructions"
-                >
+                <div class="px-3 py-2.5">
                     <!-- Flex container with responsive adjustments and smaller md sizes -->
                     <div class="flex flex-wrap justify-between items-center w-full min-w-0">
                         <!-- Left side content (Main Researcher and Title) -->
                         <div class="w-full min-w-0 pr-3">
                             <!-- Title of the Proposal -->
-                            <p class="text-sm md:text-base font-semibold text-gray-900 dark:text-white leading-tight">
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white leading-tight">
                                 {{ $proposal->pp['title'] }}
                             </p>
 
                             <!-- Progress and status -->
-                            <div class="mt-2 flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
+                            <div class="mt-1.5 flex flex-col gap-1 md:flex-row md:items-center md:gap-3">
                                 <div class="w-full min-w-0 md:flex-1 md:max-w-3xl">
                                     @nocache('livewire.pp.partials.progress3')
                                 </div>
                                 <div class="ml-auto flex shrink-0 items-center justify-end gap-2">
-                                    @nocache('livewire.pp.partials.pp-buttons-complete-view')
                                     @nocache('livewire.pp.partials.state')
                                 </div>
                             </div>
 
                             <!-- Main Researcher and other details -->
-                            <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5
-                                        text-xs xl:text-sm leading-relaxed text-gray-800 dark:text-neutral-200">
+                            <div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1
+                                        text-xs leading-normal text-gray-800 dark:text-neutral-200">
                                 <span class="inline-flex items-center gap-x-1.5">
                                     <span>
                                         <span class="text-gray-500 dark:text-neutral-400">Main researcher:</span>
@@ -84,23 +69,25 @@
 
                     </div>
 
-                    <svg
-                        class="w-4 h-4 shrink-0 motion-reduce:transition-none transition-transform duration-200 ease-out"
-                        :class="{ 'rotate-180': activeAccordion === id }"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true"
-                        focusable="false"
-                    >
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-
-                    <span class="sr-only" x-text="activeAccordion === id ? 'Collapse details' : 'Expand details'"></span>
+                    <div class="mt-2 flex flex-wrap items-center justify-end gap-2 border-t border-susecondary pt-1.5 dark:border-susecondary">
+                        @nocache('livewire.pp.partials.pp-buttons-complete-view')
+                        <button
+                            type="button"
+                            id="{{ $btnId }}"
+                            class="inline-flex min-h-8 items-center gap-2 rounded-lg border border-susecondary bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 shadow-sm transition-colors hover:border-blue-500 hover:bg-blue-50 hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:border-susecondary dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:focus-visible:ring-offset-gray-800"
+                            @click="setActiveAccordion(id)"
+                            @keydown.escape.prevent="activeAccordion = ''"
+                            :aria-expanded="activeAccordion === id"
+                            aria-controls="{{ $panelId }}"
+                            aria-describedby="accordion-instructions"
+                        >
+                            <span x-text="activeAccordion === id ? 'Hide details' : 'View details'">View details</span>
+                            <span class="sr-only">for {{ $proposal->pp['title'] }}</span>
+                            <svg class="size-4 transition-transform motion-reduce:transition-none" :class="{ 'rotate-180': activeAccordion === id }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <div
@@ -110,7 +97,8 @@
                     x-show="activeAccordion === id"
                     x-collapse
                     x-cloak
-                    class="motion-reduce:transition-none"
+                    @keydown.escape.prevent="activeAccordion = ''; document.getElementById('{{ $btnId }}').focus()"
+                    class="border-t border-susecondary bg-gray-50/70 motion-reduce:transition-none dark:border-susecondary dark:bg-gray-900/40"
                 >
                     <div class="p-4 pt-0 text-gray-800 dark:text-neutral-200">
                         <!-- Proposal Details (Responsive Grid) -->
@@ -258,7 +246,7 @@
                                     @if($proposal->allowEdit())
                                         <a
                                             href="{{ route('pp.edit', $proposal->id) }}"
-                                            class="inline-flex items-center px-2 py-1.5 text-xs font-semibold text-gray-900 bg-transparent border border-gray-900 rounded-md
+                                            class="inline-flex items-center px-2 py-1.5 text-xs font-semibold text-gray-900 bg-transparent border border-susecondary rounded-md
                                                    hover:bg-gray-900 hover:text-white
                                                    focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-700
                                                    dark:border-white dark:text-white dark:hover:bg-gray-700"
@@ -372,7 +360,7 @@
                                     @elseif(in_array((string) $proposal->dashboard?->state, ['complete']) && (count($proposal->files ?? []) > 1))
                                         <span class="bg-blue-100 text-blue-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-blue-700 dark:text-blue-400 border border-blue-500">Processing</span>
                                     @else
-                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">Waiting</span>
+                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-susecondary">Waiting</span>
                                     @endif
                                 </p>
 
@@ -386,13 +374,13 @@
                                     @elseif(in_array((string) $proposal->dashboard?->state, ['fo_returned']))
                                         <span class="bg-yellow-100 text-yellow-800 text-xs font-medium me-1.5 px-2 py-0.5 rounded dark:bg-yellow-700 dark:text-yellow-400 border border-yellow-400">Returned</span>
                                     @elseif(in_array((string) $proposal->dashboard?->state, ['head_returned']))
-                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">Pending</span>
+                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-susecondary">Pending</span>
                                     @elseif(in_array((string) $proposal->dashboard?->state, ['head_approved']))
                                         <span class="bg-blue-100 text-blue-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-blue-700 dark:text-blue-400 border border-blue-500">Processing</span>
                                     @elseif(in_array((string) $proposal->dashboard?->state, ['submitted', 'complete']))
-                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">Waiting</span>
+                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-susecondary">Waiting</span>
                                     @else
-                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">Waiting</span>
+                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-susecondary">Waiting</span>
                                     @endif
                                 </p>
                                 <!-- Final approval -->
@@ -405,13 +393,13 @@
                                     @elseif(in_array((string) $proposal->dashboard?->state, ['final_returned']))
                                         <span class="bg-yellow-100 text-yellow-800 text-xs font-medium me-1.5 px-2 py-0.5 rounded dark:bg-yellow-700 dark:text-yellow-400 border border-yellow-400">Returned</span>
                                     @elseif(in_array((string) $proposal->dashboard?->state, ['head_returned']))
-                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">Pending</span>
+                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-susecondary">Pending</span>
                                     @elseif(in_array((string) $proposal->dashboard?->state, ['fo_approved']))
                                         <span class="bg-blue-100 text-blue-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-blue-700 dark:text-blue-400 border border-blue-500">Processing</span>
                                     @elseif(in_array((string) $proposal->dashboard?->state, ['submitted', 'complete', 'head_approved']))
-                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">Waiting</span>
+                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-susecondary">Waiting</span>
                                     @else
-                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">Waiting</span>
+                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-susecondary">Waiting</span>
                                     @endif
                                 </p>
                                 <!-- Final submission -->
@@ -422,7 +410,7 @@
                                     @elseif(in_array((string) $proposal->dashboard?->state, ['denied']))
                                         <span class="bg-red-100 text-red-800 text-xs font-medium me-1.5 px-2 py-0.5 rounded dark:bg-red-700 dark:text-red-400 border border-red-400">Denied</span>
                                     @else
-                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">
+                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-susecondary">
                                     &nbsp;&nbsp;Not sent&nbsp;&nbsp;
                                 </span>
                                     @endif
@@ -445,7 +433,7 @@
                                     @elseif(in_array((string) $proposal->dashboard?->state, ['denied']))
                                         <span class="bg-red-100 text-red-800 text-xs font-medium me-1.5 px-2 py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400">Denied</span>
                                     @else
-                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-gray-500">Not reported</span>
+                                        <span class="bg-gray-100 text-gray-800 text-xs font-medium me-1.5 px-1 py-0.5 rounded dark:bg-gray-700 dark:text-gray-400 border border-susecondary">Not reported</span>
                                     @endif
                                 </p>
                                 <p class="mt-2 text-xs text-gray-600 dark:text-neutral-400 text-right">
