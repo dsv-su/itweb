@@ -21,11 +21,11 @@
                 <span wire:loading>Updating summary…</span>
             </div>
 
-            <dl class="grid grid-cols-2 gap-x-5 gap-y-4 px-4 py-4 sm:px-5 lg:grid-cols-5">
+            <dl class="grid grid-cols-2 gap-x-5 gap-y-4 px-4 py-4 sm:px-5 {{ $awaiting > 0 ? 'lg:grid-cols-5' : 'lg:grid-cols-4' }}">
                 @foreach([
                     'My proposals' => $myCount,
                     'All proposals' => $allCount,
-                    'Awaiting review' => $awaiting ?? 0,
+                    ...($awaiting > 0 ? ['Awaiting review' => $awaiting] : []),
                     'Sent applications' => $sent ?? 0,
                     'Granted proposals' => $granted,
                 ] as $label => $count)
