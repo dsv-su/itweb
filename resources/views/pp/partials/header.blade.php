@@ -1,15 +1,42 @@
 <nav
+    data-proposal-navigation
     x-data="{
       mobileMenuOpen: false,
       activeMobileMenu: '',
       navigationMenuOpen: false,
       navigationMenu: '',
+      navigationMenuTrigger: null,
+      navigationMenuShow(menu, trigger, focusFirst = false) {
+          this.navigationMenuClearCloseTimeout();
+          if (!focusFirst && this.$refs.navigationDropdown.contains(document.activeElement)) return;
+          this.navigationMenuTrigger = trigger;
+          this.navigationMenu = menu;
+          this.navigationMenuOpen = true;
+          this.navigationMenuReposition(trigger);
+          if (focusFirst) this.$nextTick(() => {
+              document.getElementById(trigger.getAttribute('aria-controls')).querySelector('a').focus();
+          });
+      },
+      navigationMenuTab(event) {
+          const links = [...document.getElementById(this.navigationMenuTrigger.getAttribute('aria-controls')).querySelectorAll('a')];
+          if (event.shiftKey && event.target === links[0]) {
+              event.preventDefault();
+              this.navigationMenuClose(true);
+          } else if (!event.shiftKey && event.target === links[links.length - 1]) {
+              event.preventDefault();
+              const next = this.navigationMenuTrigger.closest('li').nextElementSibling.querySelector('button, a');
+              this.navigationMenuClose();
+              next.focus();
+          }
+      },
       navigationMenuCloseDelay: 200,
       navigationMenuCloseTimeout: null,
       navigationMenuLeave() {
+          this.navigationMenuClearCloseTimeout();
           let that = this;
           this.navigationMenuCloseTimeout = setTimeout(() => {
-              that.navigationMenuClose();
+              if (!that.$refs.navigationDropdown.contains(document.activeElement)
+                  && document.activeElement !== that.navigationMenuTrigger) that.navigationMenuClose();
           }, this.navigationMenuCloseDelay);
       },
       navigationMenuReposition(navElement) {
@@ -22,15 +49,24 @@
       navigationMenuClearCloseTimeout(){
           clearTimeout(this.navigationMenuCloseTimeout);
       },
-      navigationMenuClose(){
+      navigationMenuClose(restoreFocus = false){
+          this.navigationMenuClearCloseTimeout();
+          if (restoreFocus && this.navigationMenuTrigger) this.navigationMenuTrigger.focus();
           this.navigationMenuOpen = false;
           this.navigationMenu = '';
       }
   }"
-    @keydown.escape.prevent="
+    @keydown.escape.window="
       mobileMenuOpen = false;
-      navigationMenuClose();
+      if (navigationMenuOpen) {
+          $event.preventDefault();
+          navigationMenuClose($refs.navigationDropdown.contains(document.activeElement));
+      }
   "
+    @focusout="$nextTick(() => {
+        if (navigationMenuOpen && !$refs.navigationDropdown.contains(document.activeElement)
+            && document.activeElement !== navigationMenuTrigger) navigationMenuClose();
+    })"
     class="relative z-30 w-full bg-white dark:bg-gray-800"
     aria-label="Primary navigation"
 >

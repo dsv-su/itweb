@@ -34,12 +34,13 @@ class CheckLocalization
         }
 
         // CMS content uses the language of its URL; application routes use the
-        // saved preference. A fresh visit to an application route is Swedish.
+        // saved preference. Project proposals default to English on a fresh visit.
         if (!$locale && $request->route()?->getControllerClass() === FrontendController::class) {
             $locale = $normalize(Site::findByUrl($request->url())?->lang());
         }
 
-        $locale ??= $normalize($request->session()->get('locale')) ?? 'sv';
+        $defaultLocale = $request->is('projectproposals', 'projectproposals/*') ? 'en' : 'sv';
+        $locale ??= $normalize($request->session()->get('locale')) ?? $defaultLocale;
         App::setLocale($locale);
         $request->session()->put(['locale' => $locale, 'localisation' => $locale]);
 

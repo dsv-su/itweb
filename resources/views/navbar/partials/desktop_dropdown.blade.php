@@ -5,11 +5,14 @@
      x-transition:leave="transition ease-in duration-100"
      x-transition:leave-start="opacity-100 scale-100"
      x-transition:leave-end="opacity-0 scale-90"
+     @keydown.tab="navigationMenuTab($event)"
+     @focusin="navigationMenuClearCloseTimeout()"
+     @click.outside="if (navigationMenuOpen && !navigationMenuTrigger.contains($event.target)) navigationMenuClose()"
      @mouseover="navigationMenuClearCloseTimeout()" @mouseleave="navigationMenuLeave()"
      class="absolute top-0 pt-3 -translate-x-1/2 translate-y-11 hidden md:block" x-cloak>
-    <div class="flex justify-center w-auto h-auto overflow-hidden bg-white border rounded-md shadow-sm border-neutral-200/70">
+    <div class="flex justify-center w-auto h-auto overflow-hidden bg-white text-gray-900 border rounded-md shadow-sm border-neutral-200/70">
         <!-- Dropdown content for "Navigation" -->
-        <div x-show="navigationMenu == 'getting-started'" class="flex items-stretch justify-center w-full max-w-2xl p-6 gap-x-3">
+        <div id="pp-budget-panel" aria-labelledby="pp-budget-trigger" x-show="navigationMenu == 'getting-started'" class="flex items-stretch justify-center w-full max-w-2xl p-6 gap-x-3">
 
             {{--}}<div class="flex-shrink-0 w-48 rounded pt-28 pb-7 bg-gradient-to-br from-neutral-800 to-black">
                 <div class="relative px-7 space-y-1.5 text-white">
@@ -74,7 +77,7 @@
             </div>
         </div>
         <!-- Dropdown content for "Help Guides" -->
-        <div x-show="navigationMenu == 'learn-more'" class="flex items-stretch justify-center w-full p-6">
+        <div id="pp-help-panel" aria-labelledby="pp-help-trigger" x-show="navigationMenu == 'learn-more'" class="flex items-stretch justify-center w-full p-6">
             <div class="w-72">
                 <a href="{{ route('usermanual') }}" @click="navigationMenuClose()" class="block px-3.5 py-3 text-sm rounded hover:bg-neutral-100">
                     <span class="block mb-1 font-medium text-black">
@@ -83,7 +86,7 @@
                         </svg>
                         User Guide
                     </span>
-                    <span class="block font-light leading-5 opacity-50">Getting started: How to submit a proposal</span>
+                    <span class="block font-light leading-5 text-gray-600">Getting started: How to submit a proposal</span>
                 </a>
                 {{--}}
                 <a href="#" @click="navigationMenuClose()" class="block px-3.5 py-3 text-sm rounded hover:bg-neutral-100">
@@ -97,7 +100,7 @@
                         </svg>
 
                     </span>
-                    <span class="block font-light leading-5 opacity-50">Guide to Financial Procedures</span>
+                    <span class="block font-light leading-5 text-gray-600">Guide to Financial Procedures</span>
                 </a>
                 <a href="#" @click="navigationMenuClose()" class="block px-3.5 py-3 text-sm rounded hover:bg-neutral-100">
                     <span class="block mb-1 font-medium text-black">

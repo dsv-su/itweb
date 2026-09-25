@@ -1,10 +1,16 @@
 <ul class="hidden md:flex items-center justify-center flex-1 p-1 space-x-1 list-none text-neutral-700 group dark:text-white">
     <li>
         <button
-            :class="{ 'bg-neutral-100': navigationMenu=='getting-started', 'hover:bg-neutral-100': navigationMenu!='getting-started' }"
-            @mouseover="navigationMenuOpen=true; navigationMenuReposition($el); navigationMenu='getting-started'"
+            type="button"
+            id="pp-budget-trigger"
+            aria-controls="pp-budget-panel"
+            :aria-expanded="navigationMenuOpen && navigationMenu === 'getting-started'"
+            :class="{ 'bg-neutral-100 dark:bg-gray-700': navigationMenuOpen && navigationMenu === 'getting-started' }"
+            @click="navigationMenuShow('getting-started', $el, true)"
+            @keydown.arrow-down.prevent="navigationMenuShow('getting-started', $el, true)"
+            @mouseenter="navigationMenuShow('getting-started', $el)"
             @mouseleave="navigationMenuLeave()"
-            class="inline-flex items-center justify-center h-10 px-4 py-2 font-medium transition-colors rounded-md hover:text-neutral-900 focus:outline-none">
+            class="inline-flex items-center justify-center h-10 px-4 py-2 font-medium transition-colors rounded-md hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-gray-700 dark:hover:text-white">
             <span>{{__("Budget Templates")}}</span>
             <svg :class="{ '-rotate-180': navigationMenuOpen && navigationMenu=='getting-started' }"
                  class="relative top-[1px] ml-1 h-3 w-3 ease-out duration-300"
@@ -17,10 +23,16 @@
 
         <li>
             <button
-                :class="{ 'bg-neutral-100': navigationMenu=='learn-more', 'hover:bg-neutral-100': navigationMenu!='learn-more' }"
-                @mouseover="navigationMenuOpen=true; navigationMenuReposition($el); navigationMenu='learn-more'"
+                type="button"
+            id="pp-help-trigger"
+            aria-controls="pp-help-panel"
+            :aria-expanded="navigationMenuOpen && navigationMenu === 'learn-more'"
+            :class="{ 'bg-neutral-100 dark:bg-gray-700': navigationMenuOpen && navigationMenu === 'learn-more' }"
+            @click="navigationMenuShow('learn-more', $el, true)"
+            @keydown.arrow-down.prevent="navigationMenuShow('learn-more', $el, true)"
+                @mouseenter="navigationMenuShow('learn-more', $el)"
                 @mouseleave="navigationMenuLeave()"
-                class="inline-flex items-center justify-center h-10 px-4 py-2 font-medium transition-colors rounded-md hover:text-neutral-900 focus:outline-none">
+                class="inline-flex items-center justify-center h-10 px-4 py-2 font-medium transition-colors rounded-md hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-gray-700 dark:hover:text-white">
                 <span>{{__("Help Guides")}}</span>
                 <svg :class="{ '-rotate-180': navigationMenuOpen && navigationMenu=='learn-more' }"
                      class="relative top-[1px] ml-1 h-3 w-3 ease-out duration-300"
@@ -33,7 +45,7 @@
 
     <li>
         <a href="{{route('pp.stats.committed')}}" class="inline-flex items-center justify-center h-10 px-4 py-2 font-medium transition-colors rounded-md hover:text-neutral-900 dark:hover:text-gray-200">
-            <svg class="inline shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+            <svg aria-hidden="true" class="inline shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
@@ -47,7 +59,7 @@
             bg-suprimary text-white shadow-sm
             hover:bg-blue-700
             focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2
-            dark:bg-blue-500 dark:hover:bg-blue-400 dark:text-white
+            dark:bg-blue-700 dark:hover:bg-blue-800 dark:text-white
             dark:focus-visible:ring-blue-400 dark:focus-visible:ring-offset-neutral-900">
             {{ __("Create New Proposal") }}
         </a>

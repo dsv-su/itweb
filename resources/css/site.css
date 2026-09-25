@@ -284,3 +284,15 @@
 .dark #fo-settings :is(a, button, input, select, textarea):focus-visible {
     outline-color: var(--color-blue-300);
 }
+
+/* Proposal navigation focus stays visible on both header themes and white panels. */
+[data-proposal-navigation] :is(a, button):focus-visible {
+    outline: 2px solid var(--color-blue-700);
+    outline-offset: 2px;
+}
+.dark [data-proposal-navigation] :is(a, button):focus-visible {
+    outline-color: var(--color-blue-300);
+}
+[data-proposal-navigation] [x-ref="navigationDropdown"] a:focus-visible {
+    outline-color: var(--color-blue-700);
+}
