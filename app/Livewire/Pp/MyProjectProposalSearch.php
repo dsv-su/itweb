@@ -31,8 +31,8 @@ class MyProjectProposalSearch extends Component
     private function proposalStateGroups(): array
     {
         return [
-            'awaiting' => ['submitted', 'complete'],
-            'processing' => ['head_approved', 'fo_approved'],
+            'awaiting' => ['pending', 'submitted'],
+            'processing' => ['complete', 'head_approved', 'fo_approved'],
             'returned' => ['head_returned', 'fo_returned', 'final_returned'],
             'approved' => ['final_approved', 'sent'],
             'granted' => ['granted'],

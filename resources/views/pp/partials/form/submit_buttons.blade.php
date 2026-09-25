@@ -5,7 +5,7 @@
               hover:bg-red-600 hover:text-white focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none
               dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300
               dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
-            {{ __("Cancel") }}
+            Cancel
         </a>
 
         @if(in_array($type, ['preapproval', 'saved']))
@@ -17,7 +17,7 @@
                        text-green-700 hover:text-white shadow-sm focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none
                        dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300
                        dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
-                {{ __("Save") }}
+                Save
             </button>
         @endif
 
@@ -29,21 +29,21 @@
                    dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300
                    dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
             @if($type == 'edit')
-                {{ __("Edit proposal") }}
+                Edit proposal
             @elseif($type == 'preapproval')
-                {{ __("Request approval") }}
+                Request approval
             @elseif($type == 'complete')
-                {{ __("Submit complete proposal") }}
+                Submit complete proposal
             @elseif($type == 'resume')
-                {{ __("Resubmit updated proposal") }}
+                Resubmit updated proposal
             @elseif($type == 'sent')
-                {{ __("Report Sent") }}
+                Report Sent
             @elseif($type == 'granted')
-                {{ __("Report granted") }}
+                Report granted
             @elseif($type == 'rejected')
-                {{ __("Report rejected") }}
+                Report rejected
             @else
-                {{ __("Submit proposal") }}
+                Submit proposal
             @endif
         </button>
     </div>
@@ -55,7 +55,7 @@
                             hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none
                             dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300
                             dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
-            {{__("Return")}}
+            Return
         </a>
     </div>
 @endif
