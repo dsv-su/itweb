@@ -28,14 +28,14 @@
         @php
             // For each step, if it's less than or equal to the current step, mark as "completed" (blue)
             $isCompleted = $i <= $currentStep;
-            $bgColor = $isCompleted ? 'bg-blue-500' : 'bg-gray-100';
+            $bgColor = $isCompleted ? 'bg-blue-700' : 'bg-gray-100';
             $darkBgColor = $isCompleted ? 'dark:bg-blue-600' : 'dark:bg-neutral-700';
             $textColor = $isCompleted ? 'text-white' : 'text-gray-800';
-            $describeText = $isCompleted ? 'text-blue-500' : 'text-gray-800';
+            $describeText = $isCompleted ? 'text-blue-700' : 'text-gray-800';
         @endphp
         <li class="md:shrink md:basis-0 flex-1 group flex gap-x-2 md:block">
             <div class="min-w-7 min-h-7 flex flex-col items-center md:w-full md:inline-flex md:flex-wrap md:flex-row text-xs align-middle">
-                <span class="size-7 flex justify-center items-center shrink-0 {{ $bgColor }} font-medium {{ $textColor }} rounded-full {{ $darkBgColor }} {{ $isCompleted ? 'dark:text-white' : '' }}">
+                <span class="size-7 flex justify-center items-center shrink-0 {{ $bgColor }} font-medium {{ $textColor }} rounded-full {{ $darkBgColor }} {{ $isCompleted ? 'dark:text-white' : 'dark:text-gray-200' }}">
                     {{ $i }}
                 </span>
                 <div class="mt-2 w-px h-full md:mt-0 md:ms-2 md:w-full md:h-px md:flex-1 bg-gray-200 group-last:hidden dark:bg-neutral-700"></div>

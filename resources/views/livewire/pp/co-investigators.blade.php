@@ -24,19 +24,19 @@
                         {{$presenter['name'] ?? 'Name is missing'}}
                         @if($presenter['role'] === 'DSV')
                             <span class="inline-flex w-auto items-center gap-x-1.5 py-1 px-1.5 rounded text-xs font-medium
-                                 bg-suprimary text-white dark:bg-blue-800/30 dark:text-blue-500">
+                                 bg-suprimary text-white dark:bg-blue-800/30 dark:text-blue-300">
                             {{$presenter['role']}}</span>
                         @elseif($presenter['role'] === 'SU')
                             <span class="inline-flex w-auto items-center gap-x-1.5 py-1 px-1.5 rounded text-xs font-medium
-                                 bg-purple-600 text-white dark:bg-blue-800/30 dark:text-blue-500">
+                                 bg-purple-600 text-white dark:bg-blue-800/30 dark:text-blue-300">
                                 SU</span>
                         @elseif($presenter['role'] === 'Student')
                             <span class="inline-flex w-auto items-center gap-x-1.5 py-1 px-1.5 rounded text-xs font-medium
-                                 bg-green-600 text-white dark:bg-blue-800/30 dark:text-blue-500">
+                                 bg-green-700 text-white dark:bg-blue-800/30 dark:text-blue-300">
                                 {{$presenter['role']}} </span>
                         @else
                             <span class="inline-flex w-auto items-center gap-x-1.5 py-1 px-1.5 rounded text-xs font-medium
-                                 bg-gray-600 text-white dark:bg-blue-800/30 dark:text-blue-500">
+                                 bg-gray-600 text-white dark:bg-blue-800/30 dark:text-blue-300">
                                 External</span>
                         @endif
                     </div>
@@ -112,7 +112,7 @@
                                             <div class="flex flex-wrap items-center gap-2 leading-tight">
                                                 @if($sukatUser->role === 'External')
                                                     <span class="inline-flex items-center gap-x-1.5 py-1 px-1.5 rounded-md text-xs font-medium
-                                                                bg-gray-50 text-slate-900 dark:bg-blue-800/30 dark:text-blue-500">
+                                                                bg-gray-50 text-slate-900 dark:bg-blue-800/30 dark:text-blue-300">
                                                         {{ __('SU: ') }}
                                                     </span>
                                                 @endif
@@ -124,29 +124,29 @@
                                                 @php $role = $sukatUser->role ?? 'Other'; @endphp
                                                 @if($role === 'DSV')
                                                     <span class="inline-flex items-center gap-x-1.5 py-1 px-1.5 rounded-md text-xs font-medium
-                                                                bg-suprimary text-white dark:bg-blue-800/30 dark:text-blue-500">
+                                                                bg-suprimary text-white dark:bg-blue-800/30 dark:text-blue-300">
                                                         {{ $role }}
                                                     </span>
                                                 @elseif($role === 'SU')
                                                     <span class="inline-flex items-center gap-x-1.5 py-1 px-1.5 rounded-md text-xs font-medium
-                                                                bg-purple-500 text-white dark:bg-blue-800/30 dark:text-blue-500">
+                                                                bg-purple-700 text-white dark:bg-blue-800/30 dark:text-blue-300">
                                                         {{ $role }}
                                                     </span>
                                                 @elseif($role === 'Student')
                                                     <span class="inline-flex items-center gap-x-1.5 py-1 px-1.5 rounded-md text-xs font-medium
-                                                                bg-green-500 text-white dark:bg-blue-800/30 dark:text-blue-500">
+                                                                bg-green-700 text-white dark:bg-blue-800/30 dark:text-blue-300">
                                                         {{ $role }}
                                                     </span>
                                                 @else
                                                     <span class="inline-flex items-center gap-x-1.5 py-1 px-1.5 rounded-md text-xs font-medium
-                                                                bg-gray-200 text-gray-600 dark:bg-blue-800/30 dark:text-blue-500">
+                                                                bg-gray-200 text-gray-600 dark:bg-blue-800/30 dark:text-blue-300">
                                                         External
                                                     </span>
                                                 @endif
                                             </div>
 
                                             {{-- line 2: email --}}
-                                            <div class="text-xs text-slate-500 dark:text-slate-400 mt-1 truncate">
+                                            <div class="text-xs text-slate-600 dark:text-slate-300 mt-1 truncate">
                                                 {{ $sukatUser->email }}
                                             </div>
                                         </div>
@@ -187,7 +187,7 @@
 
     <button wire:click="addExternal"
             class="inline mt-2 py-2 px-2 inline-flex items-center gap-x-1 text-xs font-medium rounded-lg border border-blue-600 text-blue-600
-          hover:border-blue-500 hover:text-blue-500 focus:outline-none focus:border-blue-500 focus:text-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-500 dark:hover:text-blue-400 dark:hover:border-blue-400"
+          hover:border-blue-500 hover:text-blue-700 focus:outline-none focus:border-blue-500 focus:text-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-300 dark:hover:text-blue-400 dark:hover:border-blue-400"
             type="button">
         Add external co-investigator+
     </button>

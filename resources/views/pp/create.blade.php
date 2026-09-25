@@ -25,7 +25,7 @@
             @endif
             {{--}}
 
-            <form method="post" action="{{route('pp.submit')}}">
+            <form class="pp-form" method="post" action="{{route('pp.submit')}}">
                 @csrf
 
                 @if(in_array($type, ['preapproval', 'saved', 'complete', 'review', 'edit', 'resume', 'sent', 'granted', 'rejected']))
@@ -40,7 +40,7 @@
                     @include('pp.partials.form.title')
 
                     <!--Research subject-->
-                    <div class="w-full sm:col-span-2 py-3 flex items-center text-xs text-blue-500 uppercase
+                    <div class="w-full sm:col-span-2 py-3 flex items-center text-xs text-blue-700 uppercase
                                 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6
                                 dark:text-blue-400 dark:before:border-neutral-600 dark:after:border-neutral-600">
                         Research subject
@@ -51,7 +51,7 @@
                     <!-- Outline (objective)-->
                     @include('pp.partials.form.objective')
 
-                    <div class="w-full sm:col-span-2 py-3 flex items-center text-xs text-blue-500 uppercase
+                    <div class="w-full sm:col-span-2 py-3 flex items-center text-xs text-blue-700 uppercase
                                 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6
                                 dark:text-blue-400 dark:before:border-neutral-600 dark:after:border-neutral-600">
                         Research collaborators
@@ -70,7 +70,7 @@
                     @endif
 
                     <!-- Project organization -->
-                    <div class="w-full sm:col-span-2 py-3 flex items-center text-xs text-blue-500 uppercase
+                    <div class="w-full sm:col-span-2 py-3 flex items-center text-xs text-blue-700 uppercase
                                 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6
                                 dark:text-blue-400 dark:before:border-neutral-600 dark:after:border-neutral-600">
                         Project organization
@@ -116,7 +116,7 @@
 
                     <!-- Unit Head -->
                     @if(in_array($type, ['preapproval', 'complete', 'saved', 'edit', 'review', 'view', 'resume', 'sent', 'granted']))
-                        <div class="w-full sm:col-span-2 py-3 flex items-center text-xs text-blue-500 uppercase
+                        <div class="w-full sm:col-span-2 py-3 flex items-center text-xs text-blue-700 uppercase
                                 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6
                                 dark:text-blue-400 dark:before:border-neutral-600 dark:after:border-neutral-600">
                             Unit Head
@@ -143,7 +143,7 @@
 
                     <!-- Project budget -->
                     @if(in_array($type, ['preapproval', 'complete', 'saved', 'review', 'edit', 'resume', 'view', 'sent', 'granted']))
-                        <div id="project_budget" class="w-full sm:col-span-2 py-3 flex items-center text-xs text-blue-500 uppercase
+                        <div id="project_budget" class="w-full sm:col-span-2 py-3 flex items-center text-xs text-blue-700 uppercase
                                     before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6
                                     dark:text-blue-400 dark:before:border-neutral-600 dark:after:border-neutral-600">
                             Project budget
@@ -156,13 +156,13 @@
                         @include('pp.partials.form.budget_dsv')
 
                         <!-- Flashmessage for review update -->
-                        <div class="w-full sm:col-span-2 flex items-center text-xs text-blue-500 uppercase
+                        <div class="w-full sm:col-span-2 flex items-center text-xs text-blue-700 uppercase
                         before:flex-1 after:flex-1 after:ms-6
                         dark:text-blue-400 dark:before:border-neutral-600 dark:after:border-neutral-600">
                             @include('pp.partials.flashmessage')
                         </div>
 
-                        <div class="w-full sm:col-span-2 py-3 flex items-center text-xs text-blue-500 uppercase
+                        <div class="w-full sm:col-span-2 py-3 flex items-center text-xs text-blue-700 uppercase
                                 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6
                                 dark:text-blue-400 dark:before:border-neutral-600 dark:after:border-neutral-600">
                             CO financing
@@ -195,7 +195,7 @@
                     @endif
 
                     <!-- Project dates -->
-                    <div class="w-full sm:col-span-2 py-3 flex items-center text-xs text-blue-500 uppercase
+                    <div class="w-full sm:col-span-2 py-3 flex items-center text-xs text-blue-700 uppercase
                                 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6
                                 dark:text-blue-400 dark:before:border-neutral-600 dark:after:border-neutral-600">
                         Project dates
@@ -213,7 +213,7 @@
                     @include('pp.partials.form.duration')
 
                     <!-- Comments -->
-                    <div class="w-full sm:col-span-2 py-3 flex items-center text-xs text-blue-500 uppercase
+                    <div class="w-full sm:col-span-2 py-3 flex items-center text-xs text-blue-700 uppercase
                                 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6
                                 dark:text-blue-400 dark:before:border-neutral-600 dark:after:border-neutral-600">
                         Comments

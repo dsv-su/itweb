@@ -60,6 +60,34 @@
 
 /* Mobile submenu styling */
 
+/* Keep editable proposal fields distinct from read-only fields. */
+.pp-form :is(input, textarea, select).bg-gray-50:not([readonly]):enabled,
+.pp-form button[data-proposal-select]:enabled {
+    @apply bg-white dark:bg-gray-900;
+}
+
+/* Proposal controls need visible boundaries, placeholders, and keyboard focus. */
+.pp-form :is(input, textarea, select, button[data-proposal-select]):not(.border-red-500):not(.border-red-600) {
+    border-color: var(--color-gray-500);
+}
+.dark .pp-form :is(input, textarea, select, button[data-proposal-select]):not(.border-red-500):not(.border-red-600) {
+    border-color: var(--color-gray-400);
+}
+.pp-form :is(input, textarea)::placeholder {
+    color: var(--color-gray-600);
+    opacity: 1;
+}
+.dark .pp-form :is(input, textarea)::placeholder {
+    color: var(--color-gray-300);
+}
+.pp-form :focus-visible {
+    outline: 2px solid var(--color-blue-700);
+    outline-offset: 2px;
+}
+.dark .pp-form :focus-visible {
+    outline-color: var(--color-blue-300);
+}
+
 *, ::after, ::before {
     scroll-behavior: smooth;
 }

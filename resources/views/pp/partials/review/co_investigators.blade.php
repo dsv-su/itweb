@@ -19,19 +19,19 @@
 
                 @if(data_get($proposal, "pp.co_investigator_role.$loop->index") === 'DSV')
                     <span class="inline-flex w-auto items-center gap-x-1.5 py-1 px-1.5 rounded text-xs font-medium
-                                 bg-suprimary text-white dark:bg-blue-800/30 dark:text-blue-500">
+                                 bg-suprimary text-white dark:bg-blue-800/30 dark:text-blue-300">
                             {{$proposal['pp']['co_investigator_role'][$loop->index]}}</span>
                 @elseif(data_get($proposal, "pp.co_investigator_role.$loop->index") === 'SU')
                     <span class="inline-flex w-auto items-center gap-x-1.5 py-1 px-1.5 rounded text-xs font-medium
-                                 bg-purple-600 text-white dark:bg-blue-800/30 dark:text-blue-500">
+                                 bg-purple-600 text-white dark:bg-blue-800/30 dark:text-blue-300">
                                 SU</span>
                 @elseif(data_get($proposal, "pp.co_investigator_role.$loop->index") === 'Student')
                     <span class="inline-flex w-auto items-center gap-x-1.5 py-1 px-1.5 rounded text-xs font-medium
-                                 bg-green-600 text-white dark:bg-blue-800/30 dark:text-blue-500">
+                                 bg-green-700 text-white dark:bg-blue-800/30 dark:text-blue-300">
                                 {{$proposal['pp']['co_investigator_role'][$loop->index]}} </span>
                 @else
                     <span class="inline-flex w-auto items-center gap-x-1.5 py-1 px-1.5 rounded text-xs font-medium
-                                 bg-gray-600 text-white dark:bg-blue-800/30 dark:text-blue-500">
+                                 bg-gray-600 text-white dark:bg-blue-800/30 dark:text-blue-300">
                                 External</span>
                 @endif
 

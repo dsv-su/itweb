@@ -34,7 +34,7 @@
                         {{count($selectedUnitHeads)}}
                         <button type="button"
                                 class="remove-unithead-button py-1 px-2 text-xs font-medium rounded-lg border border-red-600 text-red-600
-                                hover:border-red-500 hover:text-red-500 dark:border-red-500 dark:text-red-500">
+                                hover:border-red-500 hover:text-red-700 dark:border-red-500 dark:text-red-400 dark:hover:text-red-300">
                             Remove
                         </button>
 
@@ -52,7 +52,7 @@
                     </select>
 
                     <button type="button"
-                            class="remove-unithead-button py-1 px-2 text-xs font-medium rounded-lg border border-red-600 text-red-600 hover:border-red-500 hover:text-red-500 dark:border-red-500 dark:text-red-500">
+                            class="remove-unithead-button py-1 px-2 text-xs font-medium rounded-lg border border-red-600 text-red-600 hover:border-red-500 hover:text-red-700 dark:border-red-500 dark:text-red-400 dark:hover:text-red-300">
                         Remove
                     </button>
 
@@ -75,7 +75,7 @@
             <label for="unit_head" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 {{ __("Add a Unit Head for approval") }}
                 <button id="add-unithead-button"
-                        class="inline py-1 px-2 inline-flex items-center gap-x-1 text-xs font-medium rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 focus:outline-none focus:border-blue-500 focus:text-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-500 dark:hover:text-blue-400 dark:hover:border-blue-400"
+                        class="inline py-1 px-2 inline-flex items-center gap-x-1 text-xs font-medium rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-700 focus:outline-none focus:border-blue-500 focus:text-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-300 dark:hover:text-blue-400 dark:hover:border-blue-400"
                         type="button">
                     Add+
                 </button>

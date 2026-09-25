@@ -11,7 +11,7 @@
         </button>
     </label>
     <div class="w-full" x-data="{open:false, selectedOrganization: null}" x-on:click.away="open=false">
-        <button type="button" class="font-mono bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 p-2.5 rounded-lg shadow-inner w-full flex justify-between items-center text-sm focus:outline-none" x-on:click="open=!open">
+        <button type="button" data-proposal-select class="font-mono bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 p-2.5 rounded-lg shadow-inner w-full flex justify-between items-center text-sm focus:outline-none" x-on:click="open=!open">
             <span class="float-left" x-text="selectedOrganization ?? '{{ $organization->name ?? __("Select Funding Agency") }}'"></span>
             <svg class="h-4 transform float-right fill-current text-black dark:text-gray-200" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 129 129" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 129 129" :class="{'rotate-180': open}">
                 <g>
@@ -19,14 +19,14 @@
                 </g>
             </svg>
         </button>
-        <div class="absolute z-10 max-w-[640px] rounded shadow-md bg-white" x-show="open" x-cloak>
+        <div class="absolute z-10 max-w-[640px] rounded shadow-md bg-white dark:bg-gray-900" x-show="open" x-cloak>
             <ul class="list-reset p-2 max-h-64 overflow-y-auto text-sm">
                 <li>
-                    <input wire:model.live="search" wire:keydown.enter="save" @keydown.enter="open = false; $event.target.blur()" type="text" class="border rounded h-10 w-full p-2">
+                    <input wire:model.live="search" wire:keydown.enter="save" @keydown.enter="open = false; $event.target.blur()" type="text" class="border rounded h-10 w-full p-2 bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
                 </li>
                 @forelse ($options as $item)
                     <li class="" wire:click="select({{$item->id}})"  x-on:click="open=false; selectedOrganization='{{$item->name}}'" id="Organization-{{$item->id}}" @keydown.enter="open=false; selectedOrganization='{{$item->name}}'; $event.target.blur()">
-                        <p class="p-2 w-full text-black hover:bg-gray-300 flex justify-between items-center cursor-pointer @if($organization->id == $item->id) bg-gray-200 @endif">
+                        <p class="p-2 w-full text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700 flex justify-between items-center cursor-pointer @if($organization->id == $item->id) bg-gray-200 dark:bg-gray-700 @endif">
                             <span>{{$item->name}}</span>
                             @if ($organization->id == $item->id)
                                 <svg class="float-right" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M6.61 11.89L3.5 8.78 2.44 9.84 6.61 14l8.95-8.95L14.5 4z"/>
@@ -36,7 +36,7 @@
                     </li>
                 @empty
                     <li x-on:click="open=false" id="no-Country">
-                        <p class="p-2 block text-red-800 hover:bg-red-200 cursor-pointer" value="0">{{__('No Organizations found')}}</p>
+                        <p class="p-2 block text-red-800 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-950 cursor-pointer" value="0">{{__('No Organizations found')}}</p>
                     </li>
                 @endforelse
             </ul>
