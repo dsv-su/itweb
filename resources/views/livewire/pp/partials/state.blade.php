@@ -93,5 +93,5 @@
          rounded
          border border-current
          whitespace-nowrap">
-  {{ $state }}
+    {{ $state }}
 </span>

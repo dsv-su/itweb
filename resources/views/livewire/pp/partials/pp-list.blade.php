@@ -20,83 +20,72 @@
                     $panelId = 'acc-panel-' . $proposal->id;
                 @endphp
 
-                <button
-                    type="button"
+                <div
+                    role="button"
+                    tabindex="0"
                     id="{{ $btnId }}"
                     class="flex items-center justify-between w-full p-2 text-left select-none
                            focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600
                            dark:focus-visible:ring-blue-300 dark:focus-visible:ring-offset-gray-800"
                     @click="setActiveAccordion(id)"
-                    @keydown.enter.prevent="setActiveAccordion(id)"
-                    @keydown.space.prevent="setActiveAccordion(id)"
+                    @keydown.enter.self.prevent="setActiveAccordion(id)"
+                    @keydown.space.self.prevent="setActiveAccordion(id)"
                     @keydown.escape.prevent="activeAccordion = ''"
                     :aria-expanded="activeAccordion === id"
                     aria-controls="{{ $panelId }}"
                     aria-describedby="accordion-instructions"
                 >
                     <!-- Flex container with responsive adjustments and smaller md sizes -->
-                    <div class="flex flex-wrap justify-between items-center w-full">
+                    <div class="flex flex-wrap justify-between items-center w-full min-w-0">
                         <!-- Left side content (Main Researcher and Title) -->
-                        <div class="w-full md:w-auto mb-2 md:mb-0">
+                        <div class="w-full min-w-0 pr-3">
                             <!-- Title of the Proposal -->
                             <p class="text-sm md:text-base font-semibold text-gray-900 dark:text-white leading-tight">
                                 {{ $proposal->pp['title'] }}
                             </p>
 
-                            <!-- Progress -->
-                            @nocache('livewire.pp.partials.progress3')
-                            <!-- End Progress -->
+                            <!-- Progress and status -->
+                            <div class="mt-2 flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
+                                <div class="w-full min-w-0 md:flex-1 md:max-w-3xl">
+                                    @nocache('livewire.pp.partials.progress3')
+                                </div>
+                                <div class="ml-auto flex shrink-0 items-center justify-end gap-2">
+                                    @nocache('livewire.pp.partials.pp-buttons-complete-view')
+                                    @nocache('livewire.pp.partials.state')
+                                </div>
+                            </div>
 
                             <!-- Main Researcher and other details -->
-                            <div class="mt-1 text-sm font-medium text-gray-800 dark:text-neutral-200 tracking-wide
-                                        flex flex-col sm:flex-row sm:flex-wrap sm:items-center
-                                        gap-y-1 sm:gap-y-0 sm:gap-x-2">
-                                <span class="font-medium">
-                                    <span class="font-medium">Main researcher:</span>
-                                    <span class="font-semibold">{{ $proposal->pp['principal_investigator'] }}</span>
+                            <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5
+                                        text-xs xl:text-sm leading-relaxed text-gray-800 dark:text-neutral-200">
+                                <span class="inline-flex items-center gap-x-1.5">
+                                    <span>
+                                        <span class="text-gray-500 dark:text-neutral-400">Main researcher:</span>
+                                        <span class="font-semibold">{{ $proposal->pp['principal_investigator'] }}</span>
+                                    </span>
                                 </span>
 
-                                <span class="hidden sm:inline text-gray-400" aria-hidden="true">|</span>
-
-                                <span class="font-medium">
-                                    <span class="font-medium">Submission deadline:</span>
+                                <span class="inline-flex flex-wrap items-baseline gap-x-1">
+                                    <span class="text-gray-500 dark:text-neutral-400">Submission deadline:</span>
                                     <span class="font-semibold">{{ $proposal->pp['submission_deadline'] ?? '' }}</span>
                                 </span>
 
-                                <span class="hidden sm:inline text-gray-400" aria-hidden="true">|</span>
-
-                                <span class="font-medium">
-                                    <span class="font-medium">Funding organization:</span>
+                                <span class="inline-flex flex-wrap items-baseline gap-x-1">
+                                    <span class="text-gray-500 dark:text-neutral-400">Funding organization:</span>
                                     <span class="font-semibold">{{ Str::limit($proposal->pp['funding_organization'], 30) ?? 'N/A' }}</span>
                                 </span>
 
-                                <span class="hidden sm:inline text-gray-400" aria-hidden="true">|</span>
-
-                                <span class="font-medium flex items-center gap-x-1">
-                                    <span class="font-medium">Economy:</span>
+                                <span class="inline-flex items-center gap-x-1">
+                                    <span class="text-gray-500 dark:text-neutral-400">Economy:</span>
                                     <livewire:pp.fo.assign :proposal="$proposal" :wire:key="$proposal->id"/>
                                 </span>
                             </div>
                         </div>
 
-                        <!-- Right side (State label) -->
-                        <div class="w-full md:w-auto shrink-0 ml-auto">
-                            <!-- Complete/View buttons -->
-                            @nocache('livewire.pp.partials.pp-buttons-complete-view')
-
-                            <!-- Stage 1-->
-                            @nocache('livewire.pp.partials.state')
-
-                            <!-- Stage 2 -->
-                            {{-- @nocache('livewire.pp.partials.stage2_state') --}}
-
-                            <!-- Stage 3 -->
-                            {{-- @nocache('livewire.pp.partials.stage3_state') --}}
-                        </div>
                     </div>
 
                     <svg
-                        class="w-4 h-4 motion-reduce:transition-none transition-transform duration-200 ease-out"
+                        class="w-4 h-4 shrink-0 motion-reduce:transition-none transition-transform duration-200 ease-out"
                         :class="{ 'rotate-180': activeAccordion === id }"
                         viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +101,7 @@
                     </svg>
 
                     <span class="sr-only" x-text="activeAccordion === id ? 'Collapse details' : 'Expand details'"></span>
-                </button>
+                </div>
 
                 <div
                     id="{{ $panelId }}"

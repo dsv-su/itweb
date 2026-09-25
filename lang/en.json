@@ -56,5 +56,13 @@
     "Daily allowances": "Daily allowances",
     "Conference fees": "Conference fees",
     "Other costs": "Other costs",
-    "Unspecified": "Unspecified"
+    "Unspecified": "Unspecified",
+    "Switch FO": "Switch FO",
+    "Financial officer": "Financial officer",
+    "Choose a financial officer": "Choose a financial officer",
+    "Financial officer updated.": "Financial officer updated.",
+    "Financial officer unchanged.": "Financial officer unchanged.",
+    "Unassigned": "Unassigned",
+    "Save": "Save",
+    "Cancel": "Cancel"
 }

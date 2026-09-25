@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Dashboard;
 use App\Models\ProjectProposal;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Statamic\View\View as StatamicView;
-use Workflow\WorkflowStub;
+use App\Services\Proposal\AdminProposalWorkflow;
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -17,12 +18,33 @@ class AdminController extends Controller
         $this->middleware('helpdesk');
     }
 
-    public function pp(): StatamicView
+    public function pp(Request $request): StatamicView
     {
+        $validated = $request->validate(['search' => ['nullable', 'string', 'max:200']]);
+        $search = trim($validated['search'] ?? '');
+
         $viewData = [
             'proposals' => ProjectProposal::query()
+                ->with(['dashboard', 'submitter'])
                 ->where('status_stage3', '!=', 'pending')
-                ->paginate(10),
+                ->when($search !== '', function ($query) use ($search) {
+                    $query->where(function ($query) use ($search) {
+                        $term = '%'.$search.'%';
+                        $query->where('name', 'like', $term)
+                            ->orWhere('id', 'like', $term)
+                            ->orWhere('pp->principal_investigator', 'like', $term)
+                            ->orWhere('pp->research_area', 'like', $term)
+                            ->orWhere('pp->funding_organization', 'like', $term)
+                            ->orWhereHas('submitter', fn ($query) => $query->where('name', 'like', $term));
+                    });
+                })
+                ->orderByDesc('created')
+                ->orderBy('id')
+                ->paginate(10)
+                ->appends(['search' => $search]),
+            'search' => $search,
+            'proposalStates' => AdminProposalWorkflow::STATES,
+            'resumeStages' => AdminProposalWorkflow::RESUME_STAGES,
             'breadcrumb' => 'Admin',
         ];
 
@@ -32,24 +54,34 @@ class AdminController extends Controller
             ->with($viewData);
     }
 
-    public function pp_delete(ProjectProposal $proposal): RedirectResponse
+    public function endProposalWorkflow(Request $request, ProjectProposal $proposal, AdminProposalWorkflow $workflow): RedirectResponse
     {
-        //$proposal = ProjectProposal::findOrFail($id);
+        $workflow->end($proposal, (string) $request->user()->getAuthIdentifier());
 
-        $dashboard = Dashboard::where('request_id', $proposal->id)->first();
+        return redirect()->back()->with('success', 'Proposal workflow ended. Its state is unchanged and reminders are disabled.');
+    }
 
-        // If you have an "archived" column, prefer that.
-        // Adjust these fields to match your actual schema.
-        $proposal->status_stage3 = 'archived';
-        $proposal->save();
+    public function resumeProposalWorkflow(Request $request, ProjectProposal $proposal, AdminProposalWorkflow $workflow): RedirectResponse
+    {
+        $validated = $request->validate([
+            'resume_stage' => ['required', 'string', Rule::in(array_keys(AdminProposalWorkflow::RESUME_STAGES))],
+            'workflow_id' => ['present', 'nullable', 'integer', 'min:1'],
+        ]);
+        $workflow->resume(
+            $proposal,
+            (string) $request->user()->getAuthIdentifier(),
+            $validated['resume_stage'],
+            isset($validated['workflow_id']) ? (int) $validated['workflow_id'] : null,
+        );
 
-        if ($dashboard && $dashboard->workflow_id) {
-            //TODO
-            //$workflow = WorkflowStub::load($dashboard->workflow_id);
-            dd('Work in progress');
-        }
+        return redirect()->back()->with('success', 'Proposal workflow resumed for '.AdminProposalWorkflow::RESUME_STAGES[$validated['resume_stage']].'. Reminders are enabled; required files are checked before review continues.');
+    }
 
-        return redirect()->back()->with('success', 'Your Project proposal has successfully been archived!');
+    public function setProposalState(Request $request, ProjectProposal $proposal, AdminProposalWorkflow $workflow): RedirectResponse
+    {
+        $validated = $request->validate(['state' => ['required', 'string', Rule::in(array_keys(AdminProposalWorkflow::STATES))]]);
+        $workflow->end($proposal, (string) $request->user()->getAuthIdentifier(), $validated['state']);
+
+        return redirect()->back()->with('success', 'Proposal state updated. Any active workflow has been ended and reminders are disabled.');
     }
 }
-

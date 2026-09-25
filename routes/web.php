@@ -254,8 +254,9 @@ Route::prefix('vice-settings')
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [\App\Http\Controllers\AdminController::class, 'pp'])->name('pp.index');
 
-    // TODO
-    Route::delete('pp/{proposal}', [\App\Http\Controllers\AdminController::class, 'pp_delete'])->name('pp.delete');
+    Route::post('pp/{proposal}/end-workflow', [\App\Http\Controllers\AdminController::class, 'endProposalWorkflow'])->name('pp.end-workflow');
+    Route::post('pp/{proposal}/resume-workflow', [\App\Http\Controllers\AdminController::class, 'resumeProposalWorkflow'])->name('pp.resume-workflow');
+    Route::patch('pp/{proposal}/state', [\App\Http\Controllers\AdminController::class, 'setProposalState'])->name('pp.state');
 });
 
 /*

@@ -20,6 +20,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(Router $router): void
     {
+        \Illuminate\Support\Facades\Bus::pipeThrough([\App\Bus\Middleware\SkipEndedProposalJobs::class]);
+
         // Run AFTER Statamic's CP StartSession middleware so $request->session() is available.
         $router->pushMiddlewareToGroup('statamic.cp', \App\Http\Middleware\ForceStatamicElevatedSession::class);
     }
