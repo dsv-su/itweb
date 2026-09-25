@@ -2,9 +2,14 @@
 
 namespace App\Livewire\Pp;
 
+use App\Mail\MonthlyProposalStatistics;
 use App\Models\SettingsVice;
 use App\Services\Directory\SearchPresenters;
+use App\Services\Stats\MonthlyProposalStats;
+use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
+use Throwable;
 
 class MonthlyStatsRecipients extends Component
 {
@@ -100,6 +105,34 @@ class MonthlyStatsRecipients extends Component
     public function removeRecipient(int $index): void
     {
         array_splice($this->recipients, $index, 1);
+    }
+
+    public function sendNow(string $email, MonthlyProposalStats $statistics): void
+    {
+        $this->resetErrorBag('monthly_stats_send');
+        session()->forget('monthly_stats_sent');
+
+        $recipient = collect(SettingsVice::first()?->monthly_stats_recipients ?? [])
+            ->first(fn ($recipient) => is_array($recipient) && ($recipient['email'] ?? '') === $email);
+
+        if (! $recipient || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->addError('monthly_stats_send', 'Save a valid recipient before sending monthly statistics.');
+
+            return;
+        }
+
+        try {
+            $month = CarbonImmutable::now('Europe/Stockholm')->startOfMonth()->subMonth();
+            $stats = $statistics->build($month);
+            Mail::to($recipient['email'])->send(new MonthlyProposalStatistics($stats, $recipient));
+        } catch (Throwable $exception) {
+            report($exception);
+            $this->addError('monthly_stats_send', 'Monthly statistics could not be sent. Please try again.');
+
+            return;
+        }
+
+        session()->flash('monthly_stats_sent', 'Monthly statistics for '.$stats['month'].' sent to '.$recipient['email'].'.');
     }
 
     public function save(): void

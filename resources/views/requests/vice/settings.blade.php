@@ -37,23 +37,26 @@
                     <p class="mt-2 text-gray-600 dark:text-gray-400">Manage proposal availability, recipients and project settings.</p>
                 </header>
                 <div class="border-b border-gray-200 px-5 pb-5 sm:px-8 dark:border-gray-700">
-                    <div class="flex gap-1 overflow-x-auto rounded-xl bg-gray-100 p-1.5 dark:bg-gray-900/60" role="tablist" aria-label="Project proposal settings"
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5" role="tablist" aria-label="Project proposal settings"
                          aria-orientation="horizontal" @keydown="moveTab($event)">
                         @foreach ([
-                            'general' => 'General',
-                            'proposal-options' => 'Proposal options',
-                            'overhead' => 'Overhead',
-                            'contacts' => 'Contacts',
-                            'notifications' => 'Notifications',
-                        ] as $tab => $label)
+                            'general' => ['General', 'Form availability and budget template'],
+                            'proposal-options' => ['Proposal options', 'Research subjects and funding organizations'],
+                            'overhead' => ['Overhead', 'Project overhead settings'],
+                            'contacts' => ['Contacts', 'Registrator and financial officers'],
+                            'notifications' => ['Notifications', 'Proposal updates and monthly statistics'],
+                        ] as $tab => [$label, $description])
                             <button type="button" id="settings-tab-{{ $tab }}" role="tab"
                                     aria-controls="settings-panel-{{ $tab }}"
+                                    aria-labelledby="settings-tab-label-{{ $tab }}"
+                                    aria-describedby="settings-tab-description-{{ $tab }}"
                                     :aria-selected="activeTab === '{{ $tab }}'"
                                     :tabindex="activeTab === '{{ $tab }}' ? 0 : -1"
                                     @click="selectTab('{{ $tab }}')"
-                                    class="flex-1 shrink-0 whitespace-nowrap rounded-lg px-4 py-2.5 text-center text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-blue-600"
-                                    :class="activeTab === '{{ $tab }}' ? 'bg-white text-blue-700 shadow-sm dark:bg-gray-700 dark:text-blue-300' : 'text-gray-600 hover:bg-white/60 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white'">
-                                {{ $label }}
+                                    class="flex h-full flex-col gap-2 rounded-xl border p-4 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                                    :class="activeTab === '{{ $tab }}' ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-sm ring-1 ring-blue-600 dark:border-blue-400 dark:bg-blue-900/20 dark:text-blue-300 dark:ring-blue-400' : 'border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:border-blue-500 dark:hover:bg-gray-700'">
+                                <span id="settings-tab-label-{{ $tab }}" class="text-sm font-semibold">{{ $label }}</span>
+                                <span id="settings-tab-description-{{ $tab }}" class="text-sm leading-5 text-gray-600 dark:text-gray-400">{{ $description }}</span>
                             </button>
                         @endforeach
                     </div>

@@ -160,8 +160,7 @@ class MonthlyProposalStatisticsTest extends TestCase
         $this->artisan('proposals:send-monthly-statistics --month=2024-02')->assertSuccessful();
         $this->artisan('proposals:send-monthly-statistics --month=2024-02')->assertSuccessful();
         Mail::assertSentCount(1);
-        Mail::assertSent(MonthlyProposalStatistics::class, fn ($mail) =>
-            $mail->stats['month'] === 'February 2024' && $mail->stats['total'] === 1
+        Mail::assertSent(MonthlyProposalStatistics::class, fn ($mail) => $mail->stats['month'] === 'February 2024' && $mail->stats['total'] === 1
         );
         $this->assertSame('2024-02-01', DB::table('monthly_proposal_stat_deliveries')->value('month'));
     }
@@ -208,5 +207,60 @@ class MonthlyProposalStatisticsTest extends TestCase
     public function test_unauthorized_users_cannot_access_recipient_settings(): void
     {
         Livewire::test(MonthlyStatsRecipients::class)->assertForbidden();
+    }
+
+    public function test_send_now_sends_only_to_selected_saved_recipient_and_allows_resending(): void
+    {
+        $user = \Mockery::mock(User::class)->makePartial();
+        $user->id = 'vice';
+        $user->shouldReceive('isVice')->andReturn(true);
+        $this->actingAs($user);
+        $this->recipients([
+            ['uid' => 'one', 'email' => 'one@example.com', 'name' => 'One'],
+            ['uid' => 'two', 'email' => 'two@example.com', 'name' => 'Two'],
+        ]);
+
+        Livewire::test(MonthlyStatsRecipients::class)
+            ->call('sendNow', 'two@example.com')->assertHasNoErrors()
+            ->assertSee('Monthly statistics for December 2025 sent to two@example.com.')
+            ->call('sendNow', 'two@example.com')->assertHasNoErrors();
+
+        Mail::assertSentCount(2);
+        Mail::assertSent(MonthlyProposalStatistics::class, 2);
+        Mail::assertNotSent(MonthlyProposalStatistics::class, fn ($mail) => ! $mail->hasTo('two@example.com')
+            || count($mail->to) !== 1 || $mail->stats['month'] !== 'December 2025');
+        $this->assertSame(0, DB::table('monthly_proposal_stat_deliveries')->count());
+    }
+
+    public function test_send_now_does_not_trust_unsaved_or_modified_component_recipients(): void
+    {
+        $user = \Mockery::mock(User::class)->makePartial();
+        $user->id = 'vice';
+        $user->shouldReceive('isVice')->andReturn(true);
+        $this->actingAs($user);
+
+        Livewire::test(MonthlyStatsRecipients::class)
+            ->set('recipients', [['uid' => 'one', 'name' => 'One', 'email' => 'one@example.com']])
+            ->set('savedRecipients', [['uid' => 'one', 'name' => 'One', 'email' => 'one@example.com']])
+            ->call('sendNow', 'one@example.com')->assertHasErrors('monthly_stats_send');
+
+        Mail::assertNothingSent();
+    }
+
+    public function test_send_now_reports_delivery_failure(): void
+    {
+        $user = \Mockery::mock(User::class)->makePartial();
+        $user->id = 'vice';
+        $user->shouldReceive('isVice')->andReturn(true);
+        $this->actingAs($user);
+        $this->recipients([['uid' => 'one', 'email' => 'one@example.com', 'name' => 'One']]);
+        $failure = \Mockery::mock(PendingMail::class);
+        $failure->shouldReceive('send')->once()->andThrow(new \RuntimeException('Mail transport unavailable'));
+        Mail::shouldReceive('to')->with('one@example.com')->once()->andReturn($failure);
+
+        Livewire::test(MonthlyStatsRecipients::class)
+            ->call('sendNow', 'one@example.com')->assertHasErrors('monthly_stats_send')
+            ->assertSee('Monthly statistics could not be sent. Please try again.')
+            ->assertDontSee('Monthly statistics for December 2025 sent to');
     }
 }

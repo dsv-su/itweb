@@ -1,9 +1,11 @@
 <div class="mt-5 border rounded-xl shadow-sm p-6 dark:bg-slate-800 dark:border-gray-700">
+    @php $reportMonth = \Carbon\CarbonImmutable::now('Europe/Stockholm')->startOfMonth()->subMonth()->format('F Y'); @endphp
     <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
             <p class="text-sm font-medium text-gray-900 dark:text-white">Monthly statistics recipients</p>
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Selected SUKAT users receive a summary of the previous calendar month on the 1st of every month at 21:00 (Europe/Stockholm). Leave the list empty to disable these emails.</p>
             <p class="mt-2 text-xs font-medium text-gray-500 dark:text-gray-400">Adding or removing a user is not saved until you click Update.</p>
+            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Send now emails the previous calendar month’s report to a saved recipient, even if they have already received it.</p>
         </div>
         <button
             type="button"
@@ -32,6 +34,16 @@
             {{ session('monthly_stats_recipients_saved') }}
         </div>
     @endif
+
+    @if (session()->has('monthly_stats_sent'))
+        <div role="status" class="mt-3 text-sm text-green-700 dark:text-green-400">
+            {{ session('monthly_stats_sent') }}
+        </div>
+    @endif
+
+    @error('monthly_stats_send')
+        <div role="alert" class="mt-3 text-sm text-red-600 dark:text-red-400">{{ $message }}</div>
+    @enderror
 
     @error('recipients.*.uid')
         <div class="mt-3 text-sm text-red-600 dark:text-red-400">{{ $message }}</div>
@@ -82,8 +94,18 @@
                         {{ $recipient['email'] ?? 'Email is missing' }}
                     </div>
 
-                    <div class="flex items-center">
-                        <button type="button" wire:click="removeRecipient({{ $key }})">
+                    <div class="flex shrink-0 items-center gap-3">
+                        <button type="button"
+                                wire:click="sendNow(@js($recipient['email'] ?? ''))"
+                                wire:loading.attr="disabled"
+                                @disabled(! $isStored)
+                                aria-label="Send {{ $reportMonth }} monthly statistics to {{ $recipient['name'] ?? 'recipient' }} now"
+                                class="inline-flex items-center justify-center whitespace-nowrap rounded-md bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50">
+                            <span wire:loading.remove wire:target="sendNow(@js($recipient['email'] ?? ''))">Send now · {{ $reportMonth }}</span>
+                            <span wire:loading wire:target="sendNow(@js($recipient['email'] ?? ''))">Sending...</span>
+                        </button>
+                        <button type="button" wire:click="removeRecipient({{ $key }})" wire:loading.attr="disabled"
+                                aria-label="Remove {{ $recipient['name'] ?? 'recipient' }}">
                             <svg class="shrink-0 size-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12h4M4 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
                             </svg>
