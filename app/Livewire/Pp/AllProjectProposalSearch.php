@@ -3,6 +3,7 @@
 namespace App\Livewire\Pp;
 
 use App\Models\ProjectProposal;
+use App\Services\Awaiting\AwaitingDashboard;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -83,7 +84,8 @@ class AllProjectProposalSearch extends Component
     {
         $user = Auth::user();
         $proposals = $this->fetchProposals();
+        $reviewableProposalIds = (new AwaitingDashboard($user))->proposals();
         return view('livewire.pp.all-project-proposal-search',
-            ['proposals' => $proposals]);
+            ['proposals' => $proposals, 'reviewableProposalIds' => $reviewableProposalIds]);
     }
 }

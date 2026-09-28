@@ -14,6 +14,7 @@ use Livewire\Component;
 
 class ProjectProposalHome extends Component
 {
+    public string $page = 'my';
     public $proposals;
     public $myproposals;
     public $awaiting;

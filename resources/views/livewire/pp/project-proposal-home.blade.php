@@ -1,6 +1,5 @@
 <div wire:poll.visible.keep-alive.15s class="bg-gray-50 p-3 dark:bg-gray-900 sm:p-5">
     @php
-        $slug = request()->route('slug');
         $sections = [
             'my' => ['label' => 'My proposals', 'count' => $myCount],
             'all' => ['label' => 'All proposals', 'count' => $allCount],
@@ -40,7 +39,7 @@
         <nav aria-label="Browse proposals" class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <span class="mr-1 text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">Browse</span>
             @foreach($sections as $key => $section)
-                @php $isActive = $slug === $key || ($key === 'my' && empty($slug)); @endphp
+                @php $isActive = $page === $key; @endphp
                 <a href="{{ route('pp.show', $key) }}"
                    @if($isActive) aria-current="page" @endif
                    class="inline-flex min-h-11 items-center justify-between gap-3 rounded-lg border px-4 py-2.5 text-sm font-semibold shadow-sm transition-colors motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900

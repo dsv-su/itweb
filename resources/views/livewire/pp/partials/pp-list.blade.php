@@ -70,6 +70,14 @@
                     </div>
 
                     <div class="mt-2 flex flex-wrap items-center justify-end gap-2 border-t border-susecondary pt-1.5 dark:border-susecondary">
+                        @if($review ?? false)
+                            <a
+                                href="{{ route('pp.review.show', $proposal->id) }}"
+                                class="inline-flex min-h-8 items-center justify-center gap-2 rounded-lg border border-green-700 bg-white px-2.5 py-1 text-xs font-semibold text-green-800 shadow-sm transition-colors hover:bg-green-700 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-green-700 focus-visible:ring-offset-2 dark:border-green-400 dark:bg-transparent dark:text-green-300 dark:hover:bg-green-700 dark:hover:text-white dark:focus-visible:ring-offset-gray-800"
+                            >
+                                Review
+                            </a>
+                        @endif
                         @nocache('livewire.pp.partials.pp-buttons-complete-view')
                         <button
                             type="button"
@@ -209,7 +217,7 @@
 
                                 <!-- Button group -->
                                 <div class="inline-flex flex-wrap gap-2 rounded-md" role="group" aria-label="Proposal actions">
-                                    @if($review ?? false)
+                                    @if(($review ?? false) || (isset($reviewableProposalIds) && $reviewableProposalIds->contains($proposal->id)))
                                         <a
                                             href="{{ route('pp.review.show', $proposal->id) }}"
                                             class="inline-flex items-center px-2 py-1.5 bg-white border border-green-700 text-green-800 rounded-md font-semibold text-xs
@@ -220,7 +228,6 @@
                                             Review
                                         </a>
                                     @endif
-
                                     @if($proposal->allowResume() ?? false)
                                         <a
                                             href="{{ route('pp.resume', $proposal->id) }}"

@@ -11,7 +11,7 @@
     <!-- Content -->
     <div class="w-full">
         <div class="p-2 sm:p-4 space-y-2 sm:space-y-4">
-            <livewire:pp.project-proposal-home />
+            <livewire:pp.project-proposal-home :page="$page" />
             @switch ($page)
                 @case ('my')
                     <livewire:pp.my-project-proposal-search />
@@ -27,4 +27,3 @@
     </div>
     <!-- End Content -->
 @endsection
-
