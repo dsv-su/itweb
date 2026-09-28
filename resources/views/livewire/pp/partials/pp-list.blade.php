@@ -69,7 +69,7 @@
 
                     </div>
 
-                    <div class="mt-2 flex flex-wrap items-center justify-end gap-2 border-t border-susecondary pt-1.5 dark:border-susecondary">
+                    <div class="mt-2 flex flex-wrap items-center justify-end gap-2 pt-1.5">
                         @if($review ?? false)
                             <a
                                 href="{{ route('pp.review.show', $proposal->id) }}"
