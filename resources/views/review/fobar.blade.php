@@ -1,14 +1,11 @@
-<!-- Toggle Button -->
-<button type="button" id="toggleButton"
-        class="fixed bottom-2 sm:right-5 z-50 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white
-        hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
-    Toggle Review
-</button>
+<div class="relative w-[calc(100%-3rem)] sm:fixed sm:bottom-24 sm:left-1/2 sm:-translate-x-1/2 sm:max-w-2xl z-40">
+    <button type="button" id="toggleButton" aria-controls="reviewBox" aria-expanded="true"
+            class="absolute left-full top-1/2 -translate-y-1/2 z-10 inline-flex min-h-36 w-11 items-center justify-center rounded-r-xl border border-l-0 border-blue-700 bg-blue-600 py-4 text-sm font-semibold tracking-wide text-white shadow-lg transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 dark:border-blue-500 dark:bg-blue-700 dark:hover:bg-blue-600">
+        <span class="whitespace-nowrap [writing-mode:vertical-rl]">Toggle Review</span>
+    </button>
 
-<div id="reviewBox"
-     class="sm:fixed sm:bottom-24 inset-x-0 px-4 z-40 sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:max-w-2xl w-full bg-white
-            dark:bg-gray-900 dark:border-gray-600 p-4 sm:rounded-lg shadow-lg overflow-x-hidden"
->
+    <div id="reviewBox"
+         class="w-full bg-white dark:bg-gray-900 dark:border-gray-600 p-4 sm:rounded-lg shadow-lg overflow-x-hidden">
 
     @if(session('status'))
         <div role="status" class="my-4 rounded-lg bg-green-100 p-4 text-sm text-green-800 dark:bg-green-900 dark:text-green-200">
@@ -48,10 +45,15 @@
                 <span class="text-sm dark:text-gray-400 group-hover:text-white">{{ __("Attest/Godkänd") }}</span>
             </button>
         </div>
+    </div>
 </div>
 <!-- JS toggle -->
 <script>
     document.getElementById('toggleButton').addEventListener('click', function () {
-        document.getElementById('reviewBox').classList.toggle('hidden');
+        const reviewBox = document.getElementById('reviewBox');
+        const isCollapsed = reviewBox.classList.toggle('invisible');
+
+        reviewBox.inert = isCollapsed;
+        this.setAttribute('aria-expanded', String(!isCollapsed));
     });
 </script>

@@ -22,9 +22,9 @@
 
             <dl class="grid grid-cols-2 gap-x-5 gap-y-4 px-4 py-4 sm:px-5 {{ $awaiting > 0 ? 'lg:grid-cols-5' : 'lg:grid-cols-4' }}">
                 @foreach([
+                    ...($awaiting > 0 ? ['Awaiting review' => $awaiting] : []),
                     'My proposals' => $myCount,
                     'All proposals' => $allCount,
-                    ...($awaiting > 0 ? ['Awaiting review' => $awaiting] : []),
                     'Sent applications' => $sent ?? 0,
                     'Granted proposals' => $granted,
                 ] as $label => $count)

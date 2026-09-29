@@ -78,7 +78,8 @@ return [
         'class' => null,
 
         'urls' => [
-            //
+            '/projectproposals',
+            '/projectproposals/*',
         ],
 
     ],

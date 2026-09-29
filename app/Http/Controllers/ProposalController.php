@@ -21,7 +21,6 @@ use App\Workflows\States\FoReturned;
 use App\Workflows\States\FinalReturned;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Services\Budget\Budget;
@@ -464,6 +463,9 @@ class ProposalController extends Controller
 
     private function handleReview(Request $request, Carbon $submittedAt)
     {
+        $dashboard = Dashboard::where('request_id', $request->id)->firstOrFail();
+        abort_unless((new DashboardRole($dashboard, $request->user()))->check() === 'fo', 403, 'Unauthorized');
+
         return DB::transaction(function () use ($request, $submittedAt) {
 
             $pp = ProjectProposal::findOrFail($request->id);
@@ -569,12 +571,10 @@ class ProposalController extends Controller
 
     private function getFoIds(): array
     {
-        return Cache::remember('fo_ids', 600, function () {
-            return [
-                'fo'    => SettingsFo::query()->where('active', true)->orderBy('id')->value('user_id'),
-                'fo_eu' => SettingsFoEu::query()->where('active', true)->orderBy('id')->value('user_id'),
-            ];
-        });
+        return [
+            'fo' => SettingsFo::query()->where('active', true)->orderBy('id')->value('user_id'),
+            'fo_eu' => SettingsFoEu::query()->where('active', true)->orderBy('id')->value('user_id'),
+        ];
     }
 
     private function truthy($value): bool
@@ -601,9 +601,10 @@ class ProposalController extends Controller
             ->where('request_id', $data['id'])
             ->firstOrFail();
 
-        $workflow = new WorkflowHandler($dashboard->workflow_id);
         $roleObj  = new DashboardRole($dashboard, $user);
-        $actorRole = $roleObj->check(); // compute once
+        $actorRole = $roleObj->check();
+        abort_unless($actorRole, 403, 'Unauthorized');
+        $workflow = new WorkflowHandler($dashboard->workflow_id);
 
         // 1) Update comments (synchronous DB write)
         $statusMap = [

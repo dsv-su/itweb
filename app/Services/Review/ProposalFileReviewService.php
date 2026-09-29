@@ -37,7 +37,7 @@ class ProposalFileReviewService
         string $from = 'pending',
         string $to   = 'approved'
     ): self {
-        $files = $this->proposal->files;
+        $files = $this->proposal->refresh()->files ?? [];
 
         foreach ($files as $name => &$data) {
             if (
@@ -65,7 +65,7 @@ class ProposalFileReviewService
      */
     public function approveFile(string $filename, string $to = 'approved'): self
     {
-        $files = $this->proposal->files;
+        $files = $this->proposal->refresh()->files ?? [];
 
         if (isset($files[$filename])) {
             $files[$filename]['review'] = $to;
