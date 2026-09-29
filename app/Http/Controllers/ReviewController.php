@@ -21,6 +21,7 @@ class ReviewController extends Controller
 {
     public function __construct()
     {
+        $this->middleware(\App\Http\Middleware\PreventReviewCaching::class);
         $this->middleware(['web', 'auth', 'dsv']);
         $this->middleware(['checklang', 'locale']);
         $this->middleware('review')->except(['pp_view']);
@@ -126,35 +127,48 @@ class ReviewController extends Controller
 
     private function handleReview(Request $request, $dashboardId, bool $isFo)
     {
-        $dashboard = Dashboard::findOrFail($dashboardId);
+        $request->validate(['decision' => ['sometimes', 'required', 'in:update,approve,return,deny']]);
 
-        $isHeadUpdate = ! $isFo && $request->input('decision') === 'update';
-        if ($isHeadUpdate) {
-            abort_unless($this->isHeadReview($dashboard), 403);
-        }
-
-        if ($isFo || $isHeadUpdate) {
-            $this->applyProjectUpdates($request, $dashboard);
-
-            if ($request->input('decision', 'update') === 'update') {
-                return redirect()->back()
-                    ->with('status', __('The form has been updated.'))
-                    ->withInput($request->only('comment'));
+        return DB::transaction(function () use ($request, $dashboardId, $isFo) {
+            $dashboard = Dashboard::where('type', 'travelrequest')->lockForUpdate()->findOrFail($dashboardId);
+            if ($isFo) {
+                abort_unless((string) $dashboard->state === 'head_approved'
+                    && ($dashboard->fo_id === auth()->id()
+                        || SettingsFo::where('user_id', auth()->id())->where('active', true)->exists()), 403);
             }
-        }
+            // Only the assigned officer may submit a decision; other active officers may edit the project.
+            if ($isFo && $request->input('decision', 'update') !== 'update') {
+                abort_unless($dashboard->fo_id === auth()->id(), 403);
+            }
 
-        //$user = request()->user();
-        $user = auth()->user();
-        $comment = trim(
-            (string) ($request->input('comment_mobile') ?: $request->input('comment'))
-        );
+            $isHeadUpdate = ! $isFo && $request->input('decision') === 'update';
+            if ($isHeadUpdate) {
+                abort_unless($this->isHeadReview($dashboard), 403);
+            }
 
-        $decision = $request->input('decision');
+            if ($isFo || $isHeadUpdate) {
+                $this->applyProjectUpdates($request, $dashboard);
 
-        $handler = new RequestReviewHandler($dashboard, $user, $comment, $decision);
-        $handler->review();
+                if ($request->input('decision', 'update') === 'update') {
+                    return redirect()->back()
+                        ->with('status', __('The form has been updated.'))
+                        ->withInput($request->only('comment'));
+                }
+            }
 
-        return redirect('/')->with('status', 'Request updated');
+            //$user = request()->user();
+            $user = auth()->user();
+            $comment = trim(
+                (string) ($request->input('comment_mobile') ?: $request->input('comment'))
+            );
+
+            $decision = $request->input('decision');
+
+            $handler = new RequestReviewHandler($dashboard, $user, $comment, $decision);
+            $handler->review();
+
+            return redirect('/')->with('status', 'Request updated');
+        });
     }
 
     private function isHeadReview(Dashboard $dashboard): bool

@@ -8,6 +8,7 @@ use App\Models\HeadComment;
 use App\Models\ManagerComment;
 use App\Models\TravelRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -29,14 +30,15 @@ class RequestReviewHandler
         $this->reviewer = $reviewer;
         $this->comment = trim((string) $comment);
         $this->decision = $decision;
-
-        $this->workflowhandler = new WorkflowHandler((int) $this->dashboard->workflow_id);
     }
 
     public function review(): void
     {
         $this->assertValidDecision($this->decision);
-        $this->registerCommentAndTransition();
+        DB::transaction(function () {
+            $this->dashboard = Dashboard::query()->lockForUpdate()->findOrFail($this->dashboard->id);
+            $this->registerCommentAndTransition();
+        });
     }
 
     private function registerCommentAndTransition(): void
@@ -51,6 +53,8 @@ class RequestReviewHandler
         if ($role === null) {
             throw new RuntimeException('Reviewer is not allowed to review this request in the current state.');
         }
+
+        $this->workflowhandler = new WorkflowHandler((int) $this->dashboard->workflow_id);
 
         $comment = match ($role) {
             'manager' => $this->managerComment('travelrequest', $tr->id, $this->reviewer->id, $this->comment),
@@ -82,10 +86,8 @@ class RequestReviewHandler
         $tr->review_details = $details;
         $tr->save();
 
-        // Signal the workflow
-        $this->applyTransition($role, $this->decision);
-
-        $tr->save();
+        // Workers must observe the committed review and state.
+        DB::afterCommit(fn () => $this->applyTransition($role, $this->decision));
     }
 
     private function applyDashboardStateTransition(string $role, string $decision): void

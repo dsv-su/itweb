@@ -15,7 +15,7 @@ Route::get($login, [SystemController::class, 'login'])->name('login');
 $langConstraint = 'en|sv|swe';
 
 Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])
-    ->middleware(config('statamic.routes.middleware', ['web']));
+    ->middleware([...config('statamic.routes.middleware', ['web']), \App\Http\Middleware\PreventReviewCaching::class]);
 
 Route::get('/search', SearchController::class)
     ->middleware('checklang')
@@ -26,10 +26,10 @@ Route::get('/{lang}/search', SearchController::class)
     ->name('search.localized');
 
 Route::view('/notifications', 'notifications.index', ['title' => 'Notifications'])
-    ->middleware(['auth', 'checklang'])->name('notifications');
+    ->middleware(['auth', 'checklang', \App\Http\Middleware\PreventReviewCaching::class])->name('notifications');
 Route::view('/{lang}/notifications', 'notifications.index', ['title' => 'Notifications'])
     ->where('lang', $langConstraint)
-    ->middleware(['auth', 'checklang'])->name('notifications.localized');
+    ->middleware(['auth', 'checklang', \App\Http\Middleware\PreventReviewCaching::class])->name('notifications.localized');
 
 // Language switcher (explicit)
 Route::get('/lang/{lang}', [\App\Http\Controllers\LocalizationController::class, 'index'])

@@ -80,6 +80,18 @@ return [
         'urls' => [
             '/projectproposals',
             '/projectproposals/*',
+            '/review/*',
+            '/fo_review/*',
+            '/viewpdf/*',
+            ...array_merge(...array_map(fn ($prefix) => [
+                $prefix ?: '/',
+                $prefix.'/travel',
+                $prefix.'/travel/*',
+                $prefix.'/travelresume/*',
+                $prefix.'/list',
+                $prefix.'/show/*',
+                $prefix.'/notifications',
+            ], ['', '/en', '/sv', '/swe'])),
         ],
 
     ],

@@ -24,6 +24,7 @@ class FOController extends Controller
 {
     public function __construct()
     {
+        $this->middleware(\App\Http\Middleware\PreventReviewCaching::class);
         $this->middleware('fo')->except(['download']);
         $this->middleware('download')->only('download');
     }

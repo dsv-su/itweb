@@ -27,6 +27,7 @@ class TravelRequestController extends Controller
 
     public function __construct()
     {
+        $this->middleware(\App\Http\Middleware\PreventReviewCaching::class);
         $this->middleware(['web', 'auth', 'dsv']);
         $this->middleware('show')->except(['create', 'resume', 'resumeLocalized', 'submit', 'editCompleted', 'updateCompleted']);
         $this->middleware('fo')->only(['editCompleted', 'updateCompleted']);
