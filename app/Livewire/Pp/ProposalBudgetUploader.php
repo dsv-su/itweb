@@ -69,6 +69,13 @@ class ProposalBudgetUploader extends Component
 
     public function allowUpload(): void
     {
+        $user = Auth::user();
+
+        if ($user && ($user->isSuperAdmin() || $user->isHelpDesk())) {
+            $this->allow = true;
+            return;
+        }
+
         $userId = Auth::id();
 
         $allowedUserIds = array_filter([

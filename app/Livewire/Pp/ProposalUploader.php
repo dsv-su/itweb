@@ -102,7 +102,14 @@ class ProposalUploader extends Component
 
     public function allowUpload(): void
     {
-        $userId = Auth::id(); // avoids loading the full user model
+        $user = Auth::user();
+
+        if ($user && ($user->isSuperAdmin() || $user->isHelpDesk())) {
+            $this->allow = true;
+            return;
+        }
+
+        $userId = Auth::id();
 
         $allowedUserIds = array_values(array_filter([
             $this->dashboard->user_id,
