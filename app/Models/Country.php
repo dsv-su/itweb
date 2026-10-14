@@ -13,4 +13,20 @@ class Country extends Model
         'allowance',
         'year'
     ];
+
+    public function getLocalizedNameAttribute(): ?string
+    {
+        return self::localizedName($this->country);
+    }
+
+    public static function localizedName(?string $name): ?string
+    {
+        if ($name === null || app()->getLocale() !== 'en') {
+            return $name;
+        }
+
+        $translations = trans('countries', [], 'en');
+
+        return is_array($translations) ? ($translations[$name] ?? $name) : $name;
+    }
 }

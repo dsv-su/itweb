@@ -86,7 +86,7 @@
                             <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                                 @foreach($destinations as $country => $destination)
                                     <tr>
-                                        <th scope="row" class="py-3 pr-4 font-medium">{{ $country ?: __('Unspecified') }}</th>
+                                        <th scope="row" class="py-3 pr-4 font-medium">{{ \App\Models\Country::localizedName($country) ?: __('Unspecified') }}</th>
                                         <td class="px-4 py-3 text-right tabular-nums">{{ $number($destination['count']) }}</td>
                                         <td class="py-3 pl-4 text-right tabular-nums">{{ $number($destination['total']) }}</td>
                                     </tr>

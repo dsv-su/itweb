@@ -33,7 +33,12 @@ class CountrySelect2 extends Component
 
     public function getOptionsProperty()
     {
-        return Country::where('country', 'LIKE', "%{$this->search}%")->get();
+        // Filter the displayed names so English searches work without changing
+        // the Swedish values used for saved requests and allowance lookups.
+        return Country::all()
+            ->filter(fn (Country $country) => mb_stripos($country->localized_name, $this->search ?? '') !== false)
+            ->sortBy('localized_name', SORT_NATURAL | SORT_FLAG_CASE)
+            ->values();
     }
 
     public function render()
@@ -45,7 +50,9 @@ class CountrySelect2 extends Component
 
     public function save()
     {
-        $country = Country::where('country',$this->search)->first();
+        $country = $this->options->first(
+            fn (Country $country) => mb_strtolower($country->localized_name) === mb_strtolower($this->search ?? '')
+        );
         if(!empty($country)) {
             $this->Country = $country;
             $this->dispatch('selectedCountry', $this->Country->id);
