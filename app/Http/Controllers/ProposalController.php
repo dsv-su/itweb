@@ -464,7 +464,15 @@ class ProposalController extends Controller
     private function handleReview(Request $request, Carbon $submittedAt)
     {
         $dashboard = Dashboard::where('request_id', $request->id)->firstOrFail();
-        abort_unless((new DashboardRole($dashboard, $request->user()))->check() === 'fo', 403, 'Unauthorized');
+        $role = (new DashboardRole($dashboard, $request->user()))->check();
+        abort_unless(in_array($role, ['fo', 'vice_final'], true), 403, 'Unauthorized');
+
+        if ($role === 'vice_final') {
+            $this->updateViceOrganization($request, $request->id);
+
+            return redirect()->back()->withFragment('project-organization')
+                ->with('success', 'Project organization has been updated');
+        }
 
         return DB::transaction(function () use ($request, $submittedAt) {
 
@@ -606,6 +614,10 @@ class ProposalController extends Controller
         abort_unless($actorRole, 403, 'Unauthorized');
         $workflow = new WorkflowHandler($dashboard->workflow_id);
 
+        if ($actorRole === 'vice_final') {
+            $this->updateViceOrganization($request, $data['id']);
+        }
+
         // 1) Update comments (synchronous DB write)
         $statusMap = [
             'approve' => 'approved',
@@ -621,6 +633,69 @@ class ProposalController extends Controller
         };
 
         return redirect()->route('pp.show', ['slug' => 'awaiting']);
+    }
+
+    private function updateViceOrganization(Request $request, string $id): void
+    {
+        $fields = [
+            'funding_organization' => 'Funding agency',
+            'program' => 'Program/Call/Target',
+            'dsvcoordinating' => 'DSV coordinating',
+            'other_coordination' => 'Other coordinator',
+            'eu' => 'EU project',
+            'eu_wallenberg' => 'Wallenberg project',
+        ];
+        $data = $request->validate([
+            'funding_organization' => ['sometimes', 'nullable', 'string', 'max:255', 'exists:funding_organizations,name'],
+            'program' => ['sometimes', 'nullable', 'string', 'max:5000'],
+            'dsvcoordinating' => ['sometimes', 'required', 'in:yes,no'],
+            'other_coordination' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'eu' => ['sometimes', 'nullable', 'in:yes,no'],
+            'eu_wallenberg' => ['sometimes', 'nullable', 'in:yes,no'],
+        ]);
+        if ($data === []) {
+            return;
+        }
+
+        DB::transaction(function () use ($id, $data, $fields) {
+            $proposal = ProjectProposal::query()->lockForUpdate()->findOrFail($id);
+            $pp = $proposal->pp ?? [];
+            $next = array_replace($pp, $data);
+            if (in_array($next['funding_organization'] ?? '', [
+                'Wallenberg', 'Wallenberg, MMW - föransökan',
+                'Wallenberg, MAW, föransökan', 'Wallenberg, MAW',
+            ], true)) {
+                $next['eu'] = 'no';
+                $next['eu_wallenberg'] = 'yes';
+            } elseif (($next['eu'] ?? null) === 'yes') {
+                $next['eu_wallenberg'] = 'no';
+            }
+            if (($next['dsvcoordinating'] ?? null) === 'yes') {
+                $next['other_coordination'] = '';
+            }
+            $changes = [];
+            $organizationChanges = $pp['vice_organization_changes'] ?? [];
+            foreach ($fields as $key => $label) {
+                if ((string) ($pp[$key] ?? '') !== (string) ($next[$key] ?? '')) {
+                    $changes[] = $label.': "'.($pp[$key] ?? '').'" → "'.($next[$key] ?? '').'"';
+                    $before = $organizationChanges[$key]['before'] ?? ($pp[$key] ?? '');
+                    $after = $next[$key] ?? '';
+                    if ((string) $before === (string) $after) {
+                        unset($organizationChanges[$key]);
+                    } else {
+                        $organizationChanges[$key] = compact('label', 'before', 'after');
+                    }
+                }
+            }
+            if ($changes === []) {
+                return;
+            }
+            $next['vice_organization_changes'] = $organizationChanges;
+            $next['submitted'] = now()->toISOString();
+            $next['status'] = 'revised';
+            $proposal->update(['pp' => $next]);
+            $this->comments_update($id, "Project organization has been revised by the vice.\n".implode("\n", $changes), 'updated');
+        });
     }
 
     private function handleApprove(Dashboard $dashboard, string $requestId, string $actorRole, $user,

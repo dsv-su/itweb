@@ -134,6 +134,143 @@ class ProposalReviewFreshnessTest extends \Tests\TestCase
         $this->assertSame(['fo' => 'new', 'fo_eu' => 'old'], $method->invoke($controller));
     }
 
+    private function organizationReviewRequest(array $changes = []): Request
+    {
+        Schema::table('dashboards', fn (Blueprint $table) => $table->string('vice_id')->nullable());
+        Schema::table('project_proposals', fn (Blueprint $table) => $table->json('pp')->nullable());
+        DB::table('dashboards')->where('id', 1)->update(['vice_id' => 'old']);
+        DB::table('project_proposals')->where('id', 'trip')->update(['pp' => json_encode([
+            'program' => 'Original call', 'dsvcoordinating' => 'no',
+            'other_coordination' => 'Coordinator', 'eu' => 'no', 'eu_wallenberg' => 'no',
+            'budget_dsv' => 100, 'user_comments' => 'Existing comment',
+        ])]);
+        $request = Request::create('/projectproposals/submit', 'POST', ['id' => 'trip', ...$changes]);
+        $request->setUserResolver(fn () => User::findOrFail('old'));
+
+        return $request;
+    }
+
+    public function test_vice_can_revise_organization_with_audit_comments_but_not_budget(): void
+    {
+        $request = $this->organizationReviewRequest(['program' => 'Revised call', 'budget_dsv' => 999]);
+        $method = new \ReflectionMethod(ProposalController::class, 'handleReview');
+        $method->invoke(app(ProposalController::class), $request, now());
+        $pp = ProjectProposal::findOrFail('trip')->pp;
+        $this->assertSame('Revised call', $pp['program']);
+        $this->assertSame(100, $pp['budget_dsv']);
+        $this->assertStringStartsWith('Existing comment', $pp['user_comments']);
+        $this->assertStringContainsString('REVISED by Previous Officer', $pp['user_comments']);
+        $this->assertStringContainsString('"Original call" → "Revised call"', $pp['user_comments']);
+        $method->invoke(app(ProposalController::class), $request, now());
+        $this->assertSame($pp['user_comments'], ProjectProposal::findOrFail('trip')->pp['user_comments']);
+    }
+
+    public function test_vice_organization_revision_normalizes_dependent_fields(): void
+    {
+        $request = $this->organizationReviewRequest(['dsvcoordinating' => 'yes', 'eu' => 'yes', 'eu_wallenberg' => 'yes']);
+        (new \ReflectionMethod(ProposalController::class, 'handleReview'))
+            ->invoke(app(ProposalController::class), $request, now());
+        $pp = ProjectProposal::findOrFail('trip')->pp;
+        $this->assertSame('', $pp['other_coordination']);
+        $this->assertSame('no', $pp['eu_wallenberg']);
+        $this->assertStringContainsString('Other coordinator:', $pp['user_comments']);
+    }
+
+    public function test_vice_cannot_revise_organization_after_final_approval(): void
+    {
+        $request = $this->organizationReviewRequest(['program' => 'Unauthorized call']);
+        DB::table('dashboards')->where('id', 1)->update(['state' => 'final_approved']);
+        try {
+            (new \ReflectionMethod(ProposalController::class, 'handleReview'))
+                ->invoke(app(ProposalController::class), $request, now());
+            $this->fail('Expected stale review to be rejected');
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
+            $this->assertSame(403, $exception->getStatusCode());
+        }
+        $this->assertSame('Original call', ProjectProposal::findOrFail('trip')->pp['program']);
+    }
+
+    private function approvedNotification(string $type = 'projectproposal'): \App\Mail\NotifyRequestApproved
+    {
+        $dashboard = Dashboard::findOrFail(1);
+        $dashboard->forceFill(['type' => $type, 'state' => $type === 'travelrequest' ? 'fo_approved' : 'final_approved',
+            'name' => 'Test request', 'created' => 1700000000]);
+
+        return new \App\Mail\NotifyRequestApproved(User::findOrFail('old'), $dashboard);
+    }
+
+    public function test_approved_email_summarizes_net_vice_changes_across_saves(): void
+    {
+        $request = $this->organizationReviewRequest(['program' => 'Intermediate call']);
+        $method = new \ReflectionMethod(ProposalController::class, 'handleReview');
+        $method->invoke(app(ProposalController::class), $request, now());
+        $request->merge(['program' => 'Final <call>', 'dsvcoordinating' => 'yes']);
+        $method->invoke(app(ProposalController::class), $request, now());
+        $mail = $this->approvedNotification();
+        $changes = $mail->content()->with['organizationChanges'];
+        $this->assertCount(3, $changes);
+        $this->assertSame('Original call', $changes[0]['before']);
+        $this->assertSame('Final <call>', $changes[0]['after']);
+        $this->assertSame('Yes', $changes[1]['after']);
+        $html = $mail->render();
+        $this->assertStringContainsString('Project Organization changes', $html);
+        $this->assertStringContainsString('Final &lt;call&gt;', $html);
+        $this->assertStringNotContainsString('Intermediate call', $html);
+        $this->assertStringContainsString('Not specified', $html);
+        $this->assertStringContainsString('Before review', $html);
+    }
+
+    public function test_reverted_vice_changes_are_absent_from_approved_email(): void
+    {
+        $request = $this->organizationReviewRequest(['program' => 'Changed']);
+        $method = new \ReflectionMethod(ProposalController::class, 'handleReview');
+        $method->invoke(app(ProposalController::class), $request, now());
+        $request->merge(['program' => 'Original call']);
+        $method->invoke(app(ProposalController::class), $request, now());
+        $mail = $this->approvedNotification();
+        $this->assertSame([], $mail->content()->with['organizationChanges']);
+        $this->assertStringNotContainsString('Project Organization changes', $mail->render());
+    }
+
+    public function test_approved_email_omits_vice_values_replaced_by_another_editor(): void
+    {
+        $request = $this->organizationReviewRequest(['program' => 'Vice call']);
+        (new \ReflectionMethod(ProposalController::class, 'handleReview'))
+            ->invoke(app(ProposalController::class), $request, now());
+        $proposal = ProjectProposal::findOrFail('trip');
+        $proposal->update(['pp' => [...$proposal->pp, 'program' => 'Applicant call']]);
+        $this->assertSame([], $this->approvedNotification()->content()->with['organizationChanges']);
+    }
+
+    public function test_approved_email_without_vice_edits_keeps_existing_content(): void
+    {
+        $this->organizationReviewRequest();
+        $mail = $this->approvedNotification();
+        $this->assertSame([], $mail->content()->with['organizationChanges']);
+        $this->assertStringNotContainsString('Project Organization changes', $mail->render());
+        $this->assertStringContainsString('You may now submit your application.', $mail->render());
+    }
+
+    public function test_travel_approval_email_does_not_query_project_proposals(): void
+    {
+        Schema::drop('project_proposals');
+        $mail = $this->approvedNotification('travelrequest');
+        $this->assertSame([], $mail->content()->with['organizationChanges']);
+        $html = $mail->render();
+        $this->assertStringNotContainsString('Project Organization changes', $html);
+        $this->assertStringContainsString('GODKÄND RESEBEGÄRAN', $html);
+        $this->assertStringContainsString('Bon Voyage', $html);
+    }
+
+    public function test_organization_review_templates_compile(): void
+    {
+        foreach (['pp/create', 'pp/partials/review/organization_changes', 'pp/partials/form/program_call', 'pp/partials/review/bar'] as $template) {
+            $compiled = app('blade.compiler')->compileString(file_get_contents(resource_path('views/'.$template.'.blade.php')));
+            $this->assertNotEmpty(token_get_all($compiled, TOKEN_PARSE));
+            $this->assertStringNotContainsString('@endif', $compiled);
+        }
+    }
+
     public function test_proposal_responses_prohibit_storage(): void
     {
         $response = (new SetProjectProposalsTitle)->handle(Request::create('/projectproposals'), fn () => response('Review'));

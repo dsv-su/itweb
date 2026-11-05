@@ -66,6 +66,7 @@ class EuProject extends Component
     {
         // Hide the whole EU question when org is Wallenberg
         $this->checkbox = 'hidden';
+        $this->eu = 'no';
 
         // Ensure consistent downstream behavior: show checkbox in the other component
         $this->dispatch('eu_hide');

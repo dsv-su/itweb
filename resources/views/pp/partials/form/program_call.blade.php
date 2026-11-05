@@ -2,7 +2,7 @@
 @php
     $programValue = old('program', $proposal->pp['program'] ?? '');
     $programUrl = filter_var($programValue, FILTER_VALIDATE_URL) ? $programValue : null;
-    $isReadonly = in_array($type, ['review', 'view'], true);
+    $isReadonly = in_array($type, ['review', 'view'], true) && !($viceOrganizationEditable ?? false);
 @endphp
 
 <div class="w-full sm:col-span-2">

@@ -10,7 +10,8 @@
             </svg>
         </button>
     </label>
-    <div class="w-full" x-data="{open:false, selectedOrganization: null}" x-on:click.away="open=false">
+    <div class="w-full" x-data="{open:false, selectedOrganization: null}" x-on:click.away="open=false"
+         x-effect="if (selectedOrganization !== null) $dispatch('proposal-field-change', { name: 'funding_organization', value: selectedOrganization })">
         <button type="button" data-proposal-select class="font-mono bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 p-2.5 rounded-lg shadow-inner w-full flex justify-between items-center text-sm focus:outline-none" x-on:click="open=!open">
             <span class="float-left" x-text="selectedOrganization ?? '{{ $organization->name ?? __("Select Funding Agency") }}'"></span>
             <svg class="h-4 transform float-right fill-current text-black dark:text-gray-200" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 129 129" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 129 129" :class="{'rotate-180': open}">

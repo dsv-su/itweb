@@ -93,6 +93,9 @@ OVERVIEW:
 <br>
 --------------
 <br>
+@if($dashboard->type === 'projectproposal' && !empty($organizationChanges))
+    @include('emails.projectproposal.organization-changes')
+@endif
 @if($dashboard->type != 'travelrequest')
 Please manually report your submitted application by clicking the Sent button. Once you receive a grant decision or a rejection, update your progress by clicking the corresponding buttons.
 

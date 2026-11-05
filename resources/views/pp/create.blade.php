@@ -25,7 +25,11 @@
             @endif
             {{--}}
 
-            <form class="pp-form" method="post" action="{{route('pp.submit')}}">
+            @php
+                $viceOrganizationEditable = $type === 'review'
+                    && (new \App\Services\Review\DashboardRole($dashboard, auth()->user()))->check() === 'vice_final';
+            @endphp
+            <form id="proposal-form" class="pp-form" method="post" action="{{route('pp.submit')}}">
                 @csrf
 
                 @if(in_array($type, ['preapproval', 'saved', 'complete', 'review', 'edit', 'resume', 'sent', 'granted', 'rejected']))
@@ -70,15 +74,30 @@
                     @endif
 
                     <!-- Project organization -->
+                    @if($viceOrganizationEditable)
+                        <section aria-labelledby="organization-review-heading" aria-describedby="organization-review-help"
+                                 class="w-full sm:col-span-2 grid gap-4 sm:grid-cols-2 rounded-xl border border-blue-300 bg-white p-3 sm:p-5 dark:border-blue-700 dark:bg-gray-900">
+                            <div class="sm:col-span-2 border-b border-blue-100 px-3 pb-4 dark:border-blue-900">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <h2 id="organization-review-heading" class="text-sm font-semibold text-gray-900 dark:text-white">Project organization</h2>
+                                    <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 dark:bg-blue-950 dark:text-blue-300">Editable during your review</span>
+                                </div>
+                                <p id="organization-review-help" class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                                    You can update these fields if necessary before approving the proposal. Pending changes are highlighted in amber.
+                                </p>
+                            </div>
+                    @else
                     <div class="w-full sm:col-span-2 py-3 flex items-center text-xs text-blue-700 uppercase
                                 before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6
                                 dark:text-blue-400 dark:before:border-neutral-600 dark:after:border-neutral-600">
                         Project organization
                     </div>
+                    @endif
+                    <div id="project-organization" class="contents">
                     <!-- Funding organization -->
                     @if($type == 'preapproval')
                         <livewire:select2.Org-select2 proposal="" />
-                    @elseif(in_array($type, ['complete', 'saved', 'edit', 'resume']))
+                    @elseif(in_array($type, ['complete', 'saved', 'edit', 'resume']) || $viceOrganizationEditable)
                         <livewire:select2.Org-select2 :proposal="$proposal" />
                     @else
                         @include('pp.partials.review.funding_org')
@@ -90,7 +109,7 @@
                     <!--DSV coordinating -->
                     @if($type == 'preapproval')
                         <livewire:pp.dsv-coordination proposal="" />
-                    @elseif(in_array($type, ['complete', 'saved', 'edit', 'resume']))
+                    @elseif(in_array($type, ['complete', 'saved', 'edit', 'resume']) || $viceOrganizationEditable)
                         <livewire:pp.dsv-coordination :proposal="$proposal" />
                     @else
                         @include('pp.partials.review.dsvcoordination')
@@ -99,7 +118,7 @@
                     <!-- Eu project -->
                     @if($type == 'preapproval')
                         <livewire:pp.eu-project proposal="" />
-                    @elseif(in_array($type, ['complete', 'saved', 'edit', 'resume']))
+                    @elseif(in_array($type, ['complete', 'saved', 'edit', 'resume']) || $viceOrganizationEditable)
                         <livewire:pp.eu-project :proposal="$proposal" />
                     @else
                         @include('pp.partials.review.eu')
@@ -108,10 +127,20 @@
                     <!-- Eu Wallengenberg project -->
                     @if($type == 'preapproval')
                         <livewire:pp.eu-wallenberg-project proposal="" />
-                    @elseif(in_array($type, ['complete', 'saved', 'edit', 'resume']))
+                    @elseif(in_array($type, ['complete', 'saved', 'edit', 'resume']) || $viceOrganizationEditable)
                         <livewire:pp.eu-wallenberg-project :proposal="$proposal" />
                     @else
                         @include('pp.partials.review.eu_wallenberg')
+                    @endif
+
+                    </div>
+                    @if($viceOrganizationEditable)
+                        <div class="w-full sm:col-span-2 border-t border-blue-100 px-3 pt-4 dark:border-blue-900">
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">Changes are recorded in the comments and summarized in the approval email. Save them here or with your review decision.</p>
+                            <button type="submit" class="px-4 py-2 text-white bg-blue-700 rounded-lg">Update project organization</button>
+                            @include('pp.partials.flashmessage')
+                        </div>
+                        </section>
                     @endif
 
                     <!-- Unit Head -->
@@ -308,6 +337,9 @@
 
     </script>
 
+    @if($viceOrganizationEditable)
+        @include('pp.partials.review.organization_changes')
+    @endif
     <!-- Modals -->
     @include('pp.modals.pp_help')
 @endsection

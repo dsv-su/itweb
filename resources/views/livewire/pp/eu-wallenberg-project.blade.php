@@ -1,4 +1,7 @@
 <div class="{{ $checkbox }} w-full mt-2 sm:col-span-2">
+    @if($wallenbergOrg)
+        <input type="hidden" name="eu_wallenberg" value="yes">
+    @endif
     <!-- Label -->
     <label for="eu_wallenberg_project" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
         @if($wallenbergOrg)
