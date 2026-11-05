@@ -51,8 +51,8 @@ class ProjectProposal extends Model
     {
         $user = Auth::user();
 
-        //Allow SuperAdmin
-        if ($user && $user->isSuperAdmin()) {
+        // Allow SuperAdmin or users who can assign a principal investigator.
+        if ($user && ($user->isSuperAdmin() || $user->canAssignPrincipalInvestigator())) {
             return true;
         }
 
