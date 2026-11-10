@@ -7,9 +7,9 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4.109 17H1v-2a4 4 0 0 1 4-4h.87M10 4.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Zm7.95 2.55a2 2 0 0 1 0 2.829l-6.364 6.364-3.536.707.707-3.536 6.364-6.364a2 2 0 0 1 2.829 0Z"/>
                     </svg>
                 </a>
-            @endif
+            @endcan
             <h3 class="text-lg font-semibold text-gray-800 md:text-xl dark:text-gray-200">
-                {{__("Information from DSV IT")}}
+                {{ __('Information from DSV IT') }}
             </h3>
             @nocache('home.partials.itnews')
         </div>
