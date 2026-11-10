@@ -1,6 +1,8 @@
 /* Load datepicker CSS first */
 @import "../../node_modules/flowbite-datepicker/dist/css/datepicker.css";
 @import "tailwindcss";
+@import "./home.css";
+@import "./footer.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

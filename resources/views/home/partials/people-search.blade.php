@@ -1,6 +1,7 @@
-<div class="relative flex flex-col items-start justify-start rounded-xl border border-susecondary p-6 text-center md:order-3 dark:border-gray-800">
-    <h3 class="pb-2 text-lg font-semibold text-gray-800 md:text-xl dark:text-gray-200">
-        {{ __('Search people') }}
-    </h3>
-    <livewire:sukat-search />
-</div>
+<section class="home-card home-card--people" aria-labelledby="home-people-title">
+    <span class="home-icon home-icon--blue"><x-home.icon name="people" /></span>
+    <h2 id="home-people-title">{{ __('Search people') }}</h2>
+    <div class="home-card__content">
+        <livewire:sukat-search />
+    </div>
+</section>
