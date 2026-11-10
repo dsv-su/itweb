@@ -113,17 +113,21 @@ class ProjectProposal extends Model
         $user = Auth::user();
 
         return $user && ($user->isSuperAdmin() || $user->id === $this->user_id)
-            && $this->isInactiveDraft();
+            && $this->isInactiveDeletableProposal();
     }
 
-    public function isInactiveDraft(): bool
+    public function isInactiveDeletableProposal(): bool
     {
         $dashboard = $this->dashboard;
         $cutoff = now()->subWeeks(4);
 
-        return in_array($this->status_stage3, ['pending', 'saved'], true)
+        $draft = in_array($this->status_stage3, ['pending', 'saved'], true)
             && (! $dashboard || ($dashboard->type === 'projectproposal'
-                && ! $dashboard->workflow_id && (string) $dashboard->state === 'pending'))
+                && ! $dashboard->workflow_id && (string) $dashboard->state === 'pending'));
+        $submitted = $this->status_stage3 === 'submitted' && $dashboard
+            && $dashboard->type === 'projectproposal' && (string) $dashboard->state === 'submitted';
+
+        return ($draft || $submitted)
             && $this->created_at && $this->created_at->lte($cutoff)
             && $this->updated_at && $this->updated_at->lte($cutoff)
             && (! $dashboard || ($dashboard->updated_at && $dashboard->updated_at->lte($cutoff)));

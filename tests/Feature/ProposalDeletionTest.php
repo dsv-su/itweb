@@ -93,7 +93,7 @@ class ProposalDeletionTest extends \Tests\TestCase
         $this->assertFalse(ProjectProposal::findOrFail('proposal')->allowDelete());
     }
 
-    public function test_started_workflows_and_submitted_proposals_cannot_be_deleted_even_by_superuser(): void
+    public function test_inconsistent_draft_and_workflow_states_cannot_be_deleted_even_by_superuser(): void
     {
         $this->actingAs(User::findOrFail('admin'));
         DB::table('dashboards')->update(['workflow_id' => 123]);
@@ -214,6 +214,79 @@ class ProposalDeletionTest extends \Tests\TestCase
             $table->string('last_reminder_type')->nullable();
             $table->timestamp('last_reminder_sent_at')->nullable();
         });
+    }
+
+    public function test_submitted_proposal_deletion_stops_workflow_and_preserves_its_history(): void
+    {
+        foreach (glob(base_path('vendor/laravel-workflow/laravel-workflow/src/migrations/*.php')) as $file) {
+            require_once $file;
+        }
+        (new \CreateWorkflowsTable)->up();
+        (new \CreateWorkflowExceptionsTable)->up();
+        (new \CreateWorkflowRelationshipsTable)->up();
+        $workflow = \Workflow\Models\StoredWorkflow::create([
+            'class' => \App\Workflows\DSVProjectPWorkflow::class, 'status' => 'waiting',
+        ]);
+        DB::table('project_proposals')->update(['status_stage3' => 'submitted']);
+        DB::table('dashboards')->update(['state' => 'submitted', 'workflow_id' => $workflow->id]);
+        $this->assertTrue(ProjectProposal::findOrFail('proposal')->allowDelete());
+        $component = new DeleteProposal;
+        $component->proposalId = 'proposal';
+        $busyLock = new \Workflow\Middleware\WithoutOverlappingMiddleware($workflow->id, \Workflow\Middleware\WithoutOverlappingMiddleware::WORKFLOW, 0, 60);
+        $job = new \stdClass;
+        $this->assertTrue($busyLock->lock($job));
+        try {
+            $component->delete();
+            $this->fail('A processing workflow must block deletion.');
+        } catch (\Illuminate\Validation\ValidationException $exception) {
+            $this->assertStringContainsString('currently processing', $exception->getMessage());
+            $this->assertDatabaseHas('project_proposals', ['id' => 'proposal']);
+            $this->assertSame('waiting', (string) $workflow->fresh()->status);
+            Mail::assertNothingSent();
+        } finally {
+            $busyLock->unlock($job);
+        }
+        $component->delete();
+        $this->assertSame('failed', (string) $workflow->fresh()->status);
+        $this->assertSame(1, $workflow->exceptions()->count());
+        $this->assertDatabaseMissing('project_proposals', ['id' => 'proposal']);
+        $this->assertDatabaseMissing('dashboards', ['request_id' => 'proposal']);
+        Mail::assertSent(ProposalDeleted::class);
+        $called = false;
+        (new \App\Bus\Middleware\SkipEndedProposalJobs)->handle(
+            new \App\Jobs\ReminderEmails\SendCompleteReminderEmail('proposal'),
+            function () use (&$called) { $called = true; },
+        );
+        $this->assertFalse($called);
+    }
+
+    public function test_submitted_reminders_share_age_inactivity_and_permission_limits(): void
+    {
+        $this->addReminderColumns();
+        \Illuminate\Support\Facades\Queue::fake();
+        DB::table('project_proposals')->update(['status_stage3' => 'submitted']);
+        DB::table('dashboards')->update(['state' => 'submitted', 'workflow_id' => 123]);
+        $this->assertTrue(ProjectProposal::findOrFail('proposal')->allowDelete());
+        $this->artisan('send-proposal-reminders')->assertSuccessful();
+        \Illuminate\Support\Facades\Queue::assertPushed(\App\Jobs\ReminderEmails\SendInactiveProposalReminderEmail::class, 1);
+        (new \App\Jobs\ReminderEmails\SendInactiveProposalReminderEmail('proposal'))->handle();
+        Mail::assertSent(\App\Mail\Reminders\InactiveProposalReminder::class);
+        $this->actingAs(User::findOrFail('other'));
+        $this->assertFalse(ProjectProposal::findOrFail('proposal')->allowDelete());
+        $this->actingAs(User::findOrFail('admin'));
+        $this->assertTrue(ProjectProposal::findOrFail('proposal')->allowDelete());
+        foreach (['created_at', 'updated_at'] as $column) {
+            DB::table('project_proposals')->update([$column => now()->subDays(27)]);
+            $this->assertFalse(ProjectProposal::findOrFail('proposal')->allowDelete());
+            DB::table('project_proposals')->update([$column => now()->subWeeks(4)]);
+        }
+        DB::table('dashboards')->update(['updated_at' => now()]);
+        $this->assertFalse(ProjectProposal::findOrFail('proposal')->allowDelete());
+        DB::table('dashboards')->update(['updated_at' => now()->subWeeks(4)]);
+        foreach (['complete', 'head_approved', 'sent', 'granted'] as $state) {
+            DB::table('dashboards')->update(['state' => $state]);
+            $this->assertFalse(ProjectProposal::findOrFail('proposal')->allowDelete());
+        }
     }
 
     public function test_inactive_reminder_command_preserves_deletion_eligibility_and_throttles_repeats(): void

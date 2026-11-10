@@ -8,7 +8,7 @@ Subject: Your project proposal, <i><strong>{{ $proposalName }}</strong></i>, has
 Dear {{ $userName }},
 <br><br>
 Your project proposal has been permanently deleted, including any uploaded files.
-The proposal had not started a workflow and had been inactive for at least four weeks.
+The proposal was at least four weeks old and had been inactive for at least four weeks. Any linked workflow has been stopped.
 <br><br>
 OVERVIEW:
 <br><br>

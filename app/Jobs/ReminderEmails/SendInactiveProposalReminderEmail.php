@@ -20,8 +20,8 @@ class SendInactiveProposalReminderEmail implements ShouldQueue
     public function handle(): void
     {
         $proposal = ProjectProposal::with(['dashboard', 'submitter'])->find($this->proposalId);
-        if (! $proposal || ! $proposal->reminder || $proposal->status_stage3 !== 'saved'
-            || ! $proposal->isInactiveDraft()) {
+        if (! $proposal || ! $proposal->reminder || $proposal->status_stage3 === 'pending'
+            || ! $proposal->isInactiveDeletableProposal()) {
             return;
         }
 

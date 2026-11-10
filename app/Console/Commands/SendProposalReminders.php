@@ -88,8 +88,8 @@ class SendProposalReminders extends Command
 
     private function decideAction(ProjectProposal $proposal): ?array
     {
-        // Saved drafts appear in My proposals; temporary pending drafts do not.
-        if ($proposal->status_stage3 === 'saved' && $proposal->isInactiveDraft()) {
+        // Temporary pending drafts do not appear in My proposals.
+        if ($proposal->status_stage3 !== 'pending' && $proposal->isInactiveDeletableProposal()) {
             return [
                 'type' => 'REMIND_USER_INACTIVE_PROPOSAL',
                 'job' => SendInactiveProposalReminderEmail::class,

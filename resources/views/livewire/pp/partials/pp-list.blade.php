@@ -45,7 +45,7 @@
                                         text-xs leading-normal text-gray-800 dark:text-neutral-200">
                                 <span class="inline-flex items-center gap-x-1.5">
                                     <span>
-                                        <span class="text-gray-500 dark:text-neutral-400">Main researcher:</span>
+                                        <span class="text-gray-500 dark:text-neutral-400">Principal Investigator:</span>
                                         <span class="font-semibold">{{ $proposal->pp['principal_investigator'] }}</span>
                                     </span>
                                 </span>
