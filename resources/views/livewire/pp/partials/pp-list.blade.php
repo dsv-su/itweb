@@ -333,6 +333,9 @@
                                             Rejected
                                         </a>
                                     @endif
+                                    @if($proposal->allowDelete())
+                                        <livewire:pp.delete-proposal :proposal-id="$proposal->id" :wire:key="'delete-proposal-'.$proposal->id" />
+                                    @endif
                                 </div>
                                 <!-- End button group -->
                             </div>

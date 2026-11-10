@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\ReminderEmails\SendCompleteReminderEmail;
+use App\Jobs\ReminderEmails\SendInactiveProposalReminderEmail;
 use App\Jobs\ReminderEmails\SendFOReminderEmail;
 use App\Jobs\ReminderEmails\SendUHReminderEmail;
 use App\Jobs\ReminderEmails\SendUserReportGrantRejectReminderEmail;
@@ -39,6 +40,7 @@ class SendProposalReminders extends Command
         $limit  = (int) $this->option('limit');
 
         $query = ProjectProposal::query()
+            ->with('dashboard')
             ->where('reminder', 1)
             ->limit($limit);
 
@@ -73,10 +75,10 @@ class SendProposalReminders extends Command
                 dispatch(new $action['job']($proposal->id));
 
                 // update tracking
-                $proposal->forceFill([
+                ProjectProposal::withoutTimestamps(fn () => $proposal->forceFill([
                     'last_reminder_type' => $action['type'],
                     'last_reminder_sent_at' => now(),
-                ])->save();
+                ])->save());
             }
         });
 
@@ -86,6 +88,14 @@ class SendProposalReminders extends Command
 
     private function decideAction(ProjectProposal $proposal): ?array
     {
+        // Saved drafts appear in My proposals; temporary pending drafts do not.
+        if ($proposal->status_stage3 === 'saved' && $proposal->isInactiveDraft()) {
+            return [
+                'type' => 'REMIND_USER_INACTIVE_PROPOSAL',
+                'job' => SendInactiveProposalReminderEmail::class,
+            ];
+        }
+
         $s1 = $proposal->status_stage1;
         $s2 = $proposal->status_stage2;
         $s3 = $proposal->status_stage3;

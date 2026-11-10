@@ -108,6 +108,27 @@ class ProjectProposal extends Model
         return $user->canAssignPrincipalInvestigator() || $user->id === $dashboard->user_id;
     }
 
+    public function allowDelete(): bool
+    {
+        $user = Auth::user();
+
+        return $user && ($user->isSuperAdmin() || $user->id === $this->user_id)
+            && $this->isInactiveDraft();
+    }
+
+    public function isInactiveDraft(): bool
+    {
+        $dashboard = $this->dashboard;
+        $cutoff = now()->subWeeks(4);
+
+        return in_array($this->status_stage3, ['pending', 'saved'], true)
+            && (! $dashboard || ($dashboard->type === 'projectproposal'
+                && ! $dashboard->workflow_id && (string) $dashboard->state === 'pending'))
+            && $this->created_at && $this->created_at->lte($cutoff)
+            && $this->updated_at && $this->updated_at->lte($cutoff)
+            && (! $dashboard || ($dashboard->updated_at && $dashboard->updated_at->lte($cutoff)));
+    }
+
     public function allowResume(): bool
     {
         $user = Auth::user();
