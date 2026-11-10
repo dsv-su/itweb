@@ -1,8 +1,8 @@
-<section class="px-4 py-2 lg:px-0">
+<section class="px-2 py-0.5 lg:px-0">
     <div class="mx-auto max-w-7xl">
         <div class="flex justify-center">
             <nav class="flex flex-wrap items-center" aria-label="Breadcrumb">
-                <ol role="list" class="flex items-center space-x-2 lg:space-x-4">
+                <ol role="list" class="flex flex-wrap items-center gap-x-1.5 gap-y-1 lg:gap-x-2">
                     @foreach(Statamic::tag('nav:breadcrumbs') as $p)
                         <li>
                             <div class="flex items-center">
@@ -12,11 +12,12 @@
                                     </svg>
                                 @endif
                                 <a href="{{ $p->url }}"
-                                   class="ml-2 lg:ml-3 text-xs lg:text-sm font-medium
+                                   @if($p->is_current) aria-current="page" @endif
+                                   class="inline-flex min-h-6 items-center ml-1.5 text-xs lg:text-sm font-medium
                                             @if($p->is_current)
-                                                text-blue-500 dark:text-gray-200
+                                                text-blue-700 dark:text-gray-200
                                             @else
-                                                text-gray-500 dark:text-gray-400
+                                                text-gray-600 dark:text-gray-300
                                             @endif
                                             hover:scale-95 hover:text-gray-700 dark:hover:text-gray-200">
                                     {{ $p->title }}

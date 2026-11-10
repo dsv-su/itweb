@@ -1,7 +1,9 @@
 @extends('layouts.app')
-@section('content')
+@section('page-navigation')
     @nocache('dsvheader')
     @nocache('navbar.navbar')
+@endsection
+@section('content')
     @include('home.partials.banner')
     @include('home.home')
 @endsection

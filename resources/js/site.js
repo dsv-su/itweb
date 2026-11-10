@@ -131,7 +131,7 @@ document.addEventListener('livewire:navigated', initTravelHelpFocus);
 
 // These navigation panels contain ordinary links, not ARIA menus.
 function initNavigationDisclosures() {
-    document.querySelectorAll('#site-navigation [data-dropdown-toggle]').forEach((trigger) => {
+    document.querySelectorAll('#site-navigation [data-dropdown-toggle], header [data-dropdown-toggle]').forEach((trigger) => {
         const id = trigger.getAttribute('data-dropdown-toggle');
         const panel = document.getElementById(id);
         const dropdown = window.FlowbiteInstances?.getInstance('Dropdown', id);
@@ -158,13 +158,14 @@ function initNavigationDisclosures() {
 
 // Hover/focus content must remain hoverable and dismissible (WCAG 1.4.13).
 function initDashboardTooltips() {
-    document.querySelectorAll('[data-dashboard-tooltip]').forEach((trigger) => {
+    document.querySelectorAll('[data-dashboard-tooltip], [data-tooltip-target]').forEach((trigger) => {
         if (trigger.dataset.tooltipInitialized) return;
-        const id = trigger.getAttribute('data-dashboard-tooltip');
+        const id = trigger.getAttribute('data-dashboard-tooltip') || trigger.getAttribute('data-tooltip-target');
         const panel = document.getElementById(id);
         if (!panel) return;
         trigger.dataset.tooltipInitialized = 'true';
         trigger.setAttribute('aria-describedby', id);
+        window.FlowbiteInstances?.getInstance('Tooltip', id)?.destroyAndRemoveInstance();
         const tooltip = new Tooltip(panel, trigger, { triggerType: 'none' });
         let hideTimer;
         let dismissed = false;

@@ -1,0 +1,42 @@
+/* Start-page surfaces with a narrower measure for long-form reading. */
+.text-page .home-dashboard__inner { max-width: 1088px; }
+.text-page__article {
+    --tw-prose-body: var(--home-ink);
+    --tw-prose-headings: var(--home-ink);
+    --tw-prose-links: var(--home-link);
+    --tw-prose-bold: var(--home-ink);
+    --tw-prose-counters: var(--home-muted);
+    --tw-prose-bullets: var(--home-muted);
+    max-width: none;
+    margin-block: 1rem;
+    padding: clamp(1.5rem, 5vw, 4rem);
+    color: var(--home-ink);
+    font-size: 1.0625rem;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+.text-page__body { max-width: 68ch; margin-inline: auto; }
+.text-page__header { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--home-line); }
+.text-page__article h1 {
+    margin: 0;
+    color: var(--home-ink);
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.15;
+    font-weight: 650;
+    letter-spacing: -.045em;
+    text-wrap: balance;
+}
+.text-page__article .text-page__intro { margin: 1.25rem 0 0; color: var(--home-muted); font-size: 1.1875rem; line-height: 1.75; }
+.text-page__article :is(h2, h3, h4) { color: var(--home-ink); margin-block: 2em .75em; line-height: 1.35; font-weight: 650; letter-spacing: -.025em; text-wrap: balance; scroll-margin-top: 2rem; }
+.text-page__article h2 { font-size: 1.6rem; }
+.text-page__article h3 { font-size: 1.25rem; }
+.text-page__article h4 { font-size: 1.125rem; }
+.text-page__article a:not(.not-prose a) { color: var(--home-link); text-underline-offset: .2em; }
+.text-page__article .page-rich-content { overflow-x: auto; }
+.text-page__article .page-rich-content > :first-child { margin-top: 0; }
+.text-page__article .page-rich-content + .page-rich-content { margin-top: 1.5rem; }
+.text-page__article :is(pre, blockquote) { border-radius: .75rem; }
+.text-page__article blockquote { border-color: var(--home-link); color: var(--home-muted); }
+.text-page__article img { max-width: 100%; height: auto; }
+.text-page__meta { margin-top: 3rem; padding-top: 1.25rem; border-top: 1px solid var(--home-line); color: var(--home-muted); font-size: .8125rem; line-height: 1.8; }
+.text-page__meta p { margin: 0; }

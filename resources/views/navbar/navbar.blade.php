@@ -8,25 +8,25 @@
     $projectProposalsEnabled = (bool) \App\Models\SettingsOh::query()->value('form_enable');
 
     $focusClasses = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-blue-300 dark:focus-visible:ring-offset-gray-900';
-    $navLinkClasses = 'flex min-h-11 items-center py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:px-0 md:hover:text-blue-700 dark:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent md:dark:hover:text-blue-500 '.$focusClasses;
-    $dropdownButtonClasses = 'flex min-h-11 items-center justify-between w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white '.$focusClasses;
-    $dropdownLinkClasses = 'block min-h-11 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white '.$focusClasses;
+    $navLinkClasses = 'site-nav__link '.$focusClasses;
+    $dropdownButtonClasses = 'site-nav__menu-link '.$focusClasses;
+    $dropdownLinkClasses = 'site-nav__menu-link '.$focusClasses;
     $mobileActionButtonClasses = 'inline-flex shrink-0 items-center justify-center h-11 w-11 p-2 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-gray-700 '.$focusClasses;
-    $mobileDropdownClasses = 'hidden fixed left-0 right-0 top-14 z-50 w-screen max-w-none text-base list-none bg-white rounded-lg divide-y divide-gray-100 shadow-lg dark:bg-gray-700 dark:divide-gray-600';
-    $serviceLinkClasses = 'block min-h-11 p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group '.$focusClasses;
+    $mobileDropdownClasses = 'site-nav__panel hidden fixed left-0 right-0 top-14 z-50 w-screen max-w-none text-base list-none bg-white rounded-lg divide-y divide-gray-100 shadow-lg dark:bg-gray-700 dark:divide-gray-600';
+    $serviceLinkClasses = 'site-nav__service block min-h-11 p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group '.$focusClasses;
     $serviceIconClasses = 'mx-auto mb-2 w-5 h-5 text-blue-600 dark:text-white';
     $serviceLabelClasses = 'text-sm font-medium text-blue-600 dark:text-white';
 @endphp
 
-<nav id="site-navigation" aria-label="{{ __('Main navigation') }}" class="bg-white border-b border-susecondary dark:bg-gray-900 dark:border-gray-700">
-    <div class="relative flex flex-nowrap items-center justify-between w-full min-h-14 px-2 mx-auto overflow-visible bg-white md:px-6 lg:px-8 dark:border-gray-600 dark:bg-gray-900">
+<nav id="site-navigation" aria-label="{{ __('Main navigation') }}" class="site-nav">
+    <div class="site-nav__inner">
         @if($localizedHome)
-            <a href="{{ $localizedHome->url() }}" aria-label="{{ __('DSV IT home') }}" class="flex items-center min-w-0 shrink-0 mr-1 sm:mr-4 {{ $focusClasses }}">
+            <a href="{{ $localizedHome->url() }}" aria-label="{{ __('DSV IT home') }}" class="site-nav__brand {{ $focusClasses }}">
                 <div class="flex items-center h-full sm:ml-2 opacity-90 dark:text-white">
-                    <span class="px-1.5 py-1 text-xl leading-none border-2 border-black rounded-lg dark:border-white">
+                    <span class="site-nav__monogram">
                         DSV
                     </span>
-                    <span class="hidden sm:inline ml-1 mb-1 text-xl font-sudepartment font whitespace-nowrap">
+                    <span class="site-nav__brand-label hidden sm:inline">
                         {{ __("it") }}
                     </span>
                 </div>
@@ -62,7 +62,7 @@
                 </button>
 
                 <div id="apps-dropdown-mobile" class="{{ $mobileDropdownClasses }} max-h-[calc(100vh-4rem)] overflow-y-auto">
-                    <div class="block py-2 px-4 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-200">
+                    <div class="site-nav__panel-heading block py-2 px-4 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-200">
                         {{ __("Available e-services") }}
                     </div>
 
@@ -114,7 +114,7 @@
                 class="hidden absolute left-0 top-full w-full z-40 bg-white dark:bg-gray-900 dark:border-gray-700
                        md:static md:z-auto md:flex md:flex-1 md:min-w-0 md:justify-center md:items-center md:w-auto"
             >
-                <ul class="flex flex-col p-4 mt-4 font-medium bg-gray-50 border border-susecondary rounded-lg md:p-0 md:mt-0 md:flex-row md:items-center md:gap-8 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                <ul class="site-nav__list">
                     {{ nav:main }}
                     {{ if children }}
                     <li class="relative flex items-center">
@@ -124,7 +124,8 @@
                             type="button"
                     aria-expanded="false"
                             aria-controls="dropdownNavbar-{{ id }}"
-                            class="flex min-h-11 items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent {{ $focusClasses }}"
+                            {{ if is_current || is_parent }}data-active="true"{{ /if }}
+                            class="site-nav__link {{ $focusClasses }}"
                         >
                             {{ title }}
                             <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
@@ -132,7 +133,7 @@
                             </svg>
                         </button>
 
-                        <div id="dropdownNavbar-{{ id }}" class="absolute top-full left-0 z-10 hidden w-full font-normal bg-white divide-y divide-gray-100 rounded-lg shadow md:w-80 dark:bg-gray-700 dark:divide-gray-600">
+                        <div id="dropdownNavbar-{{ id }}" class="site-nav__panel absolute top-full left-0 z-10 hidden w-full font-normal bg-white divide-y divide-gray-100 rounded-lg shadow md:w-80 dark:bg-gray-700 dark:divide-gray-600">
                             <ul class="py-2 text-sm text-gray-700 border border-susecondary rounded-lg dark:text-gray-200" aria-labelledby="dropdownNavbarLink-{{ id }}">
                                 {{ children }}
                                 {{ if children }}
@@ -144,7 +145,7 @@
                                         </svg>
                                     </button>
 
-                                    <div id="doubleDropdown-{{ id }}" class="absolute top-0 left-full z-10 hidden w-full bg-white divide-y divide-gray-100 rounded-lg shadow md:w-80 dark:bg-gray-700">
+                                    <div id="doubleDropdown-{{ id }}" class="site-nav__panel absolute top-0 left-full z-10 hidden w-full bg-white divide-y divide-gray-100 rounded-lg shadow md:w-80 dark:bg-gray-700">
                                         <ul class="py-2 pl-6 text-sm text-gray-700 border border-susecondary rounded-lg dark:text-gray-200" aria-labelledby="doubleDropdownButton-{{ id }}">
                                             {{ children }}
                                             {{ if children }}
@@ -156,7 +157,7 @@
                                                     </svg>
                                                 </button>
 
-                                                <div id="trippleDropdown-{{ id }}" class="absolute top-0 left-full z-10 hidden w-full bg-white divide-y divide-gray-100 rounded-lg shadow md:w-80 dark:bg-gray-700">
+                                                <div id="trippleDropdown-{{ id }}" class="site-nav__panel absolute top-0 left-full z-10 hidden w-full bg-white divide-y divide-gray-100 rounded-lg shadow md:w-80 dark:bg-gray-700">
                                                     <ul class="py-2 pl-9 text-sm text-gray-700 border border-susecondary rounded-lg dark:text-gray-200" aria-labelledby="trippleDropdownButton-{{ id }}">
                                                         {{ children }}
                                                         {{ if children }}
@@ -167,7 +168,7 @@
                                                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                                                                 </svg>
                                                             </button>
-                                                            <div id="lastDropdown-{{ id }}" class="absolute top-0 left-full z-10 hidden w-full bg-white rounded-lg shadow md:w-80 dark:bg-gray-700">
+                                                            <div id="lastDropdown-{{ id }}" class="site-nav__panel absolute top-0 left-full z-10 hidden w-full bg-white rounded-lg shadow md:w-80 dark:bg-gray-700">
                                                                 <ul class="py-2 pl-9 text-sm text-gray-700 border border-susecondary rounded-lg dark:text-gray-200" aria-labelledby="lastDropdownButton-{{ id }}">
                                                                     {{ children }}
                                                                     <li>

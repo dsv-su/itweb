@@ -80,6 +80,7 @@ new class extends Component
 
     public function updatedSearchPresenter(): void
     {
+        $this->highlighted = 0;
         $this->sukatUsers = $this->searchService->execute($this->searchPresenter);
     }
 
@@ -117,13 +118,14 @@ new class extends Component
     <div class="flex justify-start">
         <div class="relative w-full"
              x-data
-             x-on:keydown.arrow-down.prevent="$wire.moveHighlight(1)"
-             x-on:keydown.arrow-up.prevent="$wire.moveHighlight(-1)"
-             x-on:keydown.enter.prevent="$wire.selectUser()"
              x-on:click.outside="$wire.resetData()"
-             x-on:keydown.escape.prevent="$wire.resetData()"
         >
+            <label for="presenter-input" class="sr-only">{{ __('Search by name or email') }}</label>
             <input
+                x-on:keydown.arrow-down.prevent="$wire.moveHighlight(1)"
+                x-on:keydown.arrow-up.prevent="$wire.moveHighlight(-1)"
+                x-on:keydown.enter.prevent="$wire.selectUser()"
+                x-on:keydown.escape.prevent="$wire.resetData()"
                 id="presenter-input"
                 type="text"
                 class="p-3 w-full border rounded-md text-sm
@@ -137,20 +139,33 @@ new class extends Component
                 autocomplete="off"
                 role="combobox"
                 aria-expanded="{{ (filled($searchPresenter) && count($sukatUsers)) ? 'true' : 'false' }}"
-                aria-controls="search-results"
+                aria-autocomplete="list"
+                x-effect="$wire.highlighted; $nextTick(() => document.getElementById($el.getAttribute('aria-activedescendant'))?.scrollIntoView({ block: 'nearest' }))"
+                @if(filled($searchPresenter) && count($sukatUsers))
+                    aria-controls="search-results"
+                    aria-activedescendant="people-option-{{ $highlighted }}"
+                @endif
             />
 
+            <p role="status" aria-atomic="true" class="sr-only">
+                @if(filled($searchPresenter))
+                    {{ count($sukatUsers) }} {{ __('people found') }}
+                @endif
+            </p>
             @if(filled($searchPresenter) && count($sukatUsers))
-                <div id="search-results" role="listbox"
+                <div id="search-results" role="listbox" aria-label="{{ __('Search people') }}"
                      class="absolute left-0 right-0 top-full mt-2 bg-white border border-slate-200 shadow-md rounded-md p-2 z-50
                           max-h-[calc(100vh-8rem)] overflow-y-auto
                           dark:bg-slate-900 dark:border-slate-800">
-                    <ul class="space-y-2">
+                    <ul class="space-y-2" role="presentation">
                         @foreach($sukatUsers as $i => $sukatUser)
-                            <li wire:key="presenter-{{ $sukatUser->uid ?? $sukatUser->name }}">
+                            <li role="presentation" wire:key="presenter-{{ $sukatUser->uid ?? $sukatUser->name }}">
                                 <button
                                     type="button"
                                     role="option"
+                                    id="people-option-{{ $i }}"
+                                    aria-selected="{{ $highlighted === $i ? 'true' : 'false' }}"
+                                    tabindex="-1"
                                     class="w-full text-left border rounded-lg p-2 sm:p-2 transition
                                        border-slate-200 hover:bg-blue-50 active:bg-blue-100
                                        dark:border-slate-800 dark:hover:bg-slate-800 dark:active:bg-slate-700
@@ -166,7 +181,7 @@ new class extends Component
                                             <div class="flex flex-wrap items-center gap-2 leading-tight">
                                                 @if($sukatUser->role === 'External')
                                                     <span class="inline-flex items-center gap-x-1.5 py-1 px-1.5 rounded-md text-xs font-medium
-                                                                bg-gray-50 text-slate-900 dark:bg-blue-800/30 dark:text-blue-500">
+                                                                bg-gray-50 text-slate-900 dark:bg-blue-800/30 dark:text-blue-200">
                                                         {{ __('SU: ') }}
                                                     </span>
                                                 @endif
@@ -178,29 +193,29 @@ new class extends Component
                                                 @php $role = $sukatUser->role ?? 'Other'; @endphp
                                                 @if($role === 'DSV')
                                                     <span class="inline-flex items-center gap-x-1.5 py-1 px-1.5 rounded-md text-xs font-medium
-                                                                bg-suprimary text-white dark:bg-blue-800/30 dark:text-blue-500">
+                                                                bg-suprimary text-white dark:bg-blue-800/30 dark:text-blue-200">
                                                         {{ $role }}
                                                     </span>
                                                 @elseif($role === 'SU')
                                                     <span class="inline-flex items-center gap-x-1.5 py-1 px-1.5 rounded-md text-xs font-medium
-                                                                bg-purple-500 text-white dark:bg-blue-800/30 dark:text-blue-500">
+                                                                bg-purple-500 text-white dark:bg-blue-800/30 dark:text-blue-200">
                                                         {{ $role }}
                                                     </span>
                                                 @elseif($role === 'Student')
                                                     <span class="inline-flex items-center gap-x-1.5 py-1 px-1.5 rounded-md text-xs font-medium
-                                                                bg-green-500 text-white dark:bg-blue-800/30 dark:text-blue-500">
+                                                                bg-green-500 text-white dark:bg-blue-800/30 dark:text-blue-200">
                                                         {{ $role }}
                                                     </span>
                                                 @else
                                                     <span class="inline-flex items-center gap-x-1.5 py-1 px-1.5 rounded-md text-xs font-medium
-                                                                bg-gray-200 text-gray-600 dark:bg-blue-800/30 dark:text-blue-500">
+                                                                bg-gray-200 text-gray-600 dark:bg-blue-800/30 dark:text-blue-200">
                                                         External
                                                     </span>
                                                 @endif
                                             </div>
 
                                             {{-- line 2: email --}}
-                                            <div class="text-xs text-slate-500 dark:text-slate-400 mt-1 truncate">
+                                            <div class="text-xs text-slate-500 dark:text-slate-400 mt-1 break-words">
                                                 {{ $sukatUser->email }}
                                             </div>
                                         </div>
@@ -215,6 +230,7 @@ new class extends Component
         </div>
     </div>
 
+    <div aria-live="polite" aria-atomic="true">
     @if($person)
         @php
             $personName = data_get($person, 'displayname.0') ?? data_get($person, 'name') ?? '';
@@ -265,4 +281,5 @@ new class extends Component
             </div>
         </div>
     @endif
+    </div>
 </div>

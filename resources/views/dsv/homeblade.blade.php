@@ -1,11 +1,13 @@
 @extends('layouts.app')
-@section('content')
+@section('page-navigation')
     @nocache('dsvheader')
     @nocache('navbar.navbar')
-    @include('layouts.breadcrumbs')
-
-    <!-- Sidenav with content -->
-    <div class="flex overflow-hidden bg-white dark:bg-gray-800 dark:text-white">
-        @include('partials.page')
+@endsection
+@section('content')
+    <div class="home-dashboard text-page">
+        <div class="home-dashboard__inner">
+            @include('layouts.breadcrumbs')
+            @include('partials.page')
+        </div>
     </div>
 @endsection

@@ -1,13 +1,14 @@
 <div class="home-dashboard">
     <div class="home-dashboard__inner">
+        <h1 class="sr-only">{{ __('DSV IT home') }}</h1>
         <div class="home-grid">
-            <div class="home-column home-column--news">
-                @include('home.partials.it-news')
-            </div>
-
             <div class="home-column home-column--support">
                 @include('home.partials.helpdesk')
                 @include('home.partials.service-status')
+            </div>
+
+            <div class="home-column home-column--news">
+                @include('home.partials.it-news')
             </div>
 
             <div class="home-column home-column--people">

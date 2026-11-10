@@ -3,6 +3,8 @@
 @import "tailwindcss";
 @import "./home.css";
 @import "./footer.css";
+@import "./text-page.css";
+@import "./navigation.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

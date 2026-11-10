@@ -7,7 +7,7 @@
            hover:text-white focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-gray-300 dark:focus-visible:ring-gray-500
            focus-visible:outline-none dark:text-gray-200 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
         aria-describedby="displayName-tooltip"
-        aria-label="Signed in user"
+        aria-label="{{ __('Signed in user') }}: {{ auth()->user()->name ?? __('Not logged in') }}"
     >
         <svg
             xmlns="http://www.w3.org/2000/svg"

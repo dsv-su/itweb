@@ -7,10 +7,10 @@
         ->exists();
 
     $actionButtonClasses = 'hidden md:flex min-w-11 min-h-11 items-center justify-center p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-blue-300 dark:focus-visible:ring-offset-gray-900';
-    $dropdownClasses = 'hidden overflow-hidden z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow-lg dark:bg-gray-700 dark:divide-gray-600';
-    $dropdownHeaderClasses = 'block py-2 px-4 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-200';
+    $dropdownClasses = 'site-nav__panel hidden overflow-hidden z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow-lg dark:bg-gray-700 dark:divide-gray-600';
+    $dropdownHeaderClasses = 'site-nav__panel-heading block py-2 px-4 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-200';
     $dropdownGridClasses = 'grid grid-cols-2 gap-2 p-4';
-    $serviceLinkClasses = 'block min-h-11 p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-blue-300 dark:focus-visible:ring-offset-gray-900';
+    $serviceLinkClasses = 'site-nav__service block min-h-11 p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:focus-visible:ring-blue-300 dark:focus-visible:ring-offset-gray-900';
     $serviceIconClasses = 'mx-auto mb-2 w-5 h-5 text-blue-600 dark:text-white';
     $serviceLabelClasses = 'break-words text-sm font-medium text-blue-700 dark:text-white';
     $tooltipClasses = 'absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700';
