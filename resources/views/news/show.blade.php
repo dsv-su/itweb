@@ -1,46 +1,26 @@
 @extends('layouts.app')
-@section('content')
+@section('page-navigation')
     @nocache('dsvheader')
     @nocache('navbar.navbar')
-    <!-- News -->
-    <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
-        <div class="max-w-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <div class="flex w-full sm:items-center gap-x-5 sm:gap-x-3">
-                    <div class="grow">
-                        <div class="flex justify-between items-center gap-x-2">
-                            <div>
-                                <div class="inline-block">
-                                    <div class="sm:mb-1 block text-start">
-                                          <span class="font-semibold text-gray-800 dark:text-gray-200">
-                                            {!! $page->author->name ?? '' !!}
-                                          </span>
-                                    </div>
-                                </div>
-                                <ul class="text-xs text-gray-500">
-                                    <li class="inline-block relative pe-6 last:pe-0 last-of-type:before:hidden before:absolute before:top-1/2 before:end-2
-                                                before:-translate-y-1/2 before:w-1 before:h-1 before:bg-gray-300 before:rounded-full dark:text-gray-200 dark:before:bg-gray-600">
-                                        {!! $page->date !!}
-                                    </li>
-                                    <li class="inline-block relative pe-6 last:pe-0 last-of-type:before:hidden before:absolute before:top-1/2 before:end-2 before:-translate-y-1/2
-                                                before:w-1 before:h-1 before:bg-gray-300 before:rounded-full dark:text-gray-400 dark:before:bg-gray-600">
-                                        <span class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-gray-200">{{$page->collection}}</span>
-                                    </li>
-                                </ul>
-                            </div>
-
+@endsection
+@section('content')
+    <div class="home-dashboard text-page news-page">
+        <div class="home-dashboard__inner">
+            <article class="home-card text-page__article prose prose-slate dark:prose-invert" aria-labelledby="news-title">
+                <div class="text-page__body">
+                    <header class="text-page__header">
+                        <div class="not-prose news-page__meta">
+                            <span>{{ $page->date }}</span>
+                            <span class="news-page__badge">{{ $page->collection }}</span>
                         </div>
-                    </div>
+                        <h1 id="news-title">{{ $page->title }}</h1>
+                        @if($page->author->name ?? null)
+                            <p class="not-prose news-page__author">{{ $page->author->name }}</p>
+                        @endif
+                    </header>
+                    <div class="page-rich-content">{!! $page->content !!}</div>
                 </div>
-            </div>
-            <!-- Content -->
-            <div class="space-y-5 md:space-y-8">
-                <div class="space-y-3">
-                    <h2 class="news-show-title text-xl font-bold md:text-3xl dark:text-gray-200 dark:before:bg-gray-600"> {!! $page->title !!}</h2>
-                    <div class="news-show-content prose text-lg text-gray-800 dark:prose-invert dark:text-gray-200 dark:before:bg-gray-600"> {!! $page->content !!}   </div>
-                </div>
-            </div>
-            <!-- End Content -->
+            </article>
         </div>
     </div>
 @endsection
